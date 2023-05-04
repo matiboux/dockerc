@@ -23,14 +23,14 @@ else
 fi
 
 # Set compose file arguments
-if [ $CONTEXT = "dev" ]; then
-	COMPOSE_FILE_ARGS="" # Use default docker compose behavior
+if [ -f "docker-compose.$CONTEXT.yml" ]; then
+	COMPOSE_FILE_ARGS=" -f docker-compose.yml -f docker-compose.$CONTEXT.yml"
 
 elif [ $CONTEXT = "prod" ]; then
-	COMPOSE_FILE_ARGS="-f docker-compose.yml"
+	COMPOSE_FILE_ARGS=" -f docker-compose.yml"
 
-elif [ $CONTEXT = "cicd" ]; then
-	COMPOSE_FILE_ARGS=" -f docker-compose.yml -f docker-compose-cicd.yml"
+elif [ $CONTEXT = "dev" ]; then
+	COMPOSE_FILE_ARGS="" # Use default docker compose behavior
 
 elif [ $CONTEXT = "notebooks" ]; then
 	COMPOSE_FILE_ARGS=" -f docker-compose-notebooks.yml"
@@ -39,7 +39,7 @@ elif [ $CONTEXT = "notebooks-gpu" ]; then
 	COMPOSE_FILE_ARGS=" -f docker-compose-notebooks.yml -f docker-compose-notebooks.gpu.yml"
 
 else # Error
-	echo "Error: Invalid context '$CONTEXT'"
+	echo "Error: Unknown context '$CONTEXT'"
 	exit 1
 fi
 
