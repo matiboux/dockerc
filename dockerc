@@ -15,36 +15,58 @@ else
 	CONTEXT=""
 fi
 
-# If context is empty, set to the default context
-if [ -z $CONTEXT ]; then
-	CONTEXT="dev"
+# Split context into first and second parts
+IFS="-" read -r first second <<EOF
+$CONTEXT
+EOF
+
+# If first part is empty
+if [ -z "$first" ]; then
+	# If second part is empty, set to the default context
+	if [ -z "$second" ]; then
+		first="dev"
+
+	# If second part is not empty, set first part to second part and second part to empty
+	else
+		first="-$second"
+		second=""
+	fi
 fi
 
 # If arguments are empty, set to the default arguments
-if [ -z $@ ]; then
+if [ -z "$@" ]; then
 	ARGS="up -d"
 else
 	ARGS=$@
 fi
 
 # Set compose file arguments
-if [ -f "docker-compose.$CONTEXT.yml" ]; then
-	COMPOSE_FILE_ARGS=" -f docker-compose.yml -f docker-compose.$CONTEXT.yml"
+if [ -f "docker-compose-$first.yml" ]; then
 
-elif [ $CONTEXT = "prod" ]; then
-	COMPOSE_FILE_ARGS=" -f docker-compose.yml"
+	if [ -z "$second" ]; then
+		COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml"
 
-elif [ $CONTEXT = "dev" ]; then
-	COMPOSE_FILE_ARGS="" # Use default docker compose behavior
+	elif [ -f "docker-compose-$first.$second.yml" ]; then
+		COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml -f docker-compose.$second.yml"
+	fi
 
-elif [ $CONTEXT = "notebooks" ]; then
-	COMPOSE_FILE_ARGS=" -f docker-compose-notebooks.yml"
+elif [ -f "docker-compose.yml" ]; then
 
-elif [ $CONTEXT = "notebooks-gpu" ]; then
-	COMPOSE_FILE_ARGS=" -f docker-compose-notebooks.yml -f docker-compose-notebooks.gpu.yml"
+	if [ -f "docker-compose.$first.yml" ]; then
+		COMPOSE_FILE_ARGS=" -f docker-compose.yml -f docker-compose.$first.yml"
 
-else # Error
-	echo "Error: Unknown context '$CONTEXT'"
+	elif [ $first = "prod" ]; then
+		COMPOSE_FILE_ARGS=" -f docker-compose.yml"
+	fi
+fi
+
+# If compose file arguments are empty, unless the context is dev, exit with error
+if [ -z "$COMPOSE_FILE_ARGS" ] && [ $first != "dev" ]; then
+	if [ -z "$second" ]; then
+		echo "Error: Unknown context '$first'"
+	else
+		echo "Error: Unknown context '$first-$second'"
+	fi
 	exit 1
 fi
 
