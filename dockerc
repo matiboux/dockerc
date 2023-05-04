@@ -41,25 +41,33 @@ fi
 
 if [ ! -z "$first" ]; then
 
-	# Set compose file arguments
-	if [ -f "docker-compose-$first.yml" ]; then
+	# Check in current directory, then in docker directory
+	while read -r dir; do
 
-		if [ -z "$second" ]; then
-			COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml"
+		# Set compose file arguments
+		if [ -f "$dir/docker-compose-$first.yml" ]; then
 
-		elif [ -f "docker-compose-$first.$second.yml" ]; then
-			COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml -f docker-compose-$first.$second.yml"
+			if [ -z "$second" ]; then
+				COMPOSE_FILE_ARGS=" -f $dir/docker-compose-$first.yml"
+
+			elif [ -f "$dir/docker-compose-$first.$second.yml" ]; then
+				COMPOSE_FILE_ARGS=" -f $dir/docker-compose-$first.yml -f $dir/docker-compose-$first.$second.yml"
+			fi
+
+		elif [ -f "$dir/docker-compose.yml" ]; then
+
+			if [ -f "$dir/docker-compose.$first.yml" ]; then
+				COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml -f $dir/docker-compose.$first.yml"
+
+			elif [ "$first" = "prod" ]; then
+				COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml"
+			fi
 		fi
 
-	elif [ -f "docker-compose.yml" ]; then
-
-		if [ -f "docker-compose.$first.yml" ]; then
-			COMPOSE_FILE_ARGS=" -f docker-compose.yml -f docker-compose.$first.yml"
-
-		elif [ "$first" = "prod" ]; then
-			COMPOSE_FILE_ARGS=" -f docker-compose.yml"
-		fi
-	fi
+	done <<EOF
+.
+./docker
+EOF
 
 	# If compose file arguments are empty, unless the context is dev, exit with error
 	if [ -z "$COMPOSE_FILE_ARGS" ] && [ "$first" != "dev" ]; then
@@ -70,6 +78,7 @@ if [ ! -z "$first" ]; then
 		fi
 		exit 1
 	fi
+
 fi
 
 # Run docker compose
