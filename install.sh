@@ -13,9 +13,16 @@ else
 	INSTALL_DIR="/usr/local/bin"
 fi
 
+# Check that docker compose is installed
+docker compose --help &> /dev/null
+if [ $? -ne 0 ]; then
+	echo "Error: Docker compose is not installed."
+	exit 1
+fi
+
 curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/dockerc -o "$INSTALL_DIR/dockerc"
 if [ $? -ne 0 ]; then
-	echo "Error: Installation failed."
+	echo "Error: DockerC installation failed."
 	exit 1
 fi
 
