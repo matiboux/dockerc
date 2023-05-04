@@ -14,7 +14,7 @@ else
 fi
 
 # Check that docker compose is installed
-docker compose --help &> /dev/null
+docker compose --help > /dev/null 2>&1
 if [ $? -ne 0 ]; then
 	echo "Error: Docker compose is not installed."
 	exit 1
