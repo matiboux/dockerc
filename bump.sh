@@ -36,7 +36,7 @@ else
 fi
 
 # Bump version in dockerc
-sed -i "s/\# DockerC (.*)/\# DockerC (v$VERSION)/g" dockerc
+sed -i "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" dockerc
 
 if [ "$HAS_GIT" = true ]; then
 	# Commit changes
