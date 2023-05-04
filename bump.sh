@@ -5,18 +5,26 @@
 # MIT License
 # Copyright (c) 2023 Matiboux
 
+HAS_GIT=true
+
+if [ "$1" = "-n" ]; then
+	# Disable git
+	HAS_GIT=false
+	shift
+fi
+
 # Get version from first parameter and shift
 if [ "$#" -gt 0 ]; then
 	VERSION="$1"
 	shift
+
 else
 	echo "Error: No version specified."
-	echo "Usage: $0 <version>"
+	echo "Usage: $0 [-n] <version>"
 	exit 1
 fi
 
 # Check that git is installed
-HAS_GIT=true
 if [ ! -d ".git" ]; then
 	HAS_GIT=false
 else
