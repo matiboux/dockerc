@@ -42,7 +42,7 @@ if [ ! -z "$first" ]; then
 			COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml"
 
 		elif [ -f "docker-compose-$first.$second.yml" ]; then
-			COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml -f docker-compose.$second.yml"
+			COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml -f docker-compose-$first.$second.yml"
 		fi
 
 	elif [ -f "docker-compose.yml" ]; then
