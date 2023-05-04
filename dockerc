@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# DockerC
+# Wrapper for docker compose commands in your project.
+# https://github.com/matiboux/dockerc
+# MIT License
+# Copyright (c) 2023 Matiboux
+
 # Print help
 if [ "$1" = "--help" ]; then
 	echo "Usage: $0 [context] [...args]"
