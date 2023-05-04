@@ -20,17 +20,10 @@ IFS="-" read -r first second <<EOF
 $CONTEXT
 EOF
 
-# If first part is empty
-if [ -z "$first" ]; then
-	# If second part is empty, set to the default context
-	if [ -z "$second" ]; then
-		first="dev"
-
-	# If second part is not empty, set first part to second part and second part to empty
-	else
-		first="-$second"
-		second=""
-	fi
+# If first part is empty and second part is not empty,
+# Set first part to second part and second part to empty
+if [ -z "$first" ] && [ ! -z "$second" ]; then
+	first="-$second"
 fi
 
 # If arguments are empty, set to the default arguments
@@ -40,34 +33,37 @@ else
 	ARGS=$@
 fi
 
-# Set compose file arguments
-if [ -f "docker-compose-$first.yml" ]; then
+if [ ! -z "$first" ]; then
 
-	if [ -z "$second" ]; then
-		COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml"
+	# Set compose file arguments
+	if [ -f "docker-compose-$first.yml" ]; then
 
-	elif [ -f "docker-compose-$first.$second.yml" ]; then
-		COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml -f docker-compose.$second.yml"
+		if [ -z "$second" ]; then
+			COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml"
+
+		elif [ -f "docker-compose-$first.$second.yml" ]; then
+			COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml -f docker-compose.$second.yml"
+		fi
+
+	elif [ -f "docker-compose.yml" ]; then
+
+		if [ -f "docker-compose.$first.yml" ]; then
+			COMPOSE_FILE_ARGS=" -f docker-compose.yml -f docker-compose.$first.yml"
+
+		elif [ "$first" = "prod" ]; then
+			COMPOSE_FILE_ARGS=" -f docker-compose.yml"
+		fi
 	fi
 
-elif [ -f "docker-compose.yml" ]; then
-
-	if [ -f "docker-compose.$first.yml" ]; then
-		COMPOSE_FILE_ARGS=" -f docker-compose.yml -f docker-compose.$first.yml"
-
-	elif [ $first = "prod" ]; then
-		COMPOSE_FILE_ARGS=" -f docker-compose.yml"
+	# If compose file arguments are empty, unless the context is dev, exit with error
+	if [ -z "$COMPOSE_FILE_ARGS" ] && [ "$first" != "dev" ]; then
+		if [ -z "$second" ]; then
+			echo "Error: Unknown context '$first'"
+		else
+			echo "Error: Unknown context '$first-$second'"
+		fi
+		exit 1
 	fi
-fi
-
-# If compose file arguments are empty, unless the context is dev, exit with error
-if [ -z "$COMPOSE_FILE_ARGS" ] && [ $first != "dev" ]; then
-	if [ -z "$second" ]; then
-		echo "Error: Unknown context '$first'"
-	else
-		echo "Error: Unknown context '$first-$second'"
-	fi
-	exit 1
 fi
 
 # Run docker compose
