@@ -1,0 +1,79 @@
+#!/bin/sh
+
+# DockerC
+# Wrapper for docker compose commands in your project.
+# https://github.com/matiboux/dockerc
+# MIT License
+# Copyright (c) 2023 Matiboux
+
+# Print help
+if [ "$1" = "--help" ]; then
+	echo "Usage: $0 [context] [...args]"
+	echo "  context syntax: [first] | [first]-[second]"
+	exit 0
+fi
+
+if [ $# -gt 0 ]; then
+	# Get context from first parameter and shift
+	CONTEXT="$1"
+	shift
+else
+	CONTEXT=""
+fi
+
+# Split context into first and second parts
+IFS="-" read -r first second <<EOF
+$CONTEXT
+EOF
+
+# If first part is empty and second part is not empty,
+# Set first part to second part and second part to empty
+if [ -z "$first" ] && [ ! -z "$second" ]; then
+	first="-$second"
+fi
+
+# If arguments are empty, set to the default arguments
+if [ -z "$@" ]; then
+	ARGS="up -d"
+else
+	ARGS=$@
+fi
+
+if [ ! -z "$first" ]; then
+
+	# Set compose file arguments
+	if [ -f "docker-compose-$first.yml" ]; then
+
+		if [ -z "$second" ]; then
+			COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml"
+
+		elif [ -f "docker-compose-$first.$second.yml" ]; then
+			COMPOSE_FILE_ARGS=" -f docker-compose-$first.yml -f docker-compose-$first.$second.yml"
+		fi
+
+	elif [ -f "docker-compose.yml" ]; then
+
+		if [ -f "docker-compose.$first.yml" ]; then
+			COMPOSE_FILE_ARGS=" -f docker-compose.yml -f docker-compose.$first.yml"
+
+		elif [ "$first" = "prod" ]; then
+			COMPOSE_FILE_ARGS=" -f docker-compose.yml"
+		fi
+	fi
+
+	# If compose file arguments are empty, unless the context is dev, exit with error
+	if [ -z "$COMPOSE_FILE_ARGS" ] && [ "$first" != "dev" ]; then
+		if [ -z "$second" ]; then
+			echo "Error: Unknown context '$first'"
+		else
+			echo "Error: Unknown context '$first-$second'"
+		fi
+		exit 1
+	fi
+fi
+
+# Run docker compose
+echo ""
+echo "> docker compose$COMPOSE_FILE_ARGS $ARGS"
+echo ""
+exec docker compose$COMPOSE_FILE_ARGS $ARGS
