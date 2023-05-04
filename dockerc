@@ -1,12 +1,16 @@
 #!/bin/sh
 
-# Get context from first parameter
-CONTEXT=$1
-shift
+if [ $# -gt 0 ]; then
+	# Get context from first parameter and shift
+	CONTEXT="$1"
+	shift
+else
+	CONTEXT=""
+fi
 
 # Print help
 if [ "$CONTEXT" = "help" ]; then
-	echo "Usage: $0 <mode> [<args> ...]"
+	echo "Usage: $0 [contect] [...args]"
 	exit 0
 fi
 
