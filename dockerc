@@ -83,7 +83,7 @@ EOF
 			# Break loop if compose file arguments are set!
 			break
 
-		elif [ "$dir" != "." ] && [ -f "$dir/docker-compose.yml" ] && \
+		elif [ -f "$dir/docker-compose.yml" ] && \
 		   ([ -z "$first" ] || [ "$first" = "dev" ]);
 		then
 
@@ -104,7 +104,7 @@ EOF
 ./docker
 EOF
 
-	# If compose file arguments are empty, unless the context is dev, exit with error
+	# If compose file arguments are empty, exit with error
 	if [ -z "$COMPOSE_FILE_ARGS" ]; then
 		if [ -z "$second" ]; then
 			echo "Error: Unknown context '$first'"
