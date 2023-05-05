@@ -51,6 +51,9 @@ dockerc -             # -> docker compose up -d
 dockerc - down        # -> docker compose down
 dockerc - exec app sh # -> docker compose exec app bash
 
+dockerc --            # -> docker compose up -d
+dockerc -- start      # -> docker compose start
+
 # The dev context works in the same way as long as no matching file is found!
 dockerc dev           # -> docker compose up -d
 dockerc dev logs      # -> docker compose logs
