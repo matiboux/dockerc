@@ -30,56 +30,66 @@ else
 	ARGS="up -d"
 fi
 
-# Split context into first and second parts
-IFS="-" read -r first second <<EOF
+# If context is --, ignore context and use docker compose without file arguments
+NO_COMPOSE_FILE_ARGS=false
+if [ "$CONTEXT" = "--" ]; then
+	NO_COMPOSE_FILE_ARGS=true
+fi
+
+if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
+
+	# Split context into first and second parts
+	IFS="-" read -r first second <<EOF
 $CONTEXT
 EOF
 
-# If first part is empty and second part is not empty,
-# Set first part to second part and second part to empty
-if [ -z "$first" ] && [ ! -z "$second" ]; then
-	first="-$second"
-	second=""
-fi
+	# If first part is empty and second part is not empty,
+	# Set first part to second part and second part to empty
+	if [ -z "$first" ] && [ ! -z "$second" ]; then
+		first="-$second"
+		second=""
+	fi
 
-if [ ! -z "$first" ]; then
+	if [ ! -z "$first" ]; then
 
-	# Check in current directory, then in docker directory
-	while read -r dir; do
+		# Check in current directory, then in docker directory
+		while read -r dir; do
 
-		# Set compose file arguments
-		if [ -f "$dir/docker-compose-$first.yml" ]; then
+			# Set compose file arguments
+			if [ -f "$dir/docker-compose-$first.yml" ]; then
 
-			if [ -z "$second" ]; then
-				COMPOSE_FILE_ARGS=" -f $dir/docker-compose-$first.yml"
+				if [ -z "$second" ]; then
+					COMPOSE_FILE_ARGS=" -f $dir/docker-compose-$first.yml"
 
-			elif [ -f "$dir/docker-compose-$first.$second.yml" ]; then
-				COMPOSE_FILE_ARGS=" -f $dir/docker-compose-$first.yml -f $dir/docker-compose-$first.$second.yml"
+				elif [ -f "$dir/docker-compose-$first.$second.yml" ]; then
+					COMPOSE_FILE_ARGS=" -f $dir/docker-compose-$first.yml -f $dir/docker-compose-$first.$second.yml"
+				fi
+
+			elif [ -f "$dir/docker-compose.yml" ]; then
+
+				if [ -f "$dir/docker-compose.$first.yml" ]; then
+					COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml -f $dir/docker-compose.$first.yml"
+
+				elif [ "$first" = "prod" ]; then
+					COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml"
+				fi
 			fi
 
-		elif [ -f "$dir/docker-compose.yml" ]; then
-
-			if [ -f "$dir/docker-compose.$first.yml" ]; then
-				COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml -f $dir/docker-compose.$first.yml"
-
-			elif [ "$first" = "prod" ]; then
-				COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml"
-			fi
-		fi
-
-	done <<EOF
+		done <<EOF
 .
 ./docker
 EOF
 
-	# If compose file arguments are empty, unless the context is dev, exit with error
-	if [ -z "$COMPOSE_FILE_ARGS" ] && [ "$first" != "dev" ]; then
-		if [ -z "$second" ]; then
-			echo "Error: Unknown context '$first'"
-		else
-			echo "Error: Unknown context '$first-$second'"
+		# If compose file arguments are empty, unless the context is dev, exit with error
+		if [ -z "$COMPOSE_FILE_ARGS" ] && [ "$first" != "dev" ]; then
+			if [ -z "$second" ]; then
+				echo "Error: Unknown context '$first'"
+			else
+				echo "Error: Unknown context '$first-$second'"
+			fi
+			exit 1
 		fi
-		exit 1
+
 	fi
 
 fi
