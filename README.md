@@ -45,18 +45,21 @@ my-project/
 You can now run your docker compose commands with DockerC:
 
 ```sh
-dockerc               # -> docker compose up -d
+# The default context uses the override file if it exists!
+dockerc               # -> docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
 
-dockerc -             # -> docker compose up -d
-dockerc - down        # -> docker compose down
-dockerc - exec app sh # -> docker compose exec app bash
+# Use "-" to use the default context with arguments.
+dockerc -             # -> docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+dockerc - down        # -> docker compose -f docker-compose.yml -f docker-compose.override.yml down
+dockerc - exec app sh # -> docker compose -f docker-compose.yml -f docker-compose.override.yml exec app bash
 
+# Use "--" to use docker compose without file arguments.
 dockerc --            # -> docker compose up -d
 dockerc -- start      # -> docker compose start
 
-# The dev context works in the same way as long as no matching file is found!
-dockerc dev           # -> docker compose up -d
-dockerc dev logs      # -> docker compose logs
+# The dev context works like the default context as long as no matching file is found.
+dockerc dev           # -> docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+dockerc dev logs      # -> docker compose -f docker-compose.yml -f docker-compose.override.yml logs
 
 dockerc prod          # -> docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 dockerc prod restart  # -> docker compose -f docker-compose.yml -f docker-compose.prod.yml restart
