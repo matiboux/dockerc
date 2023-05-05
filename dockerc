@@ -39,10 +39,10 @@ else
 	ARGS=$@
 fi
 
-if [ ! -z "$first" ]; then
+# Check in current directory, then in docker directory
+while read -r dir; do
 
-	# Check in current directory, then in docker directory
-	while read -r dir; do
+	if [ ! -z "$first" ]; then
 
 		# Set compose file arguments
 		if [ -f "$dir/docker-compose-$first.yml" ]; then
@@ -64,21 +64,34 @@ if [ ! -z "$first" ]; then
 			fi
 		fi
 
-	done <<EOF
+	fi
+
+	if [ -z "$COMPOSE_FILE_ARGS" ] && [ "$dir" != "." ] && [ -f "$dir/docker-compose.yml" ] && \
+	   ([ -z "$first" ] || [ "$first" = "dev" ]);
+	then
+
+		if [ -f "$dir/docker-compose.override.yml" ]; then
+			COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml -f $dir/docker-compose.override.yml"
+
+		else
+			COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml"
+		fi
+
+	fi
+
+done <<EOF
 .
 ./docker
 EOF
 
-	# If compose file arguments are empty, unless the context is dev, exit with error
-	if [ -z "$COMPOSE_FILE_ARGS" ] && [ "$first" != "dev" ]; then
-		if [ -z "$second" ]; then
-			echo "Error: Unknown context '$first'"
-		else
-			echo "Error: Unknown context '$first-$second'"
-		fi
-		exit 1
+# If compose file arguments are empty, unless the context is dev, exit with error
+if [ -z "$COMPOSE_FILE_ARGS" ]; then
+	if [ -z "$second" ]; then
+		echo "Error: Unknown context '$first'"
+	else
+		echo "Error: Unknown context '$first-$second'"
 	fi
-
+	exit 1
 fi
 
 # Run docker compose
