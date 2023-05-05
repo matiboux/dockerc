@@ -21,6 +21,15 @@ else
 	CONTEXT=""
 fi
 
+# Other parameters are arguments passed to docker compose
+if [ ! -z "$@" ]; then
+	ARGS="$@"
+
+else
+	# If arguments are empty, set to the default arguments
+	ARGS="up -d"
+fi
+
 # Split context into first and second parts
 IFS="-" read -r first second <<EOF
 $CONTEXT
@@ -31,13 +40,6 @@ EOF
 if [ -z "$first" ] && [ ! -z "$second" ]; then
 	first="-$second"
 	second=""
-fi
-
-# If arguments are empty, set to the default arguments
-if [ -z "$@" ]; then
-	ARGS="up -d"
-else
-	ARGS=$@
 fi
 
 if [ ! -z "$first" ]; then
