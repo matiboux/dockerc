@@ -30,6 +30,8 @@ else
 	ARGS="up -d"
 fi
 
+COMPOSE_FILE_ARGS=""
+
 # If context is --, ignore context and use docker compose without file arguments
 NO_COMPOSE_FILE_ARGS=false
 if [ "$CONTEXT" = "--" ]; then
@@ -77,7 +79,11 @@ EOF
 
 		fi
 
-		if [ -z "$COMPOSE_FILE_ARGS" ] && [ -f "$dir/docker-compose.yml" ] && \
+		if [ ! -z "$COMPOSE_FILE_ARGS" ]; then
+			# Break loop if compose file arguments are set!
+			break
+
+		elif [ -f "$dir/docker-compose.yml" ] && \
 		   ([ -z "$first" ] || [ "$first" = "dev" ]);
 		then
 
@@ -87,6 +93,9 @@ EOF
 			else
 				COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml"
 			fi
+
+			# Break loop because compose file arguments are set!
+			break
 
 		fi
 
