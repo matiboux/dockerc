@@ -56,3 +56,13 @@ dockerc train stop    # -> docker compose -f docker/docker-compose-train.yml sto
 dockerc train.gpu     # -> docker compose -f docker/docker-compose-train.yml -f docker/docker-compose-train.gpu.yml up -d
 dockerc train.gpu ps  # -> docker compose -f docker/docker-compose-train.yml -f docker/docker-compose-train.gpu.yml ps
 ```
+
+
+## License
+
+**MIT License**  
+Copyright (c) 2023 Matiboux
+
+You can find a copy of the MIT License in the [LICENSE](LICENSE) file.
+
+Visit [matiboux.me](https://matiboux.me) for contact information.
