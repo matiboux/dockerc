@@ -30,6 +30,7 @@ EOF
 # Set first part to second part and second part to empty
 if [ -z "$first" ] && [ ! -z "$second" ]; then
 	first="-$second"
+	second=""
 fi
 
 # If arguments are empty, set to the default arguments
