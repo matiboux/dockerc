@@ -15,6 +15,14 @@ Then, paste this in your terminal to install DockerC:
 /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh)"
 ```
 
+Take a look at the [install.sh](install.sh) script to see what it does.
+
+If you get the error `Failure writing output to destination`, you can try to run the command again with `sudo`:
+
+```bash
+sudo /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh)"
+```
+
 
 ## Usage
 
