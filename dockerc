@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# DockerC (v1.2.1)
+# DockerC (v1.2.2)
 # Wrapper for docker compose commands in your project.
 # https://github.com/matiboux/dockerc
 # MIT License
