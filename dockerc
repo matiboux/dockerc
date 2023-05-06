@@ -22,10 +22,8 @@ else
 fi
 
 # Other parameters are arguments passed to docker compose
-if [ ! -z "$@" ]; then
-	ARGS="$@"
-
-else
+ARGS="$@"
+if [ -z "$ARGS" ]; then
 	# If arguments are empty, set to the default arguments
 	ARGS="up -d"
 fi
