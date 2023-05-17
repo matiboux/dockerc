@@ -7,6 +7,15 @@ else
 	DIR="."
 fi
 
+if [ -d "$DIR/test" ]; then
+	rm -r "$DIR/test/"*
+
+	if [ $? -ne 0 ]; then
+		echo "Failed to clear ./test directory."
+		exit 1
+	fi
+fi
+
 mkdir -p "$DIR/test"
 mkdir -p "$DIR/test/docker"
 
