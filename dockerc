@@ -104,7 +104,9 @@ EOF
 
 	# If compose file arguments are empty, exit with error
 	if [ -z "$COMPOSE_FILE_ARGS" ]; then
-		if [ -z "$second" ]; then
+		if [ -z "$first" ]; then
+			echo "Error: Unknown default context"
+		elif [ -z "$second" ]; then
 			echo "Error: Unknown context '$first'"
 		else
 			echo "Error: Unknown context '$first-$second'"
