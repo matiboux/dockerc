@@ -1,12 +1,12 @@
 #!/bin/sh
 
-VERSION="v1.2.2"
-
 # DockerC (v1.2.2)
 # Wrapper for docker compose commands in your project.
 # https://github.com/matiboux/dockerc
 # MIT License
 # Copyright (c) 2023 Matiboux
+
+VERSION="v1.2.2"
 
 CURRENT_VERSION="\"tag_name\": \"$VERSION\","
 LATEST_VERSION=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
