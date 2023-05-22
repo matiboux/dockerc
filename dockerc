@@ -6,14 +6,22 @@
 # MIT License
 # Copyright (c) 2023 Matiboux
 
-# Print help
-if [ "$1" = "--help" ]; then
-	echo "Usage: $0 [options] [context] [...args]"
-	echo "  context syntax: [first] | [first]-[second]"
-	echo "  options:"
-	echo "    --help: Print this help"
-	exit 0
-fi
+# Parse options
+while true; do
+	case "$1" in
+		--help)
+			# Print help and exit
+			echo "Usage: $0 [options] [context] [...args]"
+			echo "  context syntax: [first] | [first]-[second]"
+			echo "  options:"
+			echo "    --help: Print this help"
+			exit 0
+			;;
+		*)
+			break
+			;;
+	esac
+done
 
 if [ $# -gt 0 ]; then
 	# Get context from first parameter and shift
