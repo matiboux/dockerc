@@ -60,6 +60,7 @@ if [ -z "$ARGS" ]; then
 fi
 
 COMPOSE_FILE_ARGS=""
+ENV_FILE_ARGS=""
 
 # If context is --, ignore context and use docker compose without file arguments
 NO_COMPOSE_FILE_ARGS=false
@@ -84,7 +85,23 @@ EOF
 	# Check in current directory, then in docker directory
 	while read -r dir; do
 
+		if [ -f "$dir/.env" ]; then
+			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env"
+		fi
+
+		if [ -f "$dir/.env.local" ]; then
+			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
+		fi
+
 		if [ ! -z "$first" ]; then
+
+			if [ -f "$dir/.env.$first" ]; then
+				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.$first"
+			fi
+
+			if [ -f "$dir/.env.$first.local" ]; then
+				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.$first.local"
+			fi
 
 			# Set compose file arguments
 			if [ -f "$dir/docker-compose-$first.yml" ]; then
@@ -150,11 +167,11 @@ fi
 if [ "$QUIET" = false ]; then
 	# Print docker compose command
 	echo ""
-	echo "> docker compose$COMPOSE_FILE_ARGS $ARGS"
+	echo "> docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS $ARGS"
 	echo ""
 fi
 
 if [ "$DRY_RUN" = false ]; then
 	# Run docker compose
-	exec docker compose$COMPOSE_FILE_ARGS $ARGS
+	exec docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS $ARGS
 fi

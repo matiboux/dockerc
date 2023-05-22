@@ -1,12 +1,38 @@
 #!/bin/sh
 
-mkdir -p ./test
-mkdir -p ./test/docker
+if [ $# -ge 1 ]; then
+	DIR=$1
+	shift
+else
+	DIR="."
+fi
 
-touch ./test/docker-compose.yml
-touch ./test/docker-compose.override.yml
-touch ./test/docker-compose.prod.yml
-touch ./test/docker-compose.dev.yml
+if [ -d "$DIR/test" ]; then
+	rm -r "$DIR/test/"*
 
-touch ./test/docker-compose.top.yml
-touch ./test/docker/docker-compose.sub.yml
+	if [ $? -ne 0 ]; then
+		echo "Failed to clear ./test directory."
+		exit 1
+	fi
+fi
+
+mkdir -p "$DIR/test"
+mkdir -p "$DIR/test/docker"
+
+touch "$DIR/test/docker-compose.yml"
+touch "$DIR/test/docker-compose.override.yml"
+touch "$DIR/test/docker-compose.prod.yml"
+touch "$DIR/test/docker-compose.dev.yml"
+
+touch "$DIR/test/.env"
+touch "$DIR/test/.env.local"
+touch "$DIR/test/.env.dev"
+touch "$DIR/test/.env.dev.local"
+touch "$DIR/test/.env.prod"
+touch "$DIR/test/.env.prod.local"
+
+touch "$DIR/test/docker-compose.top.yml"
+touch "$DIR/test/docker/docker-compose.sub.yml"
+
+touch "$DIR/test/.env.top"
+touch "$DIR/test/docker/.env.sub"
