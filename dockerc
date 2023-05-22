@@ -7,6 +7,7 @@
 # Copyright (c) 2023 Matiboux
 
 # Default options
+DRY_RUN=false
 QUIET=false
 
 # Parse options
@@ -18,8 +19,14 @@ while true; do
 			echo "  context syntax: [first] | [first]-[second]"
 			echo "  options:"
 			echo "    --help: Print this help"
+			echo "    -n: Dry run, print docker compose command without running it"
 			echo "    -q: Quiet, do not print docker compose command"
 			exit 0
+			;;
+		-n)
+			# Dry run, print docker compose command without running it
+			DRY_RUN=true
+			shift
 			;;
 		-q)
 			# Quiet, do not print docker compose command
@@ -140,5 +147,7 @@ if [ "$QUIET" = false ]; then
 	echo ""
 fi
 
-# Run docker compose
-exec docker compose$COMPOSE_FILE_ARGS $ARGS
+if [ "$DRY_RUN" = false ]; then
+	# Run docker compose
+	exec docker compose$COMPOSE_FILE_ARGS $ARGS
+fi
