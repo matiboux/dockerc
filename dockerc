@@ -16,6 +16,7 @@ while true; do
 		--help)
 			# Print help and exit
 			echo "Usage: $0 [options] [context] [...args]"
+			echo "  args: Arguments passed to docker compose"
 			echo "  context syntax: [first] | [first]-[second]"
 			echo "  options:"
 			echo "    --help: Print this help"
