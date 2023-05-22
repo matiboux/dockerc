@@ -1,10 +1,18 @@
 #!/bin/sh
 
+VERSION="v1.2.2"
+
 # DockerC (v1.2.2)
 # Wrapper for docker compose commands in your project.
 # https://github.com/matiboux/dockerc
 # MIT License
 # Copyright (c) 2023 Matiboux
+
+CURRENT_VERSION="\"tag_name\": \"$VERSION\","
+LATEST_VERSION=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
+if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+	echo "Notice: DockerC is not up to date, lastest version is ${LATEST_VERSION:13:$((${#LATEST_VERSION}-13-2))}!"
+fi
 
 # Default options
 DRY_RUN=false
