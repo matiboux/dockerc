@@ -6,6 +6,8 @@
 # MIT License
 # Copyright (c) 2023 Matiboux
 
+VERSION="v1.3.0"
+
 # Default options
 DRY_RUN=false
 QUIET=false
