@@ -8,8 +8,10 @@
 
 # Print help
 if [ "$1" = "--help" ]; then
-	echo "Usage: $0 [context] [...args]"
+	echo "Usage: $0 [options] [context] [...args]"
 	echo "  context syntax: [first] | [first]-[second]"
+	echo "  options:"
+	echo "    --help: Print this help"
 	exit 0
 fi
 
