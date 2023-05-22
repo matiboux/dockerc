@@ -6,6 +6,9 @@
 # MIT License
 # Copyright (c) 2023 Matiboux
 
+# Default options
+QUIET=false
+
 # Parse options
 while true; do
 	case "$1" in
@@ -15,7 +18,13 @@ while true; do
 			echo "  context syntax: [first] | [first]-[second]"
 			echo "  options:"
 			echo "    --help: Print this help"
+			echo "    -q: Quiet, do not print docker compose command"
 			exit 0
+			;;
+		-q)
+			# Quiet, do not print docker compose command
+			QUIET=true
+			shift
 			;;
 		*)
 			break
@@ -124,8 +133,12 @@ EOF
 
 fi
 
+if [ "$QUIET" = false ]; then
+	# Print docker compose command
+	echo ""
+	echo "> docker compose$COMPOSE_FILE_ARGS $ARGS"
+	echo ""
+fi
+
 # Run docker compose
-echo ""
-echo "> docker compose$COMPOSE_FILE_ARGS $ARGS"
-echo ""
 exec docker compose$COMPOSE_FILE_ARGS $ARGS
