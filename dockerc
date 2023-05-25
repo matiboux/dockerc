@@ -6,6 +6,8 @@
 # MIT License
 # Copyright (c) 2023 Matiboux
 
+VERSION="v1.3.0"
+
 # Default options
 DRY_RUN=false
 QUIET=false
@@ -26,6 +28,11 @@ while true; do
 			echo "    --help  Print this help"
 			echo "    -n      Dry run, print docker compose command without running it"
 			echo "    -q      Quiet, do not print docker compose command"
+			exit 0
+			;;
+		--version)
+			# Print version and exit
+			echo "DockerC (v$VERSION) - https://github.com/matiboux/dockerc"
 			exit 0
 			;;
 		-n)
