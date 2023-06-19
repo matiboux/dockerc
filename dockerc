@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# DockerC (v1.2.2)
+# DockerC (v1.3.2)
 # Wrapper for docker compose commands in your project.
 # https://github.com/matiboux/dockerc
 # MIT License
 # Copyright (c) 2023 Matiboux
 
-VERSION="v1.2.2"
+VERSION="1.3.2"
 
 CURRENT_VERSION="\"tag_name\": \"$VERSION\","
 LATEST_VERSION=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
@@ -34,6 +34,11 @@ while true; do
 			echo "    --help  Print this help"
 			echo "    -n      Dry run, print docker compose command without running it"
 			echo "    -q      Quiet, do not print docker compose command"
+			exit 0
+			;;
+		--version)
+			# Print version and exit
+			echo "DockerC (v$VERSION) - https://github.com/matiboux/dockerc"
 			exit 0
 			;;
 		-n)
