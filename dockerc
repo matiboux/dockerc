@@ -8,7 +8,7 @@
 
 VERSION="1.3.2"
 
-CURRENT_VERSION="\"tag_name\": \"$VERSION\","
+CURRENT_VERSION="\"tag_name\": \"v$VERSION\","
 LATEST_VERSION=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
 if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
 	echo "Notice: DockerC is not up to date, lastest version is ${LATEST_VERSION:13:$((${#LATEST_VERSION}-13-2))}!"
