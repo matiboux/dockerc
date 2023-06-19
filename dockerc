@@ -102,8 +102,6 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
 			while read -r part; do
 
-				echo "Part: $part"
-
 				if [ -z "$part" ]; then
 					continue
 				fi
@@ -113,9 +111,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 					# Look for docker-compose-$part.yml
 					if [ -f "$dir/docker-compose-$part.yml" ]; then
 						COMPOSE_FILE_ARGS_2=" -f $dir/docker-compose-$part.yml"
-						echo "1 COMPOSE_FILE_ARGS_2: $COMPOSE_FILE_ARGS_2"
 						prefix_2="-$part"
-
 					fi
 
 				elif [ ! -z "$COMPOSE_FILE_ARGS_2" ]; then
@@ -129,8 +125,6 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 						# Part was not found, invalidate COMPOSE_FILE_ARGS_2
 						COMPOSE_FILE_ARGS_2=""
 					fi
-
-					echo "2 COMPOSE_FILE_ARGS_2: $COMPOSE_FILE_ARGS_2"
 
 				fi
 
@@ -146,12 +140,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 						COMPOSE_FILE_ARGS_1=""
 					fi
 
-					echo "2 COMPOSE_FILE_ARGS_1: $COMPOSE_FILE_ARGS_1"
-
 				fi
-
-				echo "$prefix_1"
-				echo "$prefix_2"
 
 				if [ -z "$COMPOSE_FILE_ARGS_1" ] && [ -z "$COMPOSE_FILE_ARGS_2" ]; then
 					# Break loop if both are invalid
