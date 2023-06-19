@@ -9,31 +9,33 @@
 VERSION="1.3.2"
 
 # Default options
+PRINT_HELP=false
+PRINT_VERSION=false
 DRY_RUN=false
 QUIET=false
 
 # Parse options
 while true; do
 	case "$1" in
+		-h)
+			# Print help and exit
+			PRINT_HELP=true
+			shift
+			;;
 		--help)
 			# Print help and exit
-			echo "Usage: $0 [options] [context] [...args]"
-			echo "  args: Arguments passed to docker compose"
-			echo "  context syntax: [first] | [first]-[second] | \"-\" | \"--\""
-			echo "    first   First part of the context"
-			echo "    second  Second part of the context"
-			echo "    \"-\"     Use default docker compose files (\"override\" if it exists)"
-			echo "    \"--\"    Use docker compose without file arguments"
-			echo "  options:"
-			echo "    --help  Print this help"
-			echo "    -n      Dry run, print docker compose command without running it"
-			echo "    -q      Quiet, do not print docker compose command"
-			exit 0
+			PRINT_HELP=true
+			shift
+			;;
+		-v)
+			# Print version and exit
+			PRINT_VERSION=true
+			shift
 			;;
 		--version)
 			# Print version and exit
-			echo "DockerC (v$VERSION) - https://github.com/matiboux/dockerc"
-			exit 0
+			PRINT_VERSION=true
+			shift
 			;;
 		-n)
 			# Dry run, print docker compose command without running it
@@ -50,6 +52,44 @@ while true; do
 			;;
 	esac
 done
+
+if [ "$PRINT_HELP" = true ]; then
+	# Print help and exit
+	echo "Usage: $0 [options] [context] [...args]"
+	echo "  args: Arguments passed to docker compose"
+	echo "  context syntax: [first] | [first]-[second] | \"-\" | \"--\""
+	echo "    first   First part of the context"
+	echo "    second  Second part of the context"
+	echo "    \"-\"     Use default docker compose files (\"override\" if it exists)"
+	echo "    \"--\"    Use docker compose without file arguments"
+	echo "  options:"
+	echo "    -h, --help     Print this help and exit"
+	echo "    -v, --version  Print version and exit"
+	echo "    -n             Dry run, print docker compose command without running it"
+	echo "    -q             Quiet, do not print docker compose command"
+	exit 0
+fi
+
+if [ "$PRINT_VERSION" = true ]; then
+
+	# Print version and exit
+	if [ "$QUIET" = false ]; then
+		echo "DockerC (v$VERSION) - https://github.com/matiboux/dockerc"
+
+		if [ "$DRY_RUN" = false ]; then
+			CURRENT_VERSION="\"tag_name\": \"v$VERSION\","
+			LATEST_VERSION=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
+			if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+				echo "Notice: DockerC is not up to date, lastest version is ${LATEST_VERSION:13:$((${#LATEST_VERSION}-13-2))}!"
+			fi
+		fi
+
+	else
+		echo "v$VERSION"
+	fi
+
+	exit 0
+fi
 
 if [ $# -gt 0 ]; then
 	# Get context from first parameter and shift
