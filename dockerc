@@ -8,13 +8,8 @@
 
 VERSION="1.3.2"
 
-CURRENT_VERSION="\"tag_name\": \"v$VERSION\","
-LATEST_VERSION=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
-if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
-	echo "Notice: DockerC is not up to date, lastest version is ${LATEST_VERSION:13:$((${#LATEST_VERSION}-13-2))}!"
-fi
-
 # Default options
+PRINT_VERSION=false
 DRY_RUN=false
 QUIET=false
 
@@ -39,8 +34,8 @@ while true; do
 			;;
 		--version)
 			# Print version and exit
-			echo "DockerC (v$VERSION) - https://github.com/matiboux/dockerc"
-			exit 0
+			PRINT_VERSION=true
+			shift
 			;;
 		-n)
 			# Dry run, print docker compose command without running it
@@ -57,6 +52,21 @@ while true; do
 			;;
 	esac
 done
+
+if [ "$PRINT_VERSION" = true ]; then
+	# Print version and exit
+	echo "DockerC (v$VERSION) - https://github.com/matiboux/dockerc"
+
+	if [ "$DRY_RUN" = false ]; then
+		CURRENT_VERSION="\"tag_name\": \"v$VERSION\","
+		LATEST_VERSION=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
+		if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+			echo "Notice: DockerC is not up to date, lastest version is ${LATEST_VERSION:13:$((${#LATEST_VERSION}-13-2))}!"
+		fi
+	fi
+
+	exit 0
+fi
 
 if [ $# -gt 0 ]; then
 	# Get context from first parameter and shift
