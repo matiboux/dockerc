@@ -138,7 +138,7 @@ NO_COMPOSE_FILE_ARGS=false
 ENV_FILE_ARGS=""
 
 # If context is -, use default docker compose files (override if it exists)
-if [ "$CONTEXT" = "-" ]; then
+if [ "$CONTEXT" = "-" ] || [ "$CONTEXT" = "." ]; then
 	CONTEXT=""
 
 # If context is --, ignore context and use docker compose without file arguments
