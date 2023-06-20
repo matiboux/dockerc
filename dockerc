@@ -134,12 +134,17 @@ if [ -z "$ARGS" ]; then
 fi
 
 COMPOSE_FILE_ARGS=""
+NO_COMPOSE_FILE_ARGS=false
 ENV_FILE_ARGS=""
 
+# If context is -, use default docker compose files (override if it exists)
+if [ "$CONTEXT" = "-" ]; then
+	CONTEXT=""
+
 # If context is --, ignore context and use docker compose without file arguments
-NO_COMPOSE_FILE_ARGS=false
-if [ "$CONTEXT" = "--" ]; then
+elif [ "$CONTEXT" = "--" ]; then
 	NO_COMPOSE_FILE_ARGS=true
+
 fi
 
 if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
