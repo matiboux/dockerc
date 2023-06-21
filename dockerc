@@ -257,6 +257,8 @@ EOF
 	if [ -z "$COMPOSE_FILE_ARGS" ] && \
 		[ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ] || [ "$CONTEXT" = "prod" ]; then
 
+		ENV_FILE_ARGS=""
+
 		while read -r dir; do
 
 			if [ -f "$dir/.env" ]; then
