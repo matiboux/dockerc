@@ -107,12 +107,19 @@ if [ "$UPDATE" = true ]; then
 		exit 1
 	fi
 
+	if [ $# -gt 0 ]; then
+		REQUIRED_VERSION="v$1"
+		shift
+	else
+		REQUIRED_VERSION="HEAD"
+	fi
+
 	if [ "$DRY_RUN" = false ]; then
-		echo "Updating DockerC..."
-		exec /bin/sh -c "curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh | /bin/sh -s -- $INSTALL_DIR"
+		echo "Updating DockerC ($REQUIRED_VERSION)..."
+		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/$REQUIRED_VERSION/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\""
 	else
 		echo "Updating DockerC (dry run):"
-		echo "> curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh | /bin/sh -s -- $INSTALL_DIR"
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/$REQUIRED_VERSION/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\""
 	fi
 
 	exit 0
