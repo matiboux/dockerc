@@ -36,7 +36,13 @@ else
 fi
 
 # Bump version in dockerc
-sed -i "" "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" dockerc
+if [ "$(uname)" = "Darwin" ]; then
+	# MacOS
+	sed -i "" "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" dockerc
+else
+	# Linux
+	sed -i "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" dockerc
+fi
 
 if [ "$HAS_GIT" = true ]; then
 	# Commit changes
