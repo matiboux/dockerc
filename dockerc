@@ -261,16 +261,16 @@ EOF
 
 			if [ -f "$dir/docker-compose.yml" ]; then
 				COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml"
-			fi
 
-			if [ -f "$dir/docker-compose.override.yml" ] && \
-				([ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ]);
-			then
-				COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml -f $dir/docker-compose.override.yml"
-			fi
+				if [ -f "$dir/docker-compose.override.yml" ] && \
+					([ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ]);
+				then
+					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS -f $dir/docker-compose.override.yml"
+				fi
 
-			# Break loop because compose file arguments are set!
-			break
+				# Break loop because compose file arguments are set!
+				break
+			fi
 
 		done <<EOF
 .
