@@ -39,6 +39,7 @@ fi
 if [ "$(uname)" = "Darwin" ]; then
 	# MacOS
 	sed -i "" "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" dockerc
+	sed -i "" "9 s/VERSION=.*/VERSION=\"$VERSION\"/g" dockerc
 else
 	# Linux
 	sed -i "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" dockerc
