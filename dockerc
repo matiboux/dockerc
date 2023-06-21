@@ -259,6 +259,14 @@ EOF
 
 		while read -r dir; do
 
+			if [ -f "$dir/.env" ]; then
+				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env"
+			fi
+
+			if [ -f "$dir/.env.local" ]; then
+				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
+			fi
+
 			if [ -f "$dir/docker-compose.yml" ]; then
 				COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml"
 
