@@ -84,10 +84,11 @@ if [ "$PRINT_VERSION" = true ]; then
 		echo "DockerC (v$VERSION) - https://github.com/matiboux/dockerc"
 
 		if [ "$DRY_RUN" = false ]; then
-			CURRENT_VERSION="\"tag_name\": \"v$VERSION\","
-			LATEST_VERSION=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
-			if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
-				echo "Notice: DockerC is not up to date, lastest version is ${LATEST_VERSION:13:$((${#LATEST_VERSION}-13-2))}!"
+			CURRENT_VERSION_JSON="\"tag_name\": \"v$VERSION\","
+			LATEST_VERSION_JSON=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
+			if [ "$CURRENT_VERSION_JSON" != "$LATEST_VERSION_JSON" ]; then
+				LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 13) $(expr length "$LATEST_VERSION_JSON" - 13 - 2))
+				echo "Notice: DockerC is not up to date, latest version is $LATEST_VERSION!"
 			fi
 		fi
 
