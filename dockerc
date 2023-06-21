@@ -149,28 +149,45 @@ fi
 
 if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
-	COMPOSE_FILE_ARGS_1=""
-	COMPOSE_FILE_ARGS_2=""
+	# Check in current directory, then in docker directory
+	while read -r dir; do
 
-	if [ ! -z "$CONTEXT" ]; then
+		ENV_FILE_ARGS=""
+		COMPOSE_FILE_ARGS_1=""
+		PREFIX_1=""
+		COMPOSE_FILE_ARGS_2=""
+		PREFIX_2=""
 
-		# Check in current directory, then in docker directory
-		while read -r dir; do
+		while read -r envfile; do
 
-			if [ -f "$dir/.env" ]; then
-				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env"
+			if [ -f "$dir/$envfile" ]; then
+				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/$envfile"
 			fi
 
-			if [ -f "$dir/.env.local" ]; then
-				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
+			if [ -f "$dir/$envfile.local" ]; then
+				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/$envfile.local"
 			fi
 
-			prefix_1=""
-			prefix_2=""
+		done <<EOF
+$(
+		if [ ! -z "$CONTEXT" ]; then
+			cat <<EOF
+.env
+.env.$CONTEXT
+EOF
+		else
+			cat <<EOF
+.env
+EOF
+		fi
+)
+EOF
 
-			if [ -f "$dir/docker-compose.yml" ]; then
-				COMPOSE_FILE_ARGS_1=" -f $dir/docker-compose.yml"
-			fi
+		if [ -f "$dir/docker-compose.yml" ]; then
+			COMPOSE_FILE_ARGS_1=" -f $dir/docker-compose.yml"
+		fi
+
+		if [ ! -z "$CONTEXT" ]; then
 
 			while read -r part; do
 
@@ -178,43 +195,43 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 					continue
 				fi
 
-				if [ -z "$prefix_2" ]; then
+				if [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then
+
+					# Look for docker-compose$PREFIX_1.$part.yml
+					if [ -f "$dir/docker-compose$PREFIX_1.$part.yml" ]; then
+						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose$PREFIX_1.$part.yml"
+						PREFIX_1="$PREFIX_1.$part"
+
+					else
+						# Part was not found, invalidate PREFIX_1
+						PREFIX_1=""
+					fi
+
+				fi
+
+				if [ -z "$COMPOSE_FILE_ARGS_2" ] && [ -z "$PREFIX_2" ]; then
 
 					# Look for docker-compose-$part.yml
 					if [ -f "$dir/docker-compose-$part.yml" ]; then
 						COMPOSE_FILE_ARGS_2=" -f $dir/docker-compose-$part.yml"
-						prefix_2="-$part"
+						PREFIX_2="-$part"
 					fi
 
-				elif [ ! -z "$COMPOSE_FILE_ARGS_2" ]; then
+				elif [ ! -z "$COMPOSE_FILE_ARGS_2" ] && [ ! -z "$PREFIX_2" ]; then
 
-					# Look for docker-compose$prefix_2.$part.yml
-					if [ -f "$dir/docker-compose$prefix_2.$part.yml" ]; then
-						COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose$prefix_2.$part.yml"
-						prefix_2="$prefix_2.$part"
+					# Look for docker-compose$PREFIX_2.$part.yml
+					if [ -f "$dir/docker-compose$PREFIX_2.$part.yml" ]; then
+						COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose$PREFIX_2.$part.yml"
+						PREFIX_2="$PREFIX_2.$part"
 
 					else
-						# Part was not found, invalidate COMPOSE_FILE_ARGS_2
-						COMPOSE_FILE_ARGS_2=""
+						# Part was not found, invalidate PREFIX_2
+						PREFIX_2=""
 					fi
 
 				fi
 
-				if [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then
-
-					# Look for docker-compose$prefix_1.$part.yml
-					if [ -f "$dir/docker-compose$prefix_1.$part.yml" ]; then
-						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose$prefix_1.$part.yml"
-						prefix_1="$prefix_1.$part"
-
-					else
-						# Part was not found, invalidate COMPOSE_FILE_ARGS_1
-						COMPOSE_FILE_ARGS_1=""
-					fi
-
-				fi
-
-				if [ -z "$COMPOSE_FILE_ARGS_1" ] && [ -z "$COMPOSE_FILE_ARGS_2" ]; then
+				if [ -z "$PREFIX_1" ] && [ -z "$PREFIX_2" ]; then
 					# Break loop if both are invalid
 					break
 				fi
@@ -223,88 +240,36 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 $(echo "$CONTEXT" | tr "-" "\n" | tr "." "\n")
 EOF
 
-			if [ -z "$prefix_1" ]; then
-				# Reset because context was not found
-				COMPOSE_FILE_ARGS_1=""
-			fi
+		fi
 
-			if [ -z "$prefix_2" ]; then
-				# Reset because context was not found
-				COMPOSE_FILE_ARGS_2=""
-			fi
+		if [ ! -z "$PREFIX_2" ]; then
+			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_2"
+			break
 
-			if [ ! -z "$COMPOSE_FILE_ARGS_1" ] || [ ! -z "$COMPOSE_FILE_ARGS_2" ]; then
-				# Break loop if compose file arguments are set!
+		elif [ ! -z "$PREFIX_1" ]; then
+			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1"
+			break
+
+		elif [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then
+
+			if [ "$CONTEXT" = "prod" ]; then
+				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1"
 				break
+
+			elif [ -f "$dir/docker-compose.override.yml" ] && \
+				([ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ])
+			then
+				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose.override.yml"
+				break
+
 			fi
 
-		done <<EOF
+		fi
+
+	done <<EOF
 .
 ./docker
 EOF
-
-	fi
-
-	if [ ! -z "$COMPOSE_FILE_ARGS_2" ]; then
-		COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_2"
-
-	elif [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then
-		COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1"
-
-	fi
-
-	# If compose file arguments are empty, check for default and special contexts
-	if [ -z "$COMPOSE_FILE_ARGS" ] && \
-		[ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ] || [ "$CONTEXT" = "prod" ]; then
-
-		while read -r dir; do
-
-			ENV_FILE_ARGS=""
-
-			while read -r envfile; do
-
-				if [ -f "$dir/$envfile" ]; then
-					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/$envfile"
-				fi
-
-				if [ -f "$dir/$envfile.local" ]; then
-					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/$envfile.local"
-				fi
-
-			done <<EOF
-$(
-			if [ ! -z "$CONTEXT" ]; then
-				cat <<EOF
-.env
-.env.$CONTEXT
-EOF
-			else
-				cat <<EOF
-.env
-EOF
-			fi
-)
-EOF
-
-			if [ -f "$dir/docker-compose.yml" ]; then
-				COMPOSE_FILE_ARGS=" -f $dir/docker-compose.yml"
-
-				if [ -f "$dir/docker-compose.override.yml" ] && \
-					([ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ]);
-				then
-					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS -f $dir/docker-compose.override.yml"
-				fi
-
-				# Break loop because compose file arguments are set!
-				break
-			fi
-
-		done <<EOF
-.
-./docker
-EOF
-
-	fi
 
 	# If compose file arguments are empty, exit with error
 	if [ -z "$COMPOSE_FILE_ARGS" ]; then
