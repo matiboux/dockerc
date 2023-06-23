@@ -126,15 +126,15 @@ if [ "$UPDATE" = true ]; then
 		if [ "$1" = "HEAD" ] || [ "$1" = "head" ] || [ "$1" = "." ] || [ "$1" = "-" ]; then
 			REQUIRED_VERSION="HEAD"
 		else
-			REQUIRED_VERSION="v$1"
+			REQUIRED_VERSION="$1"
 		fi
 		shift
 	else
-		REQUIRED_VERSION="v$(get_latest_version)"
+		REQUIRED_VERSION="$(get_latest_version)"
 	fi
 
 	if [ "$DRY_RUN" = false ]; then
-		echo "Updating DockerC ($REQUIRED_VERSION)..."
+		echo "Updating DockerC (v$REQUIRED_VERSION)..."
 		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$REQUIRED_VERSION\""
 	else
 		echo "Updating DockerC (dry run):"
