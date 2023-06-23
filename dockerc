@@ -184,15 +184,32 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
 		done <<EOF
 $(
-		if [ ! -z "$CONTEXT" ]; then
-			echo $(cat <<EOF
+		if [ $(uname -s) != "Darwin" ]; then
+
+			if [ ! -z "$CONTEXT" ]; then
+				echo $(cat <<EOF
 .env
 .env.$CONTEXT
 EOF)
-		else
-			echo $(cat <<EOF
+			else
+				echo $(cat <<EOF
 .env
 EOF)
+			fi
+
+		else
+
+			if [ ! -z "$CONTEXT" ]; then
+				cat <<EOF
+.env
+.env.$CONTEXT
+EOF
+			else
+				cat <<EOF
+.env
+EOF
+			fi
+
 		fi
 )
 EOF
