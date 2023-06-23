@@ -184,7 +184,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
 		done <<EOF
 $(
-		if [ $(uname -s) != "Darwin" ]; then
+		if [ $(uname -s) = "Darwin" ]; then
 
 			if [ ! -z "$CONTEXT" ]; then
 				echo $(cat <<EOF
