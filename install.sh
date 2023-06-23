@@ -15,10 +15,10 @@ fi
 
 if [ "$#" -gt 0 ]; then
 	# Get specific version from parameter and shift
-	REQUIRED_VERSION="v$1"
+	REQUIRED_TAG="v$1"
 	shift
 else
-	REQUIRED_VERSION="HEAD"
+	REQUIRED_TAG="HEAD"
 fi
 
 # Check that docker compose is installed
@@ -28,7 +28,7 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/$REQUIRED_VERSION/dockerc -o "$INSTALL_DIR/dockerc"
+curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/$REQUIRED_TAG/dockerc -o "$INSTALL_DIR/dockerc"
 if [ $? -ne 0 ]; then
 	echo "Error: DockerC installation failed."
 	exit 1
@@ -40,4 +40,4 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-echo "DockerC ($REQUIRED_VERSION) installed successfully at '$INSTALL_DIR/dockerc'!"
+echo "DockerC ($REQUIRED_TAG) installed successfully at '$INSTALL_DIR/dockerc'!"
