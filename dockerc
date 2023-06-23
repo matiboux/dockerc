@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# DockerC (v1.5.2)
+# DockerC (v1.5.3)
 # Wrapper for docker compose commands in your project.
 # https://github.com/matiboux/dockerc
 # MIT License
 # Copyright (c) 2023 Matiboux
 
-VERSION="1.5.2"
+VERSION="1.5.3"
 
 # Default options
 PRINT_HELP=false
@@ -81,7 +81,15 @@ fi
 get_latest_version() {
 	# Syntax: '"tag_name": "v1.0.0",'
 	LATEST_VERSION_JSON=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
-	LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 14) $(expr length "$LATEST_VERSION_JSON" - 14 - 2))
+
+	if [ "$(uname -s)" = "Darwin" ]; then
+		# MacOS
+		LATEST_VERSION="${LATEST_VERSION_JSON:14:$((${#LATEST_VERSION_JSON}-14-2))}"
+	else
+		# Linux
+		LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 14) $(expr length "$LATEST_VERSION_JSON" - 14 - 2))
+	fi
+
 	echo "$LATEST_VERSION"
 }
 
