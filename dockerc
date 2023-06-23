@@ -185,14 +185,14 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 		done <<EOF
 $(
 		if [ ! -z "$CONTEXT" ]; then
-			cat <<EOF
+			echo $(cat <<EOF
 .env
 .env.$CONTEXT
-EOF
+EOF)
 		else
-			cat <<EOF
+			echo $(cat <<EOF
 .env
-EOF
+EOF)
 		fi
 )
 EOF
