@@ -189,7 +189,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 			ENV_FILES="$ENV_FILES .env.$CONTEXT"
 		fi
 
-		while IFS=" " read -r envfile; do
+		while read -r envfile; do
 
 			if [ -f "$dir/$envfile" ]; then
 				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/$envfile"
@@ -200,7 +200,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 			fi
 
 		done <<EOF
-$ENV_FILES
+$(echo "$ENV_FILES" | tr " " "\n")
 EOF
 
 		if [ -f "$dir/docker-compose.yml" ]; then
