@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  app:
+    # Build
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Deploy
+    environment:
+      ENV_FILE: ${ENV_FILE:-}
+      ENV_OK: ${ENV_OK:-ko}
+      ENV_LOCAL_OK: ${ENV_LOCAL_OK:-ko}
+      ENV_DEV_OK: ${ENV_DEV_OK:-ko}
+      ENV_DEV_LOCAL_OK: ${ENV_DEV_LOCAL_OK:-ko}
+      ENV_PROD_OK: ${ENV_PROD_OK:-ko}
+      ENV_PROD_LOCAL_OK: ${ENV_PROD_LOCAL_OK:-ko}
+      ENV_TOP_OK: ${ENV_TOP_OK:-ko}
+      ENV_SUB_OK: ${ENV_SUB_OK:-ko}
+      APP_ENV: ${APP_ENV:-}
+    ports:
+      - ${HTTP_PORT:-80}:80
+      - ${HTTPS_PORT:-443}:443
