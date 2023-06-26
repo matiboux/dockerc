@@ -276,11 +276,17 @@ EOF
 				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1"
 				break
 
-			elif [ -f "$dir/docker-compose.override.yml" ] && \
-				([ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ])
-			then
-				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose.override.yml"
-				break
+			elif [ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ]; then
+
+				if [ -f "$dir/docker-compose.override.yml" ]; then
+					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose.override.yml"
+					break
+
+				elif [ -z "$CONTEXT" ]; then
+					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1"
+					break
+
+				fi
 
 			fi
 
