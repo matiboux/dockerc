@@ -179,6 +179,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 	while read -r dir; do
 
 		ENV_FILE_ARGS=""
+		PREFIX=""
 		COMPOSE_FILE_ARGS_1=""
 		PREFIX_1=""
 		COMPOSE_FILE_ARGS_2=""
@@ -213,6 +214,24 @@ EOF
 
 				if [ -z "$part" ]; then
 					continue
+				fi
+
+				PREFIX="$PREFIX.$part"
+
+				if [ -f "$dir/.env.-.$part" ]; then
+					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.-.$part"
+				fi
+
+				if [ -f "$dir/.env.-.$part.local" ]; then
+					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.-.$part.local"
+				fi
+
+				if [ -f "$dir/.env$PREFIX" ]; then
+					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env$PREFIX"
+				fi
+
+				if [ -f "$dir/.env$PREFIX.local" ]; then
+					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env$PREFIX.local"
 				fi
 
 				if [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then
