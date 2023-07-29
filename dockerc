@@ -179,29 +179,19 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 	while read -r dir; do
 
 		ENV_FILE_ARGS=""
+		PREFIX=""
 		COMPOSE_FILE_ARGS_1=""
 		PREFIX_1=""
 		COMPOSE_FILE_ARGS_2=""
 		PREFIX_2=""
 
-		ENV_FILES=".env"
-		if [ ! -z "$CONTEXT" ]; then
-			ENV_FILES="$ENV_FILES .env.$CONTEXT"
+		if [ -f "$dir/.env" ]; then
+			ENV_FILE_ARGS=" --env-file $dir/.env"
 		fi
 
-		while read -r envfile; do
-
-			if [ -f "$dir/$envfile" ]; then
-				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/$envfile"
-			fi
-
-			if [ -f "$dir/$envfile.local" ]; then
-				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/$envfile.local"
-			fi
-
-		done <<EOF
-$(echo "$ENV_FILES" | tr " " "\n")
-EOF
+		if [ -f "$dir/.env.local" ]; then
+			ENV_FILE_ARGS=" --env-file $dir/.env.local"
+		fi
 
 		if [ -f "$dir/docker-compose.yml" ]; then
 			COMPOSE_FILE_ARGS_1=" -f $dir/docker-compose.yml"
@@ -213,6 +203,16 @@ EOF
 
 				if [ -z "$part" ]; then
 					continue
+				fi
+
+				PREFIX="$PREFIX.$part"
+
+				if [ -f "$dir/.env$PREFIX" ]; then
+					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env$PREFIX"
+				fi
+
+				if [ -f "$dir/.env$PREFIX.local" ]; then
+					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env$PREFIX.local"
 				fi
 
 				if [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then
