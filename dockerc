@@ -190,7 +190,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 		fi
 
 		if [ -f "$dir/.env.local" ]; then
-			ENV_FILE_ARGS=" --env-file $dir/.env.local"
+			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
 		fi
 
 		if [ -f "$dir/docker-compose.yml" ]; then
