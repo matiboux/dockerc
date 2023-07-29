@@ -186,15 +186,15 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 		PREFIX_2=""
 
 		if [ -f "$dir/.env" ]; then
-			ENV_FILE_ARGS=" --env-file $dir/.env"
+			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env"
 		fi
 
 		if [ -f "$dir/.env.local" ]; then
-			ENV_FILE_ARGS=" --env-file $dir/.env.local"
+			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
 		fi
 
 		if [ -f "$dir/docker-compose.yml" ]; then
-			COMPOSE_FILE_ARGS_1=" -f $dir/docker-compose.yml"
+			COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose.yml"
 		fi
 
 		if [ ! -z "$CONTEXT" ]; then
@@ -242,7 +242,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
 					# Look for docker-compose-$part.yml
 					if [ -f "$dir/docker-compose-$part.yml" ]; then
-						COMPOSE_FILE_ARGS_2=" -f $dir/docker-compose-$part.yml"
+						COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose-$part.yml"
 						PREFIX_2="-$part"
 					fi
 
