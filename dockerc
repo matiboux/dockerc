@@ -319,6 +319,17 @@ EOF
 
 fi
 
+# TODO: check if first char is @ before trying to match
+# TODO: check first item in args for preset, append other args
+# eg. @ubd -> up --build -d
+# eg. @ubdf ...
+# eg. @l app -> logs app
+if [ "$ARGS" = "@" ]; then
+	# TODO
+	# @ubd
+	# @l
+fi
+
 if [ "$QUIET" = false ]; then
 	# Print docker compose command
 	echo ""
