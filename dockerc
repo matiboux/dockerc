@@ -335,71 +335,61 @@ if [ "${ARGS:0:1}" = "@" ]; then
 	echo "ARGS_PRESET: $ARGS_PRESET"
 	echo "ARGS: $ARGS"
 
-	# Generate with GitHub Copilot
 	case "$ARGS_PRESET" in
-		"ubd")
-			ARGS="up --build -d$ARGS"
-			;;
-		"ubdf")
-			ARGS="up --build --force-recreate -d$ARGS"
-			;;
-		"ubdr")
-			ARGS="up --build --remove-orphans -d$ARGS"
-			;;
-		"ubdrf")
-			ARGS="up --build --force-recreate --remove-orphans -d$ARGS"
-			;;
 		"u")
 			ARGS="up$ARGS"
 			;;
 		"ud")
 			ARGS="up -d$ARGS"
 			;;
+		"ubd")
+			ARGS="up --build -d$ARGS"
+			;;
+		"ubdf")
+			ARGS="up --build -d --force-recreate$ARGS"
+			;;
+		"ubdfp")
+			ARGS="up --build -d --force-recreate --pull always$ARGS"
+			;;
+		"ubdr")
+			ARGS="up --build -d --remove-orphans$ARGS"
+			;;
+		"ubdfr")
+			ARGS="up --build -d --force-recreate --remove-orphans$ARGS"
+			;;
 		"udf")
-			ARGS="up --force-recreate -d$ARGS"
+			ARGS="up -d --force-recreate$ARGS"
 			;;
 		"udr")
-			ARGS="up --remove-orphans -d$ARGS"
+			ARGS="up -d --remove-orphans$ARGS"
 			;;
-		"udrf")
-			ARGS="up --force-recreate --remove-orphans -d$ARGS"
+		"udfr")
+			ARGS="up -d --force-recreate --remove-orphans$ARGS"
 			;;
+
 		"d")
 			ARGS="down$ARGS"
 			;;
-		"db")
-			ARGS="down --rmi local -v$ARGS"
+		"dr")
+			ARGS="down --remove-orphans --rmi local$ARGS"
 			;;
-		"dbv")
-			ARGS="down --rmi local -v --remove-orphans$ARGS
+		"drr")
+			ARGS="down --remove-orphans --rmi all$ARGS"
 			;;
-		"dbvf")
-			ARGS="down --rmi local -v --remove-orphans --force-recreate$ARGS"
+		"drrv")
+			ARGS="down --remove-orphans --rmi all -v$ARGS"
 			;;
-		"dbvfr")
-			ARGS="down --rmi local -v --remove-orphans --force-recreate --remove-orphans$ARGS"
+
+		"r")
+			ARGS="rm$ARGS"
 			;;
-		"dbvr")
-			ARGS="down --rmi local -v --remove-orphans --remove-orphans$ARGS"
+		"rf")
+			ARGS="rm -f$ARGS"
 			;;
-		"dbvrf")
-			ARGS="down --rmi local -v --remove-orphans --remove-orphans --force-recreate$ARGS"
+		"rfv")
+			ARGS="rm -f -v$ARGS"
 			;;
-		"dbvrfr")
-			ARGS="down --rmi local -v --remove-orphans --remove-orphans --force-recreate --remove-orphans$ARGS"
-			;;
-		"dbf")
-			ARGS="down --rmi local -v --force-recreate$ARGS"
-			;;
-		"dbfr")
-			ARGS="down --rmi local -v --force-recreate --remove-orphans$ARGS"
-			;;
-		"dbfrf")
-			ARGS="down --rmi local -v --force-recreate --remove-orphans --force-recreate$ARGS"
-			;;
-		"dbfrr")
-			ARGS="down --rmi local -v --force-recreate --remove-orphans --remove-orphans$ARGS"
-			;;
+
 		*)
 			echo "Error: Unknown preset '@$ARGS_PRESET'"
 			exit 1
