@@ -319,15 +319,22 @@ EOF
 
 fi
 
-# TODO: check if first char is @ before trying to match
-# TODO: check first item in args for preset, append other args
-# eg. @ubd -> up --build -d
-# eg. @ubdf ...
-# eg. @l app -> logs app
-if [ "$ARGS" = "@" ]; then
-	# TODO
-	# @ubd
-	# @l
+if [ "${ARGS:0:1}" = "@" ]; then
+
+	# Get first arg as preset name
+	ARGS_PRESET="${ARGS%% *}"
+	ARGS_PRESET="${ARGS_PRESET#?}"
+
+	# Clear first arg from args
+	if [[ "$ARGS" == *" "* ]]; then
+		ARGS="${ARGS#* }"
+	else
+		ARGS=""
+	fi
+
+	echo "ARGS_PRESET: $ARGS_PRESET"
+	echo "ARGS: $ARGS"
+	exit 1
 fi
 
 if [ "$QUIET" = false ]; then
