@@ -327,14 +327,85 @@ if [ "${ARGS:0:1}" = "@" ]; then
 
 	# Clear first arg from args
 	if [[ "$ARGS" == *" "* ]]; then
-		ARGS="${ARGS#* }"
+		ARGS=" ${ARGS#* }"
 	else
 		ARGS=""
 	fi
 
 	echo "ARGS_PRESET: $ARGS_PRESET"
 	echo "ARGS: $ARGS"
-	exit 1
+
+	# Generate with GitHub Copilot
+	case "$ARGS_PRESET" in
+		"ubd")
+			ARGS="up --build -d$ARGS"
+			;;
+		"ubdf")
+			ARGS="up --build --force-recreate -d$ARGS"
+			;;
+		"ubdr")
+			ARGS="up --build --remove-orphans -d$ARGS"
+			;;
+		"ubdrf")
+			ARGS="up --build --force-recreate --remove-orphans -d$ARGS"
+			;;
+		"u")
+			ARGS="up$ARGS"
+			;;
+		"ud")
+			ARGS="up -d$ARGS"
+			;;
+		"udf")
+			ARGS="up --force-recreate -d$ARGS"
+			;;
+		"udr")
+			ARGS="up --remove-orphans -d$ARGS"
+			;;
+		"udrf")
+			ARGS="up --force-recreate --remove-orphans -d$ARGS"
+			;;
+		"d")
+			ARGS="down$ARGS"
+			;;
+		"db")
+			ARGS="down --rmi local -v$ARGS"
+			;;
+		"dbv")
+			ARGS="down --rmi local -v --remove-orphans$ARGS
+			;;
+		"dbvf")
+			ARGS="down --rmi local -v --remove-orphans --force-recreate$ARGS"
+			;;
+		"dbvfr")
+			ARGS="down --rmi local -v --remove-orphans --force-recreate --remove-orphans$ARGS"
+			;;
+		"dbvr")
+			ARGS="down --rmi local -v --remove-orphans --remove-orphans$ARGS"
+			;;
+		"dbvrf")
+			ARGS="down --rmi local -v --remove-orphans --remove-orphans --force-recreate$ARGS"
+			;;
+		"dbvrfr")
+			ARGS="down --rmi local -v --remove-orphans --remove-orphans --force-recreate --remove-orphans$ARGS"
+			;;
+		"dbf")
+			ARGS="down --rmi local -v --force-recreate$ARGS"
+			;;
+		"dbfr")
+			ARGS="down --rmi local -v --force-recreate --remove-orphans$ARGS"
+			;;
+		"dbfrf")
+			ARGS="down --rmi local -v --force-recreate --remove-orphans --force-recreate$ARGS"
+			;;
+		"dbfrr")
+			ARGS="down --rmi local -v --force-recreate --remove-orphans --remove-orphans$ARGS"
+			;;
+		*)
+			echo "Error: Unknown preset '@$ARGS_PRESET'"
+			exit 1
+			;;
+	esac
+
 fi
 
 if [ "$QUIET" = false ]; then
