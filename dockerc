@@ -59,15 +59,19 @@ while true; do
 	esac
 done
 
-if [ "$PRINT_HELP" = true ]; then
-	# Print help and exit
-	echo "Usage: $0 [options] [context] [...args]"
-	echo "  args: Arguments passed to docker compose"
+print_context_help() {
 	echo "  context syntax: [first] | [first]-[second] | \"-\" | \"--\""
 	echo "    first   First part of the context"
 	echo "    second  Second part of the context"
 	echo "    \"-\"     Use default docker compose files (\"override\" if it exists)"
 	echo "    \"--\"    Use docker compose without file arguments"
+}
+
+if [ "$PRINT_HELP" = true ]; then
+	# Print help and exit
+	echo "Usage: $0 [options] [context] [...args]"
+	echo "  args: Arguments passed to docker compose"
+	print_context_help
 	echo "  options:"
 	echo "    -h, --help     Print this help and exit"
 	echo "    -v, --version  Print version and exit"
@@ -505,11 +509,7 @@ if [ "${ARGS:0:1}" = "@" ]; then
 		echo "    l     logs"
 		echo "    rf    rm -f"
 		echo "    rfv   rm -f -v"
-		echo "  context syntax: [first] | [first]-[second] | \"-\" | \"--\""
-		echo "    first   First part of the context"
-		echo "    second  Second part of the context"
-		echo "    \"-\"     Use default docker compose files (\"override\" if it exists)"
-		echo "    \"--\"    Use docker compose without file arguments"
+		print_context_help
 		echo "  options:"
 		echo "    -n   Dry run, print docker compose command without running it"
 		echo "    -q   Quiet, do not print docker compose command"
