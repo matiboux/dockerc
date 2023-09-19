@@ -206,7 +206,7 @@ if [ "${CONTEXT:0:1}" = "@" ]; then
 	if [ "$PRINT_DOCKER_PRESETS_HELP" = true ]; then
 		# Print help and exit
 		echo "Usage: $0 [options] @[preset] [...args]"
-		echo "  args: Arguments passed to docker compose"
+		echo "  args: Arguments passed to docker"
 		echo "  presets:"
 		echo "    rfc   Remove unused containers"
 		echo "    rfca  Remove all unused containers"
@@ -216,8 +216,8 @@ if [ "${CONTEXT:0:1}" = "@" ]; then
 		echo "    rfa   Remove all unused containers, networks and images"
 		echo "    rfav  Remove all unused containers, networks, images and volumes"
 		echo "  options:"
-		echo "    -n   Dry run, print docker compose command without running it"
-		echo "    -q   Quiet, do not print docker compose command"
+		echo "    -n   Dry run, print docker command without running it"
+		echo "    -q   Quiet, do not print docker command"
 		exit 0
 	fi
 
@@ -412,11 +412,12 @@ if [ "${ARGS:0:1}" = "@" ]; then
 		ARGS=""
 	fi
 
+	PRINT_ARGS_PRESET_HELP=false
+
 	case "$ARGS_PRESET" in
 
 		"")
-			echo "Error: Empty args preset"
-			exit 1
+			PRINT_ARGS_PRESET_HELP=true
 			;;
 
 		"u")
@@ -487,6 +488,41 @@ if [ "${ARGS:0:1}" = "@" ]; then
 			;;
 
 	esac
+
+	if [ "$PRINT_DOCKER_PRESETS_HELP" = true ]; then
+		# Print help and exit
+		echo "Usage: $0 [options] [context] @[preset] [...args]"
+		echo "  args: Arguments passed to docker compose"
+		echo "  presets:"
+		echo "    u     up"
+		echo "    ud    up -d"
+		echo "    ubd   up --build -d"
+		echo "    ubdf  up --build -d --force-recreate"
+		echo "    ubdfp up --build -d --force-recreate --pull always"
+		echo "    ubdr  up --build -d --remove-orphans"
+		echo "    ubdfr up --build -d --force-recreate --remove-orphans"
+		echo "    udf   up -d --force-recreate"
+		echo "    udr   up -d --remove-orphans"
+		echo "    udfr  up -d --force-recreate --remove-orphans"
+		echo "    d     down"
+		echo "    dr    down --remove-orphans --rmi local"
+		echo "    drr   down --remove-orphans --rmi all"
+		echo "    drrv  down --remove-orphans --rmi all -v"
+		echo "    rn    run --rm"
+		echo "    l     logs"
+		echo "    r     rm"
+		echo "    rf    rm -f"
+		echo "    rfv   rm -f -v"
+		echo "  context syntax: [first] | [first]-[second] | \"-\" | \"--\""
+		echo "    first   First part of the context"
+		echo "    second  Second part of the context"
+		echo "    \"-\"     Use default docker compose files (\"override\" if it exists)"
+		echo "    \"--\"    Use docker compose without file arguments"
+		echo "  options:"
+		echo "    -n   Dry run, print docker compose command without running it"
+		echo "    -q   Quiet, do not print docker compose command"
+		exit 0
+	fi
 
 fi
 
