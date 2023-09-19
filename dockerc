@@ -487,7 +487,7 @@ if [ "${ARGS:0:1}" = "@" ]; then
 
 	esac
 
-	if [ "$PRINT_DOCKER_PRESETS_HELP" = true ]; then
+	if [ "$PRINT_ARGS_PRESET_HELP" = true ]; then
 		# Print help and exit
 		echo "Usage: $0 [options] [context] @[preset] [...args]"
 		echo "  args: Arguments passed to docker compose"
