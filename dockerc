@@ -220,8 +220,8 @@ if [ "${CONTEXT:0:1}" = "@" ]; then
 		echo "    rfa   Remove all unused containers, networks and images"
 		echo "    rfav  Remove all unused containers, networks, images and volumes"
 		echo "  options:"
-		echo "    -n   Dry run, print docker command without running it"
-		echo "    -q   Quiet, do not print docker command"
+		echo "    -n  Dry run, print docker command without running it"
+		echo "    -q  Quiet, do not print docker command"
 		exit 0
 	fi
 
@@ -511,8 +511,8 @@ if [ "${ARGS:0:1}" = "@" ]; then
 		echo "    rfv   rm -f -v"
 		print_context_help
 		echo "  options:"
-		echo "    -n   Dry run, print docker compose command without running it"
-		echo "    -q   Quiet, do not print docker compose command"
+		echo "    -n  Dry run, print docker compose command without running it"
+		echo "    -q  Quiet, do not print docker compose command"
 		exit 0
 	fi
 
