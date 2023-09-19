@@ -158,10 +158,6 @@ fi
 
 # Other parameters are arguments passed to docker compose
 ARGS="$@"
-if [ -z "$ARGS" ]; then
-	# If arguments are empty, set to the default arguments
-	ARGS="up -d"
-fi
 
 # Check for docker preset
 if [ "${CONTEXT:0:1}" = "@" ]; then
@@ -402,8 +398,13 @@ EOF
 
 fi
 
+# Check for arguments
+if [ -z "$ARGS" ]; then
+	# If arguments are empty, set to the default arguments
+	ARGS="up -d"
+
 # Check for arguments preset
-if [ "${ARGS:0:1}" = "@" ]; then
+elif [ "${ARGS:0:1}" = "@" ]; then
 
 	# Get first arg as preset name
 	ARGS_PRESET="${ARGS%% *}"
