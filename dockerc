@@ -186,7 +186,7 @@ if [ "${CONTEXT:0:1}" = "@" ]; then
 			;;
 
 		*)
-			echo "Error: Unknown preset '@$CONTEXT'"
+			echo "Error: Unknown docker preset '@$CONTEXT'"
 			exit 1
 			;;
 
@@ -448,7 +448,7 @@ if [ "${ARGS:0:1}" = "@" ]; then
 			;;
 
 		*)
-			echo "Error: Unknown preset '@$ARGS_PRESET'"
+			echo "Error: Unknown args preset '@$ARGS_PRESET'"
 			exit 1
 			;;
 
