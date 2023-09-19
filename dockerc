@@ -421,33 +421,30 @@ if [ "${ARGS:0:1}" = "@" ]; then
 			;;
 
 		"u")
-			ARGS="up$ARGS"
-			;;
-		"ud")
 			ARGS="up -d$ARGS"
 			;;
-		"ubd")
+		"ub")
 			ARGS="up --build -d$ARGS"
 			;;
-		"ubdf")
+		"ubf")
 			ARGS="up --build -d --force-recreate$ARGS"
 			;;
-		"ubdfp")
+		"ubfp")
 			ARGS="up --build -d --force-recreate --pull always$ARGS"
 			;;
-		"ubdr")
+		"ubr")
 			ARGS="up --build -d --remove-orphans$ARGS"
 			;;
-		"ubdfr")
+		"ubfr")
 			ARGS="up --build -d --force-recreate --remove-orphans$ARGS"
 			;;
-		"udf")
+		"uf")
 			ARGS="up -d --force-recreate$ARGS"
 			;;
-		"udr")
+		"ur")
 			ARGS="up -d --remove-orphans$ARGS"
 			;;
-		"udfr")
+		"ufr")
 			ARGS="up -d --force-recreate --remove-orphans$ARGS"
 			;;
 
@@ -464,7 +461,7 @@ if [ "${ARGS:0:1}" = "@" ]; then
 			ARGS="down --remove-orphans --rmi all -v$ARGS"
 			;;
 
-		"rn")
+		"r")
 			ARGS="run --rm$ARGS"
 			;;
 
@@ -472,9 +469,6 @@ if [ "${ARGS:0:1}" = "@" ]; then
 			ARGS="logs$ARGS"
 			;;
 
-		"r")
-			ARGS="rm$ARGS"
-			;;
 		"rf")
 			ARGS="rm -f$ARGS"
 			;;
@@ -494,23 +488,21 @@ if [ "${ARGS:0:1}" = "@" ]; then
 		echo "Usage: $0 [options] [context] @[preset] [...args]"
 		echo "  args: Arguments passed to docker compose"
 		echo "  presets:"
-		echo "    u     up"
-		echo "    ud    up -d"
-		echo "    ubd   up --build -d"
-		echo "    ubdf  up --build -d --force-recreate"
-		echo "    ubdfp up --build -d --force-recreate --pull always"
-		echo "    ubdr  up --build -d --remove-orphans"
-		echo "    ubdfr up --build -d --force-recreate --remove-orphans"
-		echo "    udf   up -d --force-recreate"
-		echo "    udr   up -d --remove-orphans"
-		echo "    udfr  up -d --force-recreate --remove-orphans"
+		echo "    u     up -d"
+		echo "    ub    up --build -d"
+		echo "    ubf   up --build -d --force-recreate"
+		echo "    ubfp  up --build -d --force-recreate --pull always"
+		echo "    ubr   up --build -d --remove-orphans"
+		echo "    ubfr  up --build -d --force-recreate --remove-orphans"
+		echo "    uf    up -d --force-recreate"
+		echo "    ur    up -d --remove-orphans"
+		echo "    ufr   up -d --force-recreate --remove-orphans"
 		echo "    d     down"
 		echo "    dr    down --remove-orphans --rmi local"
 		echo "    drr   down --remove-orphans --rmi all"
 		echo "    drrv  down --remove-orphans --rmi all -v"
-		echo "    rn    run --rm"
+		echo "    r     run --rm"
 		echo "    l     logs"
-		echo "    r     rm"
 		echo "    rf    rm -f"
 		echo "    rfv   rm -f -v"
 		echo "  context syntax: [first] | [first]-[second] | \"-\" | \"--\""
