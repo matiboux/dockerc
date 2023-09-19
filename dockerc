@@ -159,6 +159,56 @@ if [ -z "$ARGS" ]; then
 	ARGS="up -d"
 fi
 
+# Check for docker preset
+if [ "${CONTEXT:0:1}" = "@" ]; then
+
+	DOCKER_ARGS=""
+
+	# Remove first char
+	CONTEXT="${CONTEXT#?}"
+
+	case "$CONTEXT" in
+
+		"rfc")
+			DOCKER_ARGS="container prune -f"
+			;;
+		"rfi")
+			DOCKER_ARGS="image prune -f"
+			;;
+		"rf")
+			DOCKER_ARGS="system prune -f"
+			;;
+		"rfa")
+			DOCKER_ARGS="system prune -f -a"
+			;;
+		"rfav")
+			DOCKER_ARGS="system prune -f -a --volumes"
+			;;
+
+		*)
+			echo "Error: Unknown preset '@$CONTEXT'"
+			exit 1
+			;;
+
+	esac
+
+	if [ "$QUIET" = false ]; then
+		# Print docker command
+		echo ""
+		echo "> docker $DOCKER_ARGS"
+		echo ""
+	fi
+
+	if [ "$DRY_RUN" = false ]; then
+		# Run docker
+		exec docker $DOCKER_ARGS
+	fi
+
+	exit 0
+
+fi
+
+
 COMPOSE_FILE_ARGS=""
 NO_COMPOSE_FILE_ARGS=false
 ENV_FILE_ARGS=""
@@ -319,6 +369,7 @@ EOF
 
 fi
 
+# Check for arguments preset
 if [ "${ARGS:0:1}" = "@" ]; then
 
 	# Get first arg as preset name
@@ -333,6 +384,7 @@ if [ "${ARGS:0:1}" = "@" ]; then
 	fi
 
 	case "$ARGS_PRESET" in
+
 		"u")
 			ARGS="up$ARGS"
 			;;
@@ -399,6 +451,7 @@ if [ "${ARGS:0:1}" = "@" ]; then
 			echo "Error: Unknown preset '@$ARGS_PRESET'"
 			exit 1
 			;;
+
 	esac
 
 fi
