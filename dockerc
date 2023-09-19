@@ -458,10 +458,10 @@ if [ "${ARGS:0:1}" = "@" ]; then
 		"dr")
 			ARGS="down --remove-orphans --rmi local$ARGS"
 			;;
-		"drr")
+		"dra")
 			ARGS="down --remove-orphans --rmi all$ARGS"
 			;;
-		"drrv")
+		"drav")
 			ARGS="down --remove-orphans --rmi all -v$ARGS"
 			;;
 
@@ -503,8 +503,8 @@ if [ "${ARGS:0:1}" = "@" ]; then
 		echo "    ufr   up -d --force-recreate --remove-orphans"
 		echo "    d     down"
 		echo "    dr    down --remove-orphans --rmi local"
-		echo "    drr   down --remove-orphans --rmi all"
-		echo "    drrv  down --remove-orphans --rmi all -v"
+		echo "    dra   down --remove-orphans --rmi all"
+		echo "    drav  down --remove-orphans --rmi all -v"
 		echo "    r     run --rm"
 		echo "    l     logs"
 		echo "    rf    rm -f"
