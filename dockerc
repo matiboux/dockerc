@@ -332,9 +332,6 @@ if [ "${ARGS:0:1}" = "@" ]; then
 		ARGS=""
 	fi
 
-	echo "ARGS_PRESET: $ARGS_PRESET"
-	echo "ARGS: $ARGS"
-
 	case "$ARGS_PRESET" in
 		"u")
 			ARGS="up$ARGS"
