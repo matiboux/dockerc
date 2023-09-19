@@ -377,6 +377,14 @@ if [ "${ARGS:0:1}" = "@" ]; then
 			ARGS="down --remove-orphans --rmi all -v$ARGS"
 			;;
 
+		"rn")
+			ARGS="run --rm$ARGS"
+			;;
+
+		"l")
+			ARGS="logs$ARGS"
+			;;
+
 		"r")
 			ARGS="rm$ARGS"
 			;;
