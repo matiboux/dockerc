@@ -59,15 +59,19 @@ while true; do
 	esac
 done
 
-if [ "$PRINT_HELP" = true ]; then
-	# Print help and exit
-	echo "Usage: $0 [options] [context] [...args]"
-	echo "  args: Arguments passed to docker compose"
+print_context_help() {
 	echo "  context syntax: [first] | [first]-[second] | \"-\" | \"--\""
 	echo "    first   First part of the context"
 	echo "    second  Second part of the context"
 	echo "    \"-\"     Use default docker compose files (\"override\" if it exists)"
 	echo "    \"--\"    Use docker compose without file arguments"
+}
+
+if [ "$PRINT_HELP" = true ]; then
+	# Print help and exit
+	echo "Usage: $0 [options] [context] [...args]"
+	echo "  args: Arguments passed to docker compose"
+	print_context_help
 	echo "  options:"
 	echo "    -h, --help     Print this help and exit"
 	echo "    -v, --version  Print version and exit"
@@ -158,6 +162,85 @@ if [ -z "$ARGS" ]; then
 	# If arguments are empty, set to the default arguments
 	ARGS="up -d"
 fi
+
+# Check for docker preset
+if [ "${CONTEXT:0:1}" = "@" ]; then
+
+	PRINT_DOCKER_PRESETS_HELP=false
+	DOCKER_ARGS=""
+
+	# Remove first char
+	CONTEXT="${CONTEXT#?}"
+
+	case "$CONTEXT" in
+
+		"")
+			PRINT_DOCKER_PRESETS_HELP=true
+			;;
+
+		"rfc")
+			DOCKER_ARGS="container prune -f"
+			;;
+		"rfca")
+			DOCKER_ARGS="container prune -f -a"
+			;;
+		"rfi")
+			DOCKER_ARGS="image prune -f"
+			;;
+		"rfia")
+			DOCKER_ARGS="image prune -f -a"
+			;;
+		"rf")
+			DOCKER_ARGS="system prune -f"
+			;;
+		"rfa")
+			DOCKER_ARGS="system prune -f -a"
+			;;
+		"rfav")
+			DOCKER_ARGS="system prune -f -a --volumes"
+			;;
+
+		*)
+			echo "Error: Unknown docker preset '@$CONTEXT'"
+			exit 1
+			;;
+
+	esac
+
+	if [ "$PRINT_DOCKER_PRESETS_HELP" = true ]; then
+		# Print help and exit
+		echo "Usage: $0 [options] @[preset] [...args]"
+		echo "  args: Arguments passed to docker"
+		echo "  presets:"
+		echo "    rfc   Remove unused containers"
+		echo "    rfca  Remove all unused containers"
+		echo "    rfi   Remove unused images"
+		echo "    rfia  Remove all unused images"
+		echo "    rf    Remove unused containers, networks and images"
+		echo "    rfa   Remove all unused containers, networks and images"
+		echo "    rfav  Remove all unused containers, networks, images and volumes"
+		echo "  options:"
+		echo "    -n  Dry run, print docker command without running it"
+		echo "    -q  Quiet, do not print docker command"
+		exit 0
+	fi
+
+	if [ "$QUIET" = false ]; then
+		# Print docker command
+		echo ""
+		echo "> docker $DOCKER_ARGS $ARGS"
+		echo ""
+	fi
+
+	if [ "$DRY_RUN" = false ]; then
+		# Run docker
+		exec docker $DOCKER_ARGS $ARGS
+	fi
+
+	exit 0
+
+fi
+
 
 COMPOSE_FILE_ARGS=""
 NO_COMPOSE_FILE_ARGS=false
@@ -315,6 +398,122 @@ EOF
 			echo "Error: Unknown context '$CONTEXT'"
 		fi
 		exit 1
+	fi
+
+fi
+
+# Check for arguments preset
+if [ "${ARGS:0:1}" = "@" ]; then
+
+	# Get first arg as preset name
+	ARGS_PRESET="${ARGS%% *}"
+	ARGS_PRESET="${ARGS_PRESET#?}"
+
+	# Clear first arg from args
+	if [[ "$ARGS" == *" "* ]]; then
+		ARGS=" ${ARGS#* }"
+	else
+		ARGS=""
+	fi
+
+	PRINT_ARGS_PRESET_HELP=false
+
+	case "$ARGS_PRESET" in
+
+		"")
+			PRINT_ARGS_PRESET_HELP=true
+			;;
+
+		"u")
+			ARGS="up -d$ARGS"
+			;;
+		"ub")
+			ARGS="up --build -d$ARGS"
+			;;
+		"ubf")
+			ARGS="up --build -d --force-recreate$ARGS"
+			;;
+		"ubfp")
+			ARGS="up --build -d --force-recreate --pull always$ARGS"
+			;;
+		"ubr")
+			ARGS="up --build -d --remove-orphans$ARGS"
+			;;
+		"ubfr")
+			ARGS="up --build -d --force-recreate --remove-orphans$ARGS"
+			;;
+		"uf")
+			ARGS="up -d --force-recreate$ARGS"
+			;;
+		"ur")
+			ARGS="up -d --remove-orphans$ARGS"
+			;;
+		"ufr")
+			ARGS="up -d --force-recreate --remove-orphans$ARGS"
+			;;
+
+		"d")
+			ARGS="down$ARGS"
+			;;
+		"dr")
+			ARGS="down --remove-orphans --rmi local$ARGS"
+			;;
+		"dra")
+			ARGS="down --remove-orphans --rmi all$ARGS"
+			;;
+		"drav")
+			ARGS="down --remove-orphans --rmi all -v$ARGS"
+			;;
+
+		"r")
+			ARGS="run --rm$ARGS"
+			;;
+
+		"l")
+			ARGS="logs$ARGS"
+			;;
+
+		"rf")
+			ARGS="rm -f$ARGS"
+			;;
+		"rfv")
+			ARGS="rm -f -v$ARGS"
+			;;
+
+		*)
+			echo "Error: Unknown args preset '@$ARGS_PRESET'"
+			exit 1
+			;;
+
+	esac
+
+	if [ "$PRINT_ARGS_PRESET_HELP" = true ]; then
+		# Print help and exit
+		echo "Usage: $0 [options] [context] @[preset] [...args]"
+		echo "  args: Arguments passed to docker compose"
+		echo "  presets:"
+		echo "    u     up -d"
+		echo "    ub    up --build -d"
+		echo "    ubf   up --build -d --force-recreate"
+		echo "    ubfp  up --build -d --force-recreate --pull always"
+		echo "    ubr   up --build -d --remove-orphans"
+		echo "    ubfr  up --build -d --force-recreate --remove-orphans"
+		echo "    uf    up -d --force-recreate"
+		echo "    ur    up -d --remove-orphans"
+		echo "    ufr   up -d --force-recreate --remove-orphans"
+		echo "    d     down"
+		echo "    dr    down --remove-orphans --rmi local"
+		echo "    dra   down --remove-orphans --rmi all"
+		echo "    drav  down --remove-orphans --rmi all -v"
+		echo "    r     run --rm"
+		echo "    l     logs"
+		echo "    rf    rm -f"
+		echo "    rfv   rm -f -v"
+		print_context_help
+		echo "  options:"
+		echo "    -n  Dry run, print docker compose command without running it"
+		echo "    -q  Quiet, do not print docker compose command"
+		exit 0
 	fi
 
 fi
