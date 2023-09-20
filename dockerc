@@ -160,7 +160,7 @@ fi
 ARGS="$@"
 
 # Check for docker preset
-if [ "${CONTEXT:0:1}" = "@" ]; then
+if [ "$(expr substr "$CONTEXT" 1 1)" = "@" ]; then
 
 	PRINT_DOCKER_PRESETS_HELP=false
 	DOCKER_ARGS=""
@@ -404,7 +404,7 @@ if [ -z "$ARGS" ]; then
 	ARGS="up -d"
 
 # Check for arguments preset
-elif [ "${ARGS:0:1}" = "@" ]; then
+elif [ "$(expr substr "$ARGS" 1 1)" = "@" ]; then
 
 	# Get first arg as preset name
 	ARGS_PRESET="${ARGS%% *}"
