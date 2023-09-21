@@ -474,6 +474,10 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="run --rm$ARGS"
 			;;
 
+		"ri")
+			ARGS="run --rm -it$ARGS"
+			;;
+
 		"l")
 			ARGS="logs$ARGS"
 			;;
