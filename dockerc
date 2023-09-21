@@ -160,7 +160,7 @@ fi
 ARGS="$@"
 
 # Check for docker preset
-if [ "$(expr substr "$CONTEXT" 1 1)" = "@" ]; then
+if [ "$(echo "$CONTEXT" | cut -c1)" = "@" ]; then
 
 	PRINT_DOCKER_PRESETS_HELP=false
 	DOCKER_ARGS=""
@@ -404,7 +404,7 @@ if [ -z "$ARGS" ]; then
 	ARGS="up -d"
 
 # Check for arguments preset
-elif [ "$(expr substr "$ARGS" 1 1)" = "@" ]; then
+elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 
 	# Get first arg as preset name
 	ARGS_PRESET="${ARGS%% *}"
