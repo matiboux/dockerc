@@ -473,7 +473,6 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"r")
 			ARGS="run --rm$ARGS"
 			;;
-
 		"ri")
 			ARGS="run --rm -it$ARGS"
 			;;
