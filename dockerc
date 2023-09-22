@@ -411,10 +411,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 	ARGS_PRESET="${ARGS_PRESET#?}"
 
 	# Clear first arg from args
-	if [ "$ARGS" == *" "* ]; then
-		ARGS=" ${ARGS#* }"
-	else
-		ARGS=""
+	ARGS="${ARGS#* }"
+	if [ -n "$ARGS" ]; then
+		ARGS=" $ARGS"
 	fi
 
 	PRINT_ARGS_PRESET_HELP=false
