@@ -465,8 +465,15 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="down --remove-orphans --rmi all -v$ARGS"
 			;;
 
+		"b")
+			ARGS="build$ARGS"
+			;;
+
 		"r")
 			ARGS="run --rm$ARGS"
+			;;
+		"ri")
+			ARGS="run --rm -it$ARGS"
 			;;
 
 		"l")
