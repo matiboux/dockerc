@@ -516,6 +516,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		echo "    dra   down --remove-orphans --rmi all"
 		echo "    drav  down --remove-orphans --rmi all -v"
 		echo "    r     run --rm"
+		echo "    ri    run --rm -it"
 		echo "    l     logs"
 		echo "    rf    rm -f"
 		echo "    rfv   rm -f -v"
