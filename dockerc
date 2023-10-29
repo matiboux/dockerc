@@ -493,6 +493,10 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="ps -a$ARGS"
 			;;
 
+		"pu")
+			ARGS="push$ARGS"
+			;;
+
 		"rf")
 			ARGS="rm -f$ARGS"
 			;;
