@@ -314,7 +314,6 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
 					else
 						# Part was not found, invalidate PREFIX_1
-						COMPOSE_FILE_ARGS_1=""
 						PREFIX_1=""
 					fi
 
@@ -346,7 +345,6 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
 							else
 								# Part was not found, invalidate PREFIX_2
-								COMPOSE_FILE_ARGS_2=""
 								PREFIX_2=""
 							fi
 
