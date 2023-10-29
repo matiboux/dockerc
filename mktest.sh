@@ -8,12 +8,12 @@ else
 fi
 
 if [ ! -d "$DIR/files/test" ]; then
-	echo "Did not finc ./files/test directory."
+	echo "Did not find ./files/test directory."
 	exit 1
 fi
 
 if [ -d "$DIR/test" ]; then
-	rm -r "$DIR/test/"*
+	rm -r "$DIR/test"
 
 	if [ $? -ne 0 ]; then
 		echo "Failed to clear ./test directory."
@@ -21,4 +21,6 @@ if [ -d "$DIR/test" ]; then
 	fi
 fi
 
-cp -r "$DIR/files/test/" "$DIR/test/"
+mkdir -p "$DIR/test"
+
+cp -r "$DIR/files/test/"* "$DIR/test"
