@@ -480,7 +480,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			;;
 
 		"l")
-			ARGS="logs$ARGS"
+			ARGS="logs -n 100$ARGS"
 			;;
 
 		"rf")
