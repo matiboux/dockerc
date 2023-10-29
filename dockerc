@@ -485,6 +485,27 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"l")
 			ARGS="logs -n 100$ARGS"
 			;;
+		"lf")
+			ARGS="logs -n 100 -f$ARGS"
+			;;
+		"lt")
+			ARGS="logs -n 100 -t$ARGS"
+			;;
+		"ls")
+			ARGS="logs -n 100 --no-log-prefix$ARGS"
+			;;
+		"lft")
+			ARGS="logs -n 100 -f -t$ARGS"
+			;;
+		"lfs")
+			ARGS="logs -n 100 -f --no-log-prefix$ARGS"
+			;;
+		"lfts")
+			ARGS="logs -n 100 -f -t --no-log-prefix$ARGS"
+			;;
+		"lts")
+			ARGS="logs -n 100 -t --no-log-prefix$ARGS"
+			;;
 
 		"p")
 			ARGS="ps$ARGS"
