@@ -471,6 +471,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"b")
 			ARGS="build$ARGS"
 			;;
+		"bp")
+			ARGS="build --pull$ARGS"
+			;;
 
 		"r")
 			ARGS="run --rm$ARGS"
