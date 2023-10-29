@@ -259,6 +259,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
 		ENV_FILE_ARGS=""
 		PREFIX=""
+		COMPOSE_FILE_ARGS_1_DEFAULT=""
 		COMPOSE_FILE_ARGS_1=""
 		PREFIX_1=""
 		COMPOSE_FILE_ARGS_2=""
@@ -274,7 +275,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 		fi
 
 		if [ -f "$dir/docker-compose.yml" ]; then
-			COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose.yml"
+			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $dir/docker-compose.yml"
 		fi
 
 		if [ ! -z "$CONTEXT" ]; then
@@ -303,7 +304,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env$PREFIX.local"
 				fi
 
-				if [ ! -z "$COMPOSE_FILE_ARGS_1" ] && [ -z "$COMPOSE_FILE_ARGS_2" ]; then
+				if [ -z "$COMPOSE_FILE_ARGS_2" ]; then
 
 					# Look for docker-compose$PREFIX_1.$part.yml
 					if [ -f "$dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml" ]; then
@@ -374,7 +375,7 @@ EOF
 			break
 
 		elif [ ! -z "$PREFIX_1" ]; then
-			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1"
+			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT$COMPOSE_FILE_ARGS_1"
 			break
 
 		elif [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then
