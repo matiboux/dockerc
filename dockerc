@@ -483,6 +483,13 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="logs -n 100$ARGS"
 			;;
 
+		"p")
+			ARGS="ps$ARGS"
+			;;
+		"pa")
+			ARGS="ps -a$ARGS"
+			;;
+
 		"rf")
 			ARGS="rm -f$ARGS"
 			;;
