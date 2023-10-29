@@ -456,7 +456,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			;;
 
 		"d")
-			ARGS="down --remove-orphans$ARGS"
+			ARGS="down$ARGS"
 			;;
 		"dr")
 			ARGS="down --remove-orphans --rmi local$ARGS"
