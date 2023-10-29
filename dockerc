@@ -259,10 +259,12 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
 		ENV_FILE_ARGS=""
 		PREFIX=""
+		COMPOSE_FILE_ARGS_1_DEFAULT=""
 		COMPOSE_FILE_ARGS_1=""
 		PREFIX_1=""
 		COMPOSE_FILE_ARGS_2=""
 		PREFIX_2=""
+		MISSING_PARTS=""
 
 		if [ -f "$dir/.env" ]; then
 			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env"
@@ -273,7 +275,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 		fi
 
 		if [ -f "$dir/docker-compose.yml" ]; then
-			COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose.yml"
+			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $dir/docker-compose.yml"
 		fi
 
 		if [ ! -z "$CONTEXT" ]; then
@@ -302,47 +304,62 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env$PREFIX.local"
 				fi
 
-				if [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then
+				if [ -z "$COMPOSE_FILE_ARGS_2" ]; then
 
 					# Look for docker-compose$PREFIX_1.$part.yml
-					if [ -f "$dir/docker-compose$PREFIX_1.$part.yml" ]; then
-						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose$PREFIX_1.$part.yml"
-						PREFIX_1="$PREFIX_1.$part"
+					if [ -f "$dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml" ]; then
+						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml"
+						PREFIX_1="$PREFIX_1.$MISSING_PARTS$part"
+						MISSING_PARTS=""
 
 					else
 						# Part was not found, invalidate PREFIX_1
-						COMPOSE_FILE_ARGS_1=""
 						PREFIX_1=""
 					fi
 
 				fi
 
-				if [ -z "$COMPOSE_FILE_ARGS_2" ] && [ -z "$PREFIX_2" ]; then
+				if [ -z "$COMPOSE_FILE_ARGS_1" ]; then
 
-					# Look for docker-compose-$part.yml
-					if [ -f "$dir/docker-compose-$part.yml" ]; then
-						COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose-$part.yml"
-						PREFIX_2="-$part"
-					fi
+					if [ -z "$COMPOSE_FILE_ARGS_2" ]; then
 
-				elif [ ! -z "$COMPOSE_FILE_ARGS_2" ] && [ ! -z "$PREFIX_2" ]; then
+						if [ -z "$PREFIX_2" ]; then
 
-					# Look for docker-compose$PREFIX_2.$part.yml
-					if [ -f "$dir/docker-compose$PREFIX_2.$part.yml" ]; then
-						COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose$PREFIX_2.$part.yml"
-						PREFIX_2="$PREFIX_2.$part"
+							# Look for docker-compose-$part.yml
+							if [ -f "$dir/docker-compose-$MISSING_PARTS$part.yml" ]; then
+								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose-$MISSING_PARTS$part.yml"
+								PREFIX_2="-$MISSING_PARTS$part"
+								MISSING_PARTS=""
+							fi
+
+						fi
 
 					else
-						# Part was not found, invalidate PREFIX_2
-						COMPOSE_FILE_ARGS_2=""
-						PREFIX_2=""
+
+						if [ ! -z "$PREFIX_2" ]; then
+
+							# Look for docker-compose$PREFIX_2.$part.yml
+							if [ -f "$dir/docker-compose$PREFIX_2.$part.yml" ]; then
+								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose$PREFIX_2.$part.yml"
+								PREFIX_2="$PREFIX_2.$part"
+
+							else
+								# Part was not found, invalidate PREFIX_2
+								PREFIX_2=""
+							fi
+
+						fi
+
 					fi
 
 				fi
 
 				if [ -z "$PREFIX_1" ] && [ -z "$PREFIX_2" ]; then
-					# Break loop if both are invalid
-					break
+					if [ -z "$MISSING_PARTS" ]; then
+						MISSING_PARTS="$part."
+					else
+						MISSING_PARTS="$MISSING_PARTS$part."
+					fi
 				fi
 
 			done <<EOF
@@ -356,7 +373,7 @@ EOF
 			break
 
 		elif [ ! -z "$PREFIX_1" ]; then
-			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1"
+			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT$COMPOSE_FILE_ARGS_1"
 			break
 
 		elif [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then

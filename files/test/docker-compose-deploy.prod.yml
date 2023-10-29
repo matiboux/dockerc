@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     # Deploy
     environment:
-      COMPOSE_FILE: ''
+      COMPOSE_FILE: deploy.prod
       ENV_FILE: ${ENV_FILE:-}
       ENV_OK: ${ENV_OK:-ko}
       ENV_LOCAL_OK: ${ENV_LOCAL_OK:-ko}

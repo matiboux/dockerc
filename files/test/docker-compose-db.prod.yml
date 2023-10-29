@@ -5,10 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: top
     # Deploy
     environment:
-      COMPOSE_FILE: top
+      COMPOSE_FILE: db.prod
     ports:
       - ${HTTP_PORT:-80}:80
       - ${HTTPS_PORT:-443}:443
