@@ -376,20 +376,20 @@ EOF
 			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT$COMPOSE_FILE_ARGS_1"
 			break
 
-		elif [ ! -z "$COMPOSE_FILE_ARGS_1" ]; then
+		elif [ ! -z "$COMPOSE_FILE_ARGS_1_DEFAULT" ]; then
 
 			if [ "$CONTEXT" = "prod" ]; then
-				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1"
+				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT"
 				break
 
 			elif [ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ]; then
 
 				if [ -f "$dir/docker-compose.override.yml" ]; then
-					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose.override.yml"
+					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $dir/docker-compose.override.yml"
 					break
 
 				elif [ -z "$CONTEXT" ]; then
-					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1"
+					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT"
 					break
 
 				fi
