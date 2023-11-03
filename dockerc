@@ -491,6 +491,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"bp")
 			ARGS="build --pull$ARGS"
 			;;
+		"bf")
+			ARGS="build --pull --no-cache$ARGS"
+			;;
 
 		"r")
 			ARGS="run --rm$ARGS"
