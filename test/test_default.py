@@ -2,8 +2,7 @@ import subprocess
 
 from src.format_dockerc_stdout import format_dockerc_stdout
 
-# Test the DockerC script runs
-def test_basic():
+def test_default():
     proc = subprocess.Popen(
         ['../../dockerc', '-n'],
         cwd = './test/cwd',
