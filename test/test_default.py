@@ -15,7 +15,7 @@ def test_default_not_found():
         b'Error: Default context not found\n'
     )
     assert stderr == None
-    assert proc.returncode == 0
+    assert proc.returncode == 1
 
 def test_default_single():
     reset_dir('./cwd', [
