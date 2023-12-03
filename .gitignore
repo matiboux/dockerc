@@ -28,8 +28,9 @@ __pycache__/
 venv/
 env/
 
-# Data
-*.csv
+# Environment files for tests
+!.env.local
+!.env.*.local
 
 # -- Specific to gitignore:
 
