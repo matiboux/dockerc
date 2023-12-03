@@ -1,0 +1,38 @@
+# -- Generic rules:
+
+# Files without an extension
+*
+!*/
+!*.*
+
+# Environment files
+.env.local
+.env.*.local
+
+# Temporary files
+._*
+*~
+*.cache
+*.log*
+*.swp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# -- Application rules:
+
+# Python
+__pycache__/
+.ipynb_checkpoints/
+venv/
+env/
+
+# Data
+*.csv
+
+# -- Specific to gitignore:
+
+# Build configuration files (allow)
+!Dockerfile
+!Makefile
