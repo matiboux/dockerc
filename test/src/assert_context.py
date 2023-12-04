@@ -17,9 +17,9 @@ def assert_context(
         cwd = './cwd',
         stdout = subprocess.PIPE,
     )
-    stdout, stderr = proc.communicate()
-    assert stdout == stdout
-    assert stderr == stderr
+    proc_stdout, proc_stderr = proc.communicate()
+    assert proc_stdout == stdout
+    assert proc_stderr == stderr
     assert proc.returncode == returncode
 
 def assert_context_not_found(
