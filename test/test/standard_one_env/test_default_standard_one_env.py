@@ -1,47 +1,48 @@
 from test.src.reset_dir import reset_dir
-from test.src.assert_context import assert_context_not_found, assert_context_found
+from test.src.assert_context import assert_context_found
 
-def test_prod_not_found():
-    reset_dir('./cwd')
-    assert_context_not_found('prod')
-
-def test_prod_single():
+def test_default_env():
     reset_dir('./cwd', [
         'docker-compose.yml',
+        '.env',
     ])
     assert_context_found(
-        'prod',
+        None,
         (
             b'docker compose' \
             b' -f ./docker-compose.yml' \
+            b' --env-file ./.env' \
             b' up -d'
         ),
     )
 
-def test_prod_override():
+def test_default_env_local():
     reset_dir('./cwd', [
         'docker-compose.yml',
-        'docker-compose.override.yml',
+        '.env.local',
     ])
     assert_context_found(
-        'prod',
+        None,
         (
             b'docker compose' \
             b' -f ./docker-compose.yml' \
+            b' --env-file ./.env.local' \
             b' up -d'
         ),
     )
 
-def test_prod_simple():
+def test_default_env_both():
     reset_dir('./cwd', [
         'docker-compose.yml',
-        'docker-compose.prod.yml',
+        '.env',
+        '.env.local',
     ])
     assert_context_found(
-        'prod',
+        None,
         (
             b'docker compose' \
-            b' -f ./docker-compose.yml -f ./docker-compose.prod.yml' \
+            b' -f ./docker-compose.yml' \
+            b' --env-file ./.env --env-file ./.env.local' \
             b' up -d'
         ),
     )
