@@ -1,12 +1,9 @@
+from . import dir_files
 from test.src.reset_dir import reset_dir
 from test.src.assert_context import assert_context_found
 
 def test_default_env():
-    reset_dir('./cwd', [
-        'docker-compose.yml',
-        'docker-compose.override.yml',
-        '.env',
-    ])
+    reset_dir('./cwd', dir_files)
     assert_context_found(
         None,
         (
@@ -36,10 +33,7 @@ def test_default_env_local():
     )
 
 def test_default_env_both():
-    reset_dir('./cwd', [
-        'docker-compose.yml',
-        'docker-compose.override.yml',
-        '.env',
+    reset_dir('./cwd', dir_files + [
         '.env.local',
     ])
     assert_context_found(
