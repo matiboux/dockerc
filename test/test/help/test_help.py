@@ -69,7 +69,9 @@ def test_docker_presets_help():
     assert proc.returncode == 0
 
 def test_args_presets_help():
-    reset_dir('./twd')
+    reset_dir('./twd', [
+        'docker-compose.yml',
+    ])
     proc = subprocess.Popen(
         ['../dockerc', '-', '@'],
         cwd = './twd',
