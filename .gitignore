@@ -32,6 +32,9 @@ env/
 !.env.local
 !.env.*.local
 
+# Working directory for tests
+cwd/
+
 # -- Specific to gitignore:
 
 # Build configuration files (allow)
