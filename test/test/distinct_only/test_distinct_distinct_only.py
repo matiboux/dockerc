@@ -6,7 +6,7 @@ def test_distinct_single():
         'docker-compose-distinct.yml',
     ])
     assert_context_found(
-        'prod',
+        'distinct',
         (
             b'docker compose' \
             b' -f ./docker-compose-distinct.yml' \
