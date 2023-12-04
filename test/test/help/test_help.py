@@ -3,7 +3,7 @@ import subprocess
 from test.src.reset_dir import reset_dir
 
 HELP_STDOUT = (
-    b'Usage: ../../dockerc [options] [context] [...args]\n'
+    b'Usage: ../dockerc [options] [context] [...args]\n'
     b'  args: Arguments passed to docker compose\n'
     b'  context syntax: [first] | [first]-[second] | "-" | "--"\n'
     b'    first   First part of the context\n'
@@ -51,7 +51,7 @@ def test_docker_presets_help():
     )
     stdout, stderr = proc.communicate()
     assert stdout == (
-        b'Usage: ../../dockerc [options] [@preset] [...args]\n'
+        b'Usage: ../dockerc [options] [@preset] [...args]\n'
         b'  args: Arguments passed to docker\n'
         b'  @preset:\n'
         b'    @rfc   Remove unused containers\n'
@@ -79,7 +79,7 @@ def test_args_presets_help():
     )
     stdout, stderr = proc.communicate()
     assert stdout == (
-        b'Usage: ../../dockerc [options] [context] [@preset] [...args]\n'
+        b'Usage: ../dockerc [options] [context] [@preset] [...args]\n'
         b'  args: Arguments passed to docker compose\n'
         b'  @preset:\n'
         b'    @u     up -d\n'
