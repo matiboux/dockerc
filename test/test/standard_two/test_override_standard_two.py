@@ -10,7 +10,8 @@ def test_override_standard_two():
         'override',
         (
             b'docker compose' \
-            b' -f ./docker-compose.yml -f ./docker-compose.override.yml' \
+            b' -f ./docker-compose.yml' \
+            b' -f ./docker-compose.override.yml' \
             b' up -d'
         ),
     )
