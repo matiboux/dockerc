@@ -1,6 +1,6 @@
 import subprocess
 
-from src.format_dockerc_stdout import format_dockerc_stdout
+from test.src.format_dockerc_stdout import format_dockerc_stdout
 
 VERSION_STDOUT = (
     b'DockerC (v1.8.2) - https://github.com/matiboux/dockerc\n'

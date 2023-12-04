@@ -1,6 +1,6 @@
 import subprocess
 
-from src.format_dockerc_stdout import format_dockerc_stdout
+from test.src.format_dockerc_stdout import format_dockerc_stdout
 
 HELP_STDOUT = (
     b'Usage: ../../dockerc [options] [context] [...args]\n'

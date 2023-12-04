@@ -1,6 +1,6 @@
 import subprocess
 
-from src.format_dockerc_stdout import format_dockerc_stdout
+from test.src.format_dockerc_stdout import format_dockerc_stdout
 
 def assert_context(
     context: str | None,

@@ -10,6 +10,8 @@ FROM python:3.12-slim AS python_upstream
 # App base image
 FROM python_upstream AS app_base
 
+ENV PYTHONPATH=/app
+
 WORKDIR /app
 
 # Installing requirements

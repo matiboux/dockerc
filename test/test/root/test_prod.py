@@ -1,5 +1,5 @@
-from src.reset_dir import reset_dir
-from src.assert_context import assert_context_not_found, assert_context_found
+from test.src.reset_dir import reset_dir
+from test.src.assert_context import assert_context_not_found, assert_context_found
 
 def test_prod_not_found():
     reset_dir('./cwd')
