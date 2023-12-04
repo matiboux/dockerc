@@ -20,8 +20,8 @@ HELP_STDOUT = (
 
 def test_help():
     proc = subprocess.Popen(
-        ['../../dockerc', '--help'],
-        cwd = './test/cwd',
+        ['../dockerc', '--help'],
+        cwd = './twd',
         stdout = subprocess.PIPE,
     )
     stdout, stderr = proc.communicate()
@@ -31,8 +31,8 @@ def test_help():
 
 def test_help_shorthand():
     proc = subprocess.Popen(
-        ['../../dockerc', '-h'],
-        cwd = './test/cwd',
+        ['../dockerc', '-h'],
+        cwd = './twd',
         stdout = subprocess.PIPE,
     )
     stdout, stderr = proc.communicate()
@@ -42,8 +42,8 @@ def test_help_shorthand():
 
 def test_docker_presets_help():
     proc = subprocess.Popen(
-        ['../../dockerc', '@'],
-        cwd = './test/cwd',
+        ['../dockerc', '@'],
+        cwd = './twd',
         stdout = subprocess.PIPE,
     )
     stdout, stderr = proc.communicate()
@@ -67,8 +67,8 @@ def test_docker_presets_help():
 
 def test_args_presets_help():
     proc = subprocess.Popen(
-        ['../../dockerc', '-', '@'],
-        cwd = './test/cwd',
+        ['../dockerc', '-', '@'],
+        cwd = './twd',
         stdout = subprocess.PIPE,
     )
     stdout, stderr = proc.communicate()

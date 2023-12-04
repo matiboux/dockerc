@@ -1,7 +1,7 @@
 import os
 import shutil
 
-def reset_dir(path: str = './cwd', files: list | None = None) -> None:
+def reset_dir(path: str = './twd', files: list | None = None) -> None:
     shutil.rmtree(path, ignore_errors = True)
     os.makedirs(path, exist_ok = True)
 

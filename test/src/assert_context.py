@@ -4,6 +4,7 @@ from test.src.format_dockerc_stdout import format_dockerc_stdout
 
 def assert_context(
     context: str | None,
+    cwd: str = './twd',
     stdout: bytes | None = None,
     stderr: bytes | None = None,
     returncode: int = 0,
@@ -14,7 +15,7 @@ def assert_context(
             if context is not None
             else ['../dockerc', '-n']
         ),
-        cwd = './cwd',
+        cwd = './twd',
         stdout = subprocess.PIPE,
     )
     proc_stdout, proc_stderr = proc.communicate()

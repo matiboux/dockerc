@@ -9,8 +9,8 @@ VERSION_STDOUT = (
 
 def test_version():
     proc = subprocess.Popen(
-        ['../../dockerc', '--version'],
-        cwd = './test/cwd',
+        ['../dockerc', '--version'],
+        cwd = './twd',
         stdout = subprocess.PIPE,
     )
     stdout, stderr = proc.communicate()
@@ -20,8 +20,8 @@ def test_version():
 
 def test_version_shorthand():
     proc = subprocess.Popen(
-        ['../../dockerc', '-v'],
-        cwd = './test/cwd',
+        ['../dockerc', '-v'],
+        cwd = './twd',
         stdout = subprocess.PIPE,
     )
     stdout, stderr = proc.communicate()

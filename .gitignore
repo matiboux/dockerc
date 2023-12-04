@@ -33,7 +33,7 @@ env/
 !.env.*.local
 
 # Working directory for tests
-cwd/
+twd/
 
 # -- Specific to gitignore:
 
