@@ -1,6 +1,6 @@
 import subprocess
 
-from test.src.format_dockerc_stdout import format_dockerc_stdout
+from test.src.reset_dir import reset_dir
 
 VERSION_STDOUT = (
     b'DockerC (v1.8.2) - https://github.com/matiboux/dockerc\n'
@@ -8,6 +8,7 @@ VERSION_STDOUT = (
 )
 
 def test_version():
+    reset_dir('./twd')
     proc = subprocess.Popen(
         ['../dockerc', '--version'],
         cwd = './twd',
@@ -19,6 +20,7 @@ def test_version():
     assert proc.returncode == 0
 
 def test_version_shorthand():
+    reset_dir('./twd')
     proc = subprocess.Popen(
         ['../dockerc', '-v'],
         cwd = './twd',

@@ -1,6 +1,6 @@
 import subprocess
 
-from test.src.format_dockerc_stdout import format_dockerc_stdout
+from test.src.reset_dir import reset_dir
 
 HELP_STDOUT = (
     b'Usage: ../../dockerc [options] [context] [...args]\n'
@@ -19,6 +19,7 @@ HELP_STDOUT = (
 )
 
 def test_help():
+    reset_dir('./twd')
     proc = subprocess.Popen(
         ['../dockerc', '--help'],
         cwd = './twd',
@@ -30,6 +31,7 @@ def test_help():
     assert proc.returncode == 0
 
 def test_help_shorthand():
+    reset_dir('./twd')
     proc = subprocess.Popen(
         ['../dockerc', '-h'],
         cwd = './twd',
@@ -41,6 +43,7 @@ def test_help_shorthand():
     assert proc.returncode == 0
 
 def test_docker_presets_help():
+    reset_dir('./twd')
     proc = subprocess.Popen(
         ['../dockerc', '@'],
         cwd = './twd',
@@ -66,6 +69,7 @@ def test_docker_presets_help():
     assert proc.returncode == 0
 
 def test_args_presets_help():
+    reset_dir('./twd')
     proc = subprocess.Popen(
         ['../dockerc', '-', '@'],
         cwd = './twd',
