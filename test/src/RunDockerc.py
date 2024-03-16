@@ -1,3 +1,5 @@
+import subprocess
+
 class RunDockerc():
     def __init__(
         self,
@@ -21,7 +23,7 @@ class RunDockerc():
             cwd = self.cwd,
             stdout = subprocess.PIPE,
         )
-        self.proc_stdout, self.proc_stderr = proc.communicate()
+        self.proc_stdout, self.proc_stderr = self.proc.communicate()
 
     def assert_context(
         self,

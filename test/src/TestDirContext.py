@@ -3,7 +3,7 @@ import shutil
 import random
 import string
 
-from . import RunDockerc
+from .RunDockerc import RunDockerc
 
 class TestDirContext(object):
     # Tell pytest to ignore this class
