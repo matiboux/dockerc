@@ -3,7 +3,7 @@ import shutil
 import random
 import string
 
-from . import assert_context
+from . import RunDockerc
 
 class TestDirContext(object):
     # Tell pytest to ignore this class
@@ -24,40 +24,13 @@ class TestDirContext(object):
     def __exit__(self, *args):
         pass
 
-    def assert_context(
+    def run_dockerc(
         self,
-        context: str | None,
-        stdout: bytes | None = None,
-        stderr: bytes | None = None,
-        returncode: int = 0,
-    ) -> None:
-        return assert_context.assert_context(
-            context,
-            stdout = stdout,
-            stderr = stderr,
-            returncode = returncode,
-            dockerc_path = self.dockerc_path,
-            cwd = self.test_cwd,
-        )
-
-    def assert_context_not_found(
-        self,
-        context: str | None,
-    ) -> None:
-        return assert_context.assert_context_not_found(
-            context,
-            dockerc_path = self.dockerc_path,
-            cwd = self.test_cwd,
-        )
-
-    def assert_context_found(
-        self,
-        context: str | None,
-        stdout: bytes,
-    ) -> None:
-        return assert_context.assert_context_found(
-            context,
-            stdout,
-            dockerc_path = self.dockerc_path,
-            cwd = self.test_cwd,
+        *args,
+        cwd: str = None,
+    ) -> RunDockerc:
+        return RunDockerc(
+            self.dockerc_path,
+            cwd or self.test_cwd,
+            *args,
         )
