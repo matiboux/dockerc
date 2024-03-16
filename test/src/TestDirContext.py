@@ -3,7 +3,7 @@ import shutil
 import random
 import string
 
-import assert_context
+from . import assert_context
 
 class TestDirContext(object):
     # Tell pytest to ignore this class
