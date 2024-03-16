@@ -13,25 +13,22 @@ class TestWorkingDir(object):
         self.dir_path = os.path.join(TEST_DIR_PREFIX, test_dir_name)
 
     def __enter__(self):
-        os.makedirs(path, exist_ok = True)
+        os.makedirs(self.dir_path, exist_ok = True)
         return self
 
     def __exit__(self, *args):
         shutil.rmtree(self.dir_path, ignore_errors = True)
 
     def add_file(self, file_name: str, content: str = '') -> None:
+        if not file_name:
+            return
         full_path = os.path.join(self.dir_path, file_name)
         os.makedirs(os.path.dirname(full_path), exist_ok = True)
         with open(full_path, 'w') as f:
             f.write(content)
 
-    def add_empty_files(self, *file_names: str | list[str]) -> None:
+    def add_empty_files(self, *file_names: str) -> None:
         if len(file_names) < 1:
             return
-        if isinstance(file_names[0], list):
-            for sub_file_names in file_names:
-                for sub_file_name in sub_file_names:
-                    self.add_file(sub_file_name)
-        else:
-            for file_name in file_names:
-                self.add_file(file_name)
+        for file_name in file_names:
+            self.add_file(file_name)
