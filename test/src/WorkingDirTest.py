@@ -5,7 +5,7 @@ import string
 
 TEST_DIR_PREFIX = os.path.abspath('./twd')
 
-class TestWorkingDir(object):
+class WorkingDirTest(object):
     def __init__(self, test_name: str):
         # Generate a random suffix to avoid conflicts
         random_suffix = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(8))
