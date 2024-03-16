@@ -5,7 +5,7 @@ from test.src.format_dockerc_stdout import format_dockerc_stdout
 def assert_context(
     context: str | None,
     dockerc_path: str = '../dockerc',
-    cwd: str = './cwd',
+    cwd: str = './twd',
     stdout: bytes | None = None,
     stderr: bytes | None = None,
     returncode: int = 0,
@@ -26,9 +26,13 @@ def assert_context(
 
 def assert_context_not_found(
     context: str | None,
+    dockerc_path: str = None,
+    cwd: str = None,
 ) -> None:
     assert_context(
         context,
+        **({ 'dockerc_path': dockerc_path } if dockerc_path else {}),
+        **({ 'cwd': cwd } if cwd else {}),
         stdout = (
             (
                 b'Error: Unknown context \'' \
@@ -46,8 +50,12 @@ def assert_context_not_found(
 def assert_context_found(
     context: str | None,
     stdout: bytes,
+    dockerc_path: str = None,
+    cwd: str = None,
 ) -> None:
     assert_context(
         context,
+        **({ 'dockerc_path': dockerc_path } if dockerc_path else {}),
+        **({ 'cwd': cwd } if cwd else {}),
         stdout = format_dockerc_stdout(stdout),
     )
