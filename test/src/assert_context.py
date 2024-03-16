@@ -4,11 +4,11 @@ from test.src.format_dockerc_stdout import format_dockerc_stdout
 
 def assert_context(
     context: str | None,
-    dockerc_path: str = '../dockerc',
-    cwd: str = './twd',
     stdout: bytes | None = None,
     stderr: bytes | None = None,
     returncode: int = 0,
+    dockerc_path: str = '../dockerc',
+    cwd: str = './twd',
 ) -> None:
     proc = subprocess.Popen(
         (
@@ -31,8 +31,6 @@ def assert_context_not_found(
 ) -> None:
     assert_context(
         context,
-        **({ 'dockerc_path': dockerc_path } if dockerc_path else {}),
-        **({ 'cwd': cwd } if cwd else {}),
         stdout = (
             (
                 b'Error: Unknown context \'' \
@@ -45,6 +43,8 @@ def assert_context_not_found(
             )
         ),
         returncode = 1,
+        **({ 'dockerc_path': dockerc_path } if dockerc_path else {}),
+        **({ 'cwd': cwd } if cwd else {}),
     )
 
 def assert_context_found(
@@ -55,7 +55,7 @@ def assert_context_found(
 ) -> None:
     assert_context(
         context,
+        stdout = format_dockerc_stdout(stdout),
         **({ 'dockerc_path': dockerc_path } if dockerc_path else {}),
         **({ 'cwd': cwd } if cwd else {}),
-        stdout = format_dockerc_stdout(stdout),
     )
