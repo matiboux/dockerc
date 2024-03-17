@@ -14,11 +14,11 @@ class TestDirContext(object):
         file: str = __file__,
         dockerc_path: str = None,
     ):
-        self.test_cwd = os.path.join(os.path.dirname(file), 'cwd')
-        self.dockerc_path = dockerc_path or os.path.join(os.path.dirname(file), '..', '..', 'dockerc')
+        self.cwd = os.path.join(os.path.dirname(file), 'cwd')
+        self.dockerc_path = dockerc_path or os.path.join(os.path.dirname(__file__), '..', '..', 'dockerc')
 
     def __enter__(self):
-        os.makedirs(self.test_cwd, exist_ok = True)
+        os.makedirs(self.cwd, exist_ok = True)
         return self
 
     def __exit__(self, *args):
@@ -31,6 +31,6 @@ class TestDirContext(object):
     ) -> RunDockerc:
         return RunDockerc(
             self.dockerc_path,
-            cwd or self.test_cwd,
+            cwd or self.cwd,
             *args,
         )
