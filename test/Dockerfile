@@ -32,4 +32,4 @@ ENV APP_ENV=prod
 # Mount source code as volume
 VOLUME /app
 
-CMD [ "pytest" ]
+CMD [ "pytest", "-vv" ]
