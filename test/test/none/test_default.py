@@ -1,7 +1,8 @@
-from . import dir_files
-from test.src.reset_dir import reset_dir
-from test.src.assert_context import assert_context_not_found
+from test.src.TestDirContext import TestDirContext
 
-def test_default_not_found(dir_files = dir_files):
-    reset_dir('./twd', dir_files)
-    assert_context_not_found(None)
+def test_default_not_found():
+    with TestDirContext() as ctx:
+        dockerc = ctx.run_dockerc(
+            None,
+        )
+        dockerc.assert_context_not_found()
