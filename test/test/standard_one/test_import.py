@@ -1,9 +1,8 @@
-from . import dir_files
-from test.test.none.test_what import test_what as func_test_what
-from test.test.none.test_distinct import test_distinct as func_test_distinct
+from test.test.empty.test_default import test_what_not_found as func_test_what_not_found
+from test.test.empty.test_base import test_base_not_found as func_test_base_not_found
 
-def test_what(dir_files = dir_files):
-	func_test_what(dir_files)
+def test_what_not_found(file = __file__):
+	func_test_what_not_found(file)
 
-def test_distinct(dir_files = dir_files):
-	func_test_distinct(dir_files)
+def test_base_not_found(file = __file__):
+	func_test_base_not_found(file)
