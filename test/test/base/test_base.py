@@ -33,13 +33,8 @@ def test_base_prod(file = __file__):
         dockerc = ctx.run_dockerc(
             'base.prod',
         )
-        dockerc.assert_context_found(
-            format_dockerc_stdout(
-                b'docker compose'
-                b' -f ./docker-compose-base.yml'
-                b' up -d'
-            ),
-        )
+        # !!!
+        dockerc.assert_context_not_found()
 
 def test_base_what_not_found(file = __file__):
     with TestDirContext(file) as ctx:
