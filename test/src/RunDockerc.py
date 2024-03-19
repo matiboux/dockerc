@@ -31,9 +31,13 @@ class RunDockerc():
         stderr: bytes | None = None,
         returncode: int = 0,
     ):
-        assert self.proc.returncode == returncode
+        if not self.proc_stdout == stdout:
+            print('stdout')
+            print(self.proc_stdout, flush = True)
+            print(stdout, flush = True)
         assert self.proc_stdout == stdout
         assert self.proc_stderr == stderr
+        assert self.proc.returncode == returncode
 
     def assert_context_found(
         self,
@@ -41,6 +45,17 @@ class RunDockerc():
     ):
         return self.assert_context(
             stdout = stdout,
+        )
+
+    def assert_context_error(
+        self,
+        stdout: bytes | None = None,
+        stderr: bytes | None = None,
+    ):
+        return self.assert_context(
+            **({'stdout': stdout} if stdout is not None else {}),
+            **({'stderr': stderr} if stderr is not None else {}),
+            returncode = 1,
         )
 
     def assert_context_not_found(
