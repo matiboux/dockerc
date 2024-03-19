@@ -4,8 +4,8 @@ from test.src.assert_context import assert_context_found
 from test.src.format_dockerc_stdout import format_dockerc_stdout
 from test.src.TestDirContext import TestDirContext
 
-def test_default_env_local():
-    with TestDirContext(__file__) as ctx:
+def test_default_env_local(file = __file__):
+    with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc(
             None,
         )
