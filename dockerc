@@ -511,8 +511,14 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"sh")
 			ARGS="run --rm -it --entrypoint /bin/sh$ARGS"
 			;;
+		"shb")
+			ARGS="run --rm --build -it --entrypoint /bin/sh$ARGS"
+			;;
 		"bash")
 			ARGS="run --rm -it --entrypoint /bin/bash$ARGS"
+			;;
+		"bashb")
+			ARGS="run --rm --build -it --entrypoint /bin/bash$ARGS"
 			;;
 
 		"l")
