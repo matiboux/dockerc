@@ -1,0 +1,18 @@
+version: '3.4'
+
+# Services definition for tests
+
+services:
+
+  test:
+    # Build
+    image: ${IMAGES_PREFIX:-app}-test:${DOCKER_TAG:-latest}
+    build:
+      context: .
+      dockerfile: ./test/Dockerfile
+      target: app_prod
+    # Deploy
+    # environment:
+    #   LLM_MODEL: ${LLM_MODEL:-}
+    volumes:
+      - .:/app

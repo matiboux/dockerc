@@ -32,8 +32,18 @@ Thumbs.db
 
 # -- Application rules:
 
-# Test folder
-/test/
+# Python
+__pycache__/
+.ipynb_checkpoints/
+venv/
+env/
+
+# Environment files for tests
+!.env.local
+!.env.*.local
+
+# Working directory for tests
+twd/
 
 # -- Specific to gitignore:
 
