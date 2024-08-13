@@ -34,6 +34,7 @@ ENV NODE_ENV=development
 FROM app_dev_base AS app_test
 
 ENV APP_ENV=test
+ENV PYTHONPATH=/app
 
 # Install jq
 RUN --mount=type=cache,target=/var/cache/apt \
