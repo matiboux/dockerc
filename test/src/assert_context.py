@@ -24,29 +24,6 @@ def assert_context(
     assert proc_stderr == stderr
     assert proc.returncode == returncode
 
-def assert_context_not_found(
-    context: str | None,
-    dockerc_path: str = None,
-    cwd: str = None,
-) -> None:
-    assert_context(
-        context,
-        stdout = (
-            (
-                b'Error: Unknown context \'' \
-                + context.encode('utf-8') \
-                + b'\'\n'
-            )
-            if context is not None
-            else (
-                b'Error: Default context not found\n'
-            )
-        ),
-        returncode = 1,
-        **({ 'dockerc_path': dockerc_path } if dockerc_path else {}),
-        **({ 'cwd': cwd } if cwd else {}),
-    )
-
 def assert_context_found(
     context: str | None,
     stdout: bytes,
