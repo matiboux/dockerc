@@ -1,6 +1,7 @@
 import subprocess
 
 from test.src.reset_dir import reset_dir
+from test.src.TestDirContext import TestDirContext
 
 def get_help_stdout(dockerc_path: str):
     return (
@@ -37,31 +38,28 @@ def test_help_shorthand(file = __file__):
             get_help_stdout(dockerc.dockerc_path),
         )
 
-def test_docker_presets_help():
-    reset_dir('./twd')
-    proc = subprocess.Popen(
-        ['../dockerc', '@'],
-        cwd = './twd',
-        stdout = subprocess.PIPE,
-    )
-    stdout, stderr = proc.communicate()
-    assert stdout == (
-        b'Usage: ../dockerc [options] [@preset] [...args]\n'
-        b'  args: Arguments passed to docker\n'
-        b'  @preset:\n'
-        b'    @rfc   Remove unused containers\n'
-        b'    @rfca  Remove all unused containers\n'
-        b'    @rfi   Remove unused images\n'
-        b'    @rfia  Remove all unused images\n'
-        b'    @rf    Remove unused containers, networks and images\n'
-        b'    @rfa   Remove all unused containers, networks and images\n'
-        b'    @rfav  Remove all unused containers, networks, images and volumes\n'
-        b'  options:\n'
-        b'    -n  Dry run, print docker command without running it\n'
-        b'    -q  Quiet, do not print docker command\n'
-    )
-    assert stderr == None
-    assert proc.returncode == 0
+def test_docker_presets_help(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '@',
+        )
+        dockerc.assert_context_found(
+            (
+                b'Usage: ' + dockerc.dockerc_path.encode() + b' [options] [@preset] [...args]\n'
+                b'  args: Arguments passed to docker\n'
+                b'  @preset:\n'
+                b'    @rfc   Remove unused containers\n'
+                b'    @rfca  Remove all unused containers\n'
+                b'    @rfi   Remove unused images\n'
+                b'    @rfia  Remove all unused images\n'
+                b'    @rf    Remove unused containers, networks and images\n'
+                b'    @rfa   Remove all unused containers, networks and images\n'
+                b'    @rfav  Remove all unused containers, networks, images and volumes\n'
+                b'  options:\n'
+                b'    -n  Dry run, print docker command without running it\n'
+                b'    -q  Quiet, do not print docker command\n'
+            ),
+        )
 
 def test_args_presets_help():
     reset_dir('./twd', [
