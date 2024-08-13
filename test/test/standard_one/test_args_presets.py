@@ -29,7 +29,7 @@ def test_default_ub(file = __file__):
             ),
         )
 
-def test_default_ubf(file = __file__):
+def test_default_uf(file = __file__):
     with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc(
             '-',
