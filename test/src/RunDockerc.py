@@ -31,10 +31,6 @@ class RunDockerc():
         stderr: bytes | None = None,
         returncode: int = 0,
     ):
-        if not self.proc_stdout == stdout:
-            print('stdout')
-            print(self.proc_stdout, flush = True)
-            print(stdout, flush = True)
         assert self.proc_stdout == stdout
         assert self.proc_stderr == stderr
         assert self.proc.returncode == returncode
