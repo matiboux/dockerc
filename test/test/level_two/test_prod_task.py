@@ -1,16 +1,17 @@
-from . import dir_files
-from test.src.reset_dir import reset_dir
-from test.src.assert_context import assert_context_found
+from test.src.format_dockerc_stdout import format_dockerc_stdout
+from test.src.TestDirContext import TestDirContext
 
-def test_prod_task(dir_files = dir_files):
-    reset_dir('./twd', dir_files)
-    assert_context_found(
-        'prod.task',
-        (
-            b'docker compose' \
-            b' -f ./docker-compose.yml' \
-            b' -f ./docker-compose.prod.yml' \
-            b' -f ./docker-compose.prod.task.yml' \
-            b' up -d'
-        ),
-    )
+def test_prod_task(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            'prod.task',
+        )
+        dockerc.assert_context_found(
+            format_dockerc_stdout(
+                b'docker compose' \
+                b' -f ./docker-compose.yml' \
+                b' -f ./docker-compose.prod.yml' \
+                b' -f ./docker-compose.prod.task.yml' \
+                b' up -d'
+            ),
+        )
