@@ -45,8 +45,11 @@ cov.json
 # Application tests
 !/test/**/.env*.local
 
-# -- Specific to gitignore:
+# -- Specific to dockerignore:
 
-# Build configuration files (allow)
-!Dockerfile
-!Makefile
+# Docker configuration files
+Dockerfile
+docker-compose*.yml
+
+# Dotfiles
+.*
