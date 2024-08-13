@@ -39,8 +39,7 @@ venv/
 env/
 
 # Environment files for tests
-!.env.local
-!.env.*.local
+!/test/**/.env*.local
 
 # Working directory for tests
 twd/
