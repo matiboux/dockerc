@@ -415,6 +415,12 @@ EOF
 
 fi
 
+# Check for shell arguments preset shortcut
+if [ "$(echo "$ARGS" | cut -c 1-2)" = "$ " ]; then
+	# Replace arguments preset shortcut
+	ARGS="@$ $(echo "$ARGS" | cut -c 3-)"
+fi
+
 # Check for arguments
 if [ -z "$ARGS" ]; then
 	# If arguments are empty, set to the default arguments
