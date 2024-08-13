@@ -508,6 +508,10 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="run --rm --build -it$ARGS"
 			;;
 
+		"sh")
+			ARGS="run --rm -it --entrypoint /bin/sh$ARGS"
+			;;
+
 		"l")
 			ARGS="logs -n 100$ARGS"
 			;;
