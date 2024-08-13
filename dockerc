@@ -498,8 +498,14 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"r")
 			ARGS="run --rm$ARGS"
 			;;
+		"rb")
+			ARGS="run --rm --build$ARGS"
+			;;
 		"ri")
 			ARGS="run --rm -it$ARGS"
+			;;
+		"rbi")
+			ARGS="run --rm --build -it$ARGS"
 			;;
 
 		"l")
@@ -571,7 +577,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		echo "    @dra   down --remove-orphans --rmi all"
 		echo "    @drav  down --remove-orphans --rmi all -v"
 		echo "    @r     run --rm"
+		echo "    @rb    run --rm --build"
 		echo "    @ri    run --rm -it"
+		echo "    @rbi   run --rm --build -it"
 		echo "    @l     logs"
 		echo "    @rf    rm -f"
 		echo "    @rfv   rm -f -v"
