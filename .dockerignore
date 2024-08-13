@@ -38,11 +38,12 @@ __pycache__/
 venv/
 env/
 
-# Environment files for tests
-!/test/**/.env*.local
+# Pytest
+.coverage
+cov.json
 
-# Working directory for tests
-twd/
+# Application tests
+!/test/**/.env*.local
 
 # -- Specific to dockerignore:
 
