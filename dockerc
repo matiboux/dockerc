@@ -153,7 +153,7 @@ if [ $# -gt 0 ]; then
 	CONTEXT="$1"
 	shift
 else
-	CONTEXT=""
+	CONTEXT=''
 fi
 
 # Other parameters are arguments passed to docker compose
@@ -163,7 +163,7 @@ ARGS="$@"
 if [ "$(echo "$CONTEXT" | cut -c1)" = "@" ]; then
 
 	PRINT_DOCKER_PRESETS_HELP=false
-	DOCKER_ARGS=""
+	DOCKER_ARGS=''
 
 	# Remove first char
 	CONTEXT="${CONTEXT#?}"
@@ -223,9 +223,9 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = "@" ]; then
 
 	if [ "$QUIET" = false ]; then
 		# Print docker command
-		echo ""
+		echo ''
 		echo "> docker $DOCKER_ARGS $ARGS"
-		echo ""
+		echo ''
 	fi
 
 	if [ "$DRY_RUN" = false ]; then
@@ -238,13 +238,13 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = "@" ]; then
 fi
 
 
-COMPOSE_FILE_ARGS=""
+COMPOSE_FILE_ARGS=''
 NO_COMPOSE_FILE_ARGS=false
-ENV_FILE_ARGS=""
+ENV_FILE_ARGS=''
 
 # If context is -, use default docker compose files (override if it exists)
 if [ "$CONTEXT" = "-" ] || [ "$CONTEXT" = "." ]; then
-	CONTEXT=""
+	CONTEXT=''
 
 # If context is --, ignore context and use docker compose without file arguments
 elif [ "$CONTEXT" = "--" ]; then
@@ -257,14 +257,14 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 	# Check in current directory, then in docker directory
 	while read -r dir; do
 
-		ENV_FILE_ARGS=""
-		PREFIX=""
-		COMPOSE_FILE_ARGS_1_DEFAULT=""
-		COMPOSE_FILE_ARGS_1=""
-		PREFIX_1=""
-		COMPOSE_FILE_ARGS_2=""
-		PREFIX_2=""
-		MISSING_PARTS=""
+		ENV_FILE_ARGS=''
+		PREFIX=''
+		COMPOSE_FILE_ARGS_1_DEFAULT=''
+		COMPOSE_FILE_ARGS_1=''
+		PREFIX_1=''
+		COMPOSE_FILE_ARGS_2=''
+		PREFIX_2=''
+		MISSING_PARTS=''
 
 		if [ -f "$dir/.env" ]; then
 			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env"
@@ -310,11 +310,11 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 					if [ -f "$dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml" ]; then
 						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml"
 						PREFIX_1="$PREFIX_1.$MISSING_PARTS$part"
-						MISSING_PARTS=""
+						MISSING_PARTS=''
 
 					else
 						# Part was not found, invalidate PREFIX_1
-						PREFIX_1=""
+						PREFIX_1=''
 					fi
 
 				fi
@@ -329,7 +329,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 							if [ -f "$dir/docker-compose-$MISSING_PARTS$part.yml" ]; then
 								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose-$MISSING_PARTS$part.yml"
 								PREFIX_2="-$MISSING_PARTS$part"
-								MISSING_PARTS=""
+								MISSING_PARTS=''
 							fi
 
 						fi
@@ -345,7 +345,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 
 							else
 								# Part was not found, invalidate PREFIX_2
-								PREFIX_2=""
+								PREFIX_2=''
 							fi
 
 						fi
@@ -436,7 +436,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 	# Clear first arg from args
 	if [ "@$ARGS_PRESET" = "$ARGS" ]; then
 		# No other args
-		ARGS=""
+		ARGS=''
 	else
 		# Other args
 		ARGS=" ${ARGS#* }"
@@ -726,9 +726,9 @@ fi
 
 if [ "$QUIET" = false ]; then
 	# Print docker compose command
-	echo ""
+	echo ''
 	echo "> docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS $ARGS"
-	echo ""
+	echo ''
 fi
 
 if [ "$DRY_RUN" = false ]; then
