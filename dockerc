@@ -504,14 +504,26 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"r")
 			ARGS="run --rm$ARGS"
 			;;
+		"rk")
+			ARGS="run$ARGS"
+			;;
 		"rb")
 			ARGS="run --rm --build$ARGS"
+			;;
+		"rbk")
+			ARGS="run --build$ARGS"
 			;;
 		"ri")
 			ARGS="run --rm -it$ARGS"
 			;;
+		"rki")
+			ARGS="run -it$ARGS"
+			;;
 		"rbi")
 			ARGS="run --rm --build -it$ARGS"
+			;;
+		"rbki")
+			ARGS="run --build -it$ARGS"
 			;;
 
 		"sh")
