@@ -6,7 +6,7 @@
 # MIT License
 # Copyright (c) 2023 Matiboux
 
-VERSION="1.8.2"
+VERSION='1.8.2'
 
 # Default options
 PRINT_HELP=false
@@ -86,7 +86,7 @@ get_latest_version() {
 	# Syntax: '"tag_name": "v1.0.0",'
 	LATEST_VERSION_JSON=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
 
-	if [ "$(uname -s)" = "Darwin" ]; then
+	if [ "$(uname -s)" = 'Darwin' ]; then
 		# MacOS
 		LATEST_VERSION="${LATEST_VERSION_JSON:14:$((${#LATEST_VERSION_JSON}-14-2))}"
 	else
@@ -127,8 +127,8 @@ if [ "$UPDATE" = true ]; then
 	fi
 
 	if [ $# -gt 0 ]; then
-		if [ "$1" = "HEAD" ] || [ "$1" = "head" ] || [ "$1" = "." ] || [ "$1" = "-" ]; then
-			REQUIRED_VERSION="HEAD"
+		if [ "$1" = 'HEAD' ] || [ "$1" = 'head' ] || [ "$1" = '.' ] || [ "$1" = '-' ]; then
+			REQUIRED_VERSION='HEAD'
 		else
 			REQUIRED_VERSION="$1"
 		fi
@@ -160,7 +160,7 @@ fi
 ARGS="$@"
 
 # Check for docker preset
-if [ "$(echo "$CONTEXT" | cut -c1)" = "@" ]; then
+if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 	PRINT_DOCKER_PRESETS_HELP=false
 	DOCKER_ARGS=''
@@ -243,11 +243,11 @@ NO_COMPOSE_FILE_ARGS=false
 ENV_FILE_ARGS=''
 
 # If context is -, use default docker compose files (override if it exists)
-if [ "$CONTEXT" = "-" ] || [ "$CONTEXT" = "." ]; then
+if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
 	CONTEXT=''
 
 # If context is --, ignore context and use docker compose without file arguments
-elif [ "$CONTEXT" = "--" ]; then
+elif [ "$CONTEXT" = '--' ]; then
 	NO_COMPOSE_FILE_ARGS=true
 
 fi
@@ -378,11 +378,11 @@ EOF
 
 		elif [ ! -z "$COMPOSE_FILE_ARGS_1_DEFAULT" ]; then
 
-			if [ "$CONTEXT" = "prod" ]; then
+			if [ "$CONTEXT" = 'prod' ]; then
 				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT"
 				break
 
-			elif [ -z "$CONTEXT" ] || [ "$CONTEXT" = "dev" ]; then
+			elif [ -z "$CONTEXT" ] || [ "$CONTEXT" = 'dev' ]; then
 
 				if [ -f "$dir/docker-compose.override.yml" ]; then
 					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $dir/docker-compose.override.yml"
@@ -416,7 +416,7 @@ EOF
 fi
 
 # Check for shell arguments preset shortcut
-if [ "$(echo "$ARGS" | cut -c 1-2)" = "$ " ]; then
+if [ "$(echo "$ARGS" | cut -c 1-2)" = '$ ' ]; then
 	# Replace arguments preset shortcut
 	ARGS="@$ $(echo "$ARGS" | cut -c 3-)"
 fi
@@ -424,10 +424,10 @@ fi
 # Check for arguments
 if [ -z "$ARGS" ]; then
 	# If arguments are empty, set to the default arguments
-	ARGS="up -d"
+	ARGS='up -d'
 
 # Check for arguments preset
-elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
+elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 
 	# Get first arg as preset name
 	ARGS_PRESET="${ARGS%% *}"
