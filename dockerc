@@ -453,29 +453,56 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"u")
 			ARGS="up -d$ARGS"
 			;;
+		"ua")
+			ARGS="up$ARGS"
+			;;
 		"ub")
 			ARGS="up --build -d$ARGS"
+			;;
+		"uba")
+			ARGS="up --build$ARGS"
 			;;
 		"ubf")
 			ARGS="up --build -d --force-recreate$ARGS"
 			;;
+		"ubfa")
+			ARGS="up --build --force-recreate$ARGS"
+			;;
 		"ubfp")
 			ARGS="up --build -d --force-recreate --pull always$ARGS"
+			;;
+		"ubfap")
+			ARGS="up --build --force-recreate --pull always$ARGS"
 			;;
 		"ubr")
 			ARGS="up --build -d --remove-orphans$ARGS"
 			;;
+		"ubar")
+			ARGS="up --build --remove-orphans$ARGS"
+			;;
 		"ubfr")
 			ARGS="up --build -d --force-recreate --remove-orphans$ARGS"
+			;;
+		"ubfar")
+			ARGS="up --build --force-recreate --remove-orphans$ARGS"
 			;;
 		"uf")
 			ARGS="up -d --force-recreate$ARGS"
 			;;
+		"ufa")
+			ARGS="up --force-recreate$ARGS"
+			;;
 		"ur")
 			ARGS="up -d --remove-orphans$ARGS"
 			;;
+		"uar")
+			ARGS="up --remove-orphans$ARGS"
+			;;
 		"ufr")
 			ARGS="up -d --force-recreate --remove-orphans$ARGS"
+			;;
+		"ufar")
+			ARGS="up --force-recreate --remove-orphans$ARGS"
 			;;
 
 		"d")
@@ -572,6 +599,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="push$ARGS"
 			;;
 
+		"rs")
+			ARGS="rm --stop$ARGS"
+			;;
 		"rf")
 			ARGS="rm -f$ARGS"
 			;;
@@ -592,14 +622,23 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		echo "  args: Arguments passed to docker compose"
 		echo "  @preset:"
 		echo "    @u     up -d"
+		echo "    @ua    up"
 		echo "    @ub    up --build -d"
+		echo "    @uba   up --build"
 		echo "    @ubf   up --build -d --force-recreate"
+		echo "    @ubfa  up --build --force-recreate"
 		echo "    @ubfp  up --build -d --force-recreate --pull always"
+		echo "    @ubfap up --build --force-recreate --pull always"
 		echo "    @ubr   up --build -d --remove-orphans"
+		echo "    @ubar  up --build --remove-orphans"
 		echo "    @ubfr  up --build -d --force-recreate --remove-orphans"
+		echo "    @ubfar up --build --force-recreate --remove-orphans"
 		echo "    @uf    up -d --force-recreate"
+		echo "    @ufa   up --force-recreate"
 		echo "    @ur    up -d --remove-orphans"
+		echo "    @uar   up --remove-orphans"
 		echo "    @ufr   up -d --force-recreate --remove-orphans"
+		echo "    @ufar  up --force-recreate --remove-orphans"
 		echo "    @d     down"
 		echo "    @da     down --remove-orphans"
 		echo "    @dr    down --remove-orphans --rmi local"
@@ -611,6 +650,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		echo "    @ri    run --rm -it"
 		echo "    @rbi   run --rm --build -it"
 		echo "    @l     logs"
+		echo "    @rs    rm --stop"
 		echo "    @rf    rm -f"
 		echo "    @rfv   rm -f -v"
 		print_context_help
