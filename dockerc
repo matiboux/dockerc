@@ -547,10 +547,10 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"sh")
 			ARGS="run --rm -it --entrypoint /bin/sh$ARGS"
 			;;
-		"$")
-			ARGS="run --rm -it --entrypoint /bin/sh$ARGS"
-			;;
 		"shw")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/sh$ARGS"
+			;;
+		"$")
 			ARGS="run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/sh$ARGS"
 			;;
 		"shb")
