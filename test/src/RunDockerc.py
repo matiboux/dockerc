@@ -37,7 +37,7 @@ class RunDockerc():
 
     def assert_context_found(
         self,
-        stdout: bytes,
+        stdout: bytes = b'',
     ):
         return self.assert_context(
             stdout = stdout,
