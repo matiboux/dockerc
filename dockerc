@@ -532,7 +532,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm$ARGS"
 			;;
 		"rki")
-			ARGS="run -it$ARGS"
+			ARGS="run -i$ARGS"
 			;;
 		"rbi")
 			ARGS="run --build -i --rm$ARGS"
@@ -541,7 +541,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="run -w /pwd -v $(pwd):/pwd --build -i --rm$ARGS"
 			;;
 		"rbki")
-			ARGS="run --build -it$ARGS"
+			ARGS="run --build -i$ARGS"
 			;;
 
 		"sh")
@@ -650,10 +650,10 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		echo "    @rbk   run --build"
 		echo "    @ri    run -i --rm"
 		echo "    @rwi   run -w /pwd -v $(pwd):/pwd -i --rm"
-		echo "    @rki   run -it"
+		echo "    @rki   run -i"
 		echo "    @rbi   run --build -i --rm"
 		echo "    @rbwi  run -w /pwd -v $(pwd):/pwd --build -i --rm"
-		echo "    @rbki  run --build -it"
+		echo "    @rbki  run --build -i"
 		echo "    @sh    run -i --rm --entrypoint /bin/sh"
 		echo "    @shw   run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh"
 		echo "    @$     run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh"
