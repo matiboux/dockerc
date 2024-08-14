@@ -537,30 +537,72 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"r")
 			ARGS="run --rm$ARGS"
 			;;
+		"rw")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm$ARGS"
+			;;
+		"rd")
+			ARGS="run -d$ARGS"
+			;;
+		"rk")
+			ARGS="run$ARGS"
+			;;
 		"rb")
-			ARGS="run --rm --build$ARGS"
+			ARGS="run --build --rm$ARGS"
+			;;
+		"rbw")
+			ARGS="run --build -w /pwd -v $(pwd):/pwd --rm$ARGS"
+			;;
+		"rbd")
+			ARGS="run --build -d$ARGS"
+			;;
+		"rbk")
+			ARGS="run --build$ARGS"
 			;;
 		"ri")
-			ARGS="run --rm -it$ARGS"
+			ARGS="run -i --rm$ARGS"
+			;;
+		"rwi")
+			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm$ARGS"
+			;;
+		"rki")
+			ARGS="run -i$ARGS"
 			;;
 		"rbi")
-			ARGS="run --rm --build -it$ARGS"
+			ARGS="run --build -i --rm$ARGS"
+			;;
+		"rbwi")
+			ARGS="run --build -w /pwd -v $(pwd):/pwd -i --rm$ARGS"
+			;;
+		"rbki")
+			ARGS="run --build -i$ARGS"
 			;;
 
 		"sh")
-			ARGS="run --rm -it --entrypoint /bin/sh$ARGS"
+			ARGS="run -i --rm --entrypoint /bin/sh$ARGS"
+			;;
+		"shw")
+			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
 			;;
 		"$")
-			ARGS="run --rm -it --entrypoint /bin/sh$ARGS"
+			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
 			;;
 		"shb")
-			ARGS="run --rm --build -it --entrypoint /bin/sh$ARGS"
+			ARGS="run --build -i --rm --entrypoint /bin/sh$ARGS"
+			;;
+		"shbw")
+			ARGS="run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
 			;;
 		"bash")
-			ARGS="run --rm -it --entrypoint /bin/bash$ARGS"
+			ARGS="run -i --rm --entrypoint /bin/bash$ARGS"
+			;;
+		"bashw")
+			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash$ARGS"
 			;;
 		"bashb")
-			ARGS="run --rm --build -it --entrypoint /bin/bash$ARGS"
+			ARGS="run --build -i --rm --entrypoint /bin/bash$ARGS"
+			;;
+		"bashbw")
+			ARGS="run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash$ARGS"
 			;;
 
 		"l")
@@ -646,9 +688,29 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		echo "    @drav  down --remove-orphans --rmi all -v"
 		echo "    @drv   down --remove-orphans -v"
 		echo "    @r     run --rm"
-		echo "    @rb    run --rm --build"
-		echo "    @ri    run --rm -it"
-		echo "    @rbi   run --rm --build -it"
+		echo "    @rw    run -w /pwd -v \$(pwd):/pwd --rm"
+		echo "    @rd    run -d"
+		echo "    @rk    run"
+		echo "    @rb    run --build --rm"
+		echo "    @rbw   run --build -w /pwd -v \$(pwd):/pwd --rm"
+		echo "    @rbd   run --build -d"
+		echo "    @rbk   run --build"
+		echo "    @ri    run -i --rm"
+		echo "    @rwi   run -w /pwd -v \$(pwd):/pwd -i --rm"
+		echo "    @rki   run -i"
+		echo "    @rbi   run --build -i --rm"
+		echo "    @rbwi  run --build -w /pwd -v \$(pwd):/pwd -i --rm"
+		echo "    @rbki  run --build -i"
+		echo "    @sh    run -i --rm --entrypoint /bin/sh"
+		echo "    @shw   run -w /pwd -v \$(pwd):/pwd -i --rm --entrypoint /bin/sh"
+		echo "    @$     run -w /pwd -v \$(pwd):/pwd -i --rm --entrypoint /bin/sh"
+		echo "    $      run -w /pwd -v \$(pwd):/pwd -i --rm --entrypoint /bin/sh"
+		echo "    @shb   run --build -i --rm --entrypoint /bin/sh"
+		echo "    @shbw  run --build -w /pwd -v \$(pwd):/pwd -i --rm --entrypoint /bin/sh"
+		echo "    @bash  run -i --rm --entrypoint /bin/bash"
+		echo "    @bashw run -w /pwd -v \$(pwd):/pwd -i --rm --entrypoint /bin/bash"
+		echo "    @bashb run --build -i --rm --entrypoint /bin/bash"
+		echo "    @bashbw run --build -w /pwd -v \$(pwd):/pwd -i --rm --entrypoint /bin/bash"
 		echo "    @l     logs"
 		echo "    @rs    rm --stop"
 		echo "    @rf    rm -f"
