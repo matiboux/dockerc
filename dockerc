@@ -504,6 +504,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"r")
 			ARGS="run --rm$ARGS"
 			;;
+		"rw")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm$ARGS"
+			;;
 		"rd")
 			ARGS="run -d$ARGS"
 			;;
@@ -512,6 +515,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			;;
 		"rb")
 			ARGS="run --rm --build$ARGS"
+			;;
+		"rbw")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm --build$ARGS"
 			;;
 		"rbd")
 			ARGS="run --build -d$ARGS"
@@ -522,11 +528,17 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"ri")
 			ARGS="run --rm -it$ARGS"
 			;;
+		"rwi")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm -it$ARGS"
+			;;
 		"rki")
 			ARGS="run -it$ARGS"
 			;;
 		"rbi")
 			ARGS="run --rm --build -it$ARGS"
+			;;
+		"rbwi")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm --build -it$ARGS"
 			;;
 		"rbki")
 			ARGS="run --build -it$ARGS"
@@ -538,14 +550,26 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"$")
 			ARGS="run --rm -it --entrypoint /bin/sh$ARGS"
 			;;
+		"shw")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/sh$ARGS"
+			;;
 		"shb")
 			ARGS="run --rm --build -it --entrypoint /bin/sh$ARGS"
+			;;
+		"shbw")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm --build -it --entrypoint /bin/sh$ARGS"
 			;;
 		"bash")
 			ARGS="run --rm -it --entrypoint /bin/bash$ARGS"
 			;;
+		"bashw")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/bash$ARGS"
+			;;
 		"bashb")
 			ARGS="run --rm --build -it --entrypoint /bin/bash$ARGS"
+			;;
+		"bashbw")
+			ARGS="run -w /pwd -v $(pwd):/pwd --rm --build -it --entrypoint /bin/bash$ARGS"
 			;;
 
 		"l")
