@@ -490,6 +490,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"drav")
 			ARGS="down --remove-orphans --rmi all -v$ARGS"
 			;;
+		"drv")
+			ARGS="down --remove-orphans -v$ARGS"
+			;;
 
 		"b")
 			ARGS="build$ARGS"
