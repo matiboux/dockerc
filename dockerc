@@ -363,7 +363,7 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 				fi
 
 			done <<EOF
-$(echo "$CONTEXT" | tr "-" "\n" | tr "." "\n")
+$(echo "$CONTEXT" | tr '-' "\n" | tr '.' "\n")
 EOF
 
 		fi
