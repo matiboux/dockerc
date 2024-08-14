@@ -508,6 +508,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"d")
 			ARGS="down$ARGS"
 			;;
+		"da")
+			ARGS="down --remove-orphans$ARGS"
+			;;
 		"dr")
 			ARGS="down --remove-orphans --rmi local$ARGS"
 			;;
@@ -516,6 +519,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			;;
 		"drav")
 			ARGS="down --remove-orphans --rmi all -v$ARGS"
+			;;
+		"drv")
+			ARGS="down --remove-orphans -v$ARGS"
 			;;
 
 		"b")
@@ -633,10 +639,12 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		echo "    @uar   up --remove-orphans"
 		echo "    @ufr   up -d --force-recreate --remove-orphans"
 		echo "    @ufar  up --force-recreate --remove-orphans"
-		echo "    @d     down --remove-orphans"
+		echo "    @d     down"
+		echo "    @da     down --remove-orphans"
 		echo "    @dr    down --remove-orphans --rmi local"
 		echo "    @dra   down --remove-orphans --rmi all"
 		echo "    @drav  down --remove-orphans --rmi all -v"
+		echo "    @drv   down --remove-orphans -v"
 		echo "    @r     run --rm"
 		echo "    @rb    run --rm --build"
 		echo "    @ri    run --rm -it"
