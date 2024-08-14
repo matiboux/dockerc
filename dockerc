@@ -122,7 +122,7 @@ if [ "$UPDATE" = true ]; then
 	INSTALL_DIR=$(dirname "$0")
 
 	if [ ! -d "$INSTALL_DIR" ]; then
-		echo "Error: Install directory does not exist."
+		echo 'Error: Install directory does not exist.'
 		exit 1
 	fi
 
@@ -141,7 +141,7 @@ if [ "$UPDATE" = true ]; then
 		echo "Updating DockerC (v$REQUIRED_VERSION)..."
 		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$REQUIRED_VERSION\""
 	else
-		echo "Updating DockerC (dry run):"
+		echo 'Updating DockerC (dry run):'
 		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$REQUIRED_VERSION\""
 	fi
 
@@ -406,7 +406,7 @@ EOF
 	# If compose file arguments are empty, exit with error
 	if [ -z "$COMPOSE_FILE_ARGS" ]; then
 		if [ -z "$CONTEXT" ]; then
-			echo "Error: Default context not found"
+			echo 'Error: Default context not found'
 		else
 			echo "Error: Unknown context '$CONTEXT'"
 		fi
