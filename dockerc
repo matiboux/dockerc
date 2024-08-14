@@ -18,37 +18,37 @@ QUIET=false
 # Parse options
 while true; do
 	case "$1" in
-		-h)
+		'-h')
 			# Print help and exit
 			PRINT_HELP=true
 			shift
 			;;
-		--help)
+		'--help')
 			# Print help and exit
 			PRINT_HELP=true
 			shift
 			;;
-		-v)
+		'-v')
 			# Print version and exit
 			PRINT_VERSION=true
 			shift
 			;;
-		--version)
+		'--version')
 			# Print version and exit
 			PRINT_VERSION=true
 			shift
 			;;
-		--update)
+		'--update')
 			# Update DockerC and exit
 			UPDATE=true
 			shift
 			;;
-		-n)
+		'-n')
 			# Dry run, print docker compose command without running it
 			DRY_RUN=true
 			shift
 			;;
-		-q)
+		'-q')
 			# Quiet, do not print docker compose command
 			QUIET=true
 			shift
