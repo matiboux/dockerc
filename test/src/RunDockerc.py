@@ -6,7 +6,7 @@ class RunDockerc():
         dockerc_path: str,
         cwd: str,
         context: str | None = None,
-        args: str | None = None,
+        *args: list[str],
     ):
         self.dockerc_path = dockerc_path
         self.cwd = cwd
@@ -18,7 +18,7 @@ class RunDockerc():
                 self.dockerc_path,
                 '-n',
                 *([self.context] if self.context else []),
-                *([self.args] if self.args else []),
+                *self.args,
             ],
             cwd = self.cwd,
             stdout = subprocess.PIPE,
@@ -37,7 +37,7 @@ class RunDockerc():
 
     def assert_context_found(
         self,
-        stdout: bytes,
+        stdout: bytes = b'',
     ):
         return self.assert_context(
             stdout = stdout,
