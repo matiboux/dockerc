@@ -453,29 +453,56 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		"u")
 			ARGS="up -d$ARGS"
 			;;
+		"ua")
+			ARGS="up$ARGS"
+			;;
 		"ub")
 			ARGS="up --build -d$ARGS"
+			;;
+		"uba")
+			ARGS="up --build$ARGS"
 			;;
 		"ubf")
 			ARGS="up --build -d --force-recreate$ARGS"
 			;;
+		"ubfa")
+			ARGS="up --build --force-recreate$ARGS"
+			;;
 		"ubfp")
 			ARGS="up --build -d --force-recreate --pull always$ARGS"
+			;;
+		"ubfap")
+			ARGS="up --build --force-recreate --pull always$ARGS"
 			;;
 		"ubr")
 			ARGS="up --build -d --remove-orphans$ARGS"
 			;;
+		"ubar")
+			ARGS="up --build --remove-orphans$ARGS"
+			;;
 		"ubfr")
 			ARGS="up --build -d --force-recreate --remove-orphans$ARGS"
+			;;
+		"ubfar")
+			ARGS="up --build --force-recreate --remove-orphans$ARGS"
 			;;
 		"uf")
 			ARGS="up -d --force-recreate$ARGS"
 			;;
+		"ufa")
+			ARGS="up --force-recreate$ARGS"
+			;;
 		"ur")
 			ARGS="up -d --remove-orphans$ARGS"
 			;;
+		"uar")
+			ARGS="up --remove-orphans$ARGS"
+			;;
 		"ufr")
 			ARGS="up -d --force-recreate --remove-orphans$ARGS"
+			;;
+		"ufar")
+			ARGS="up --force-recreate --remove-orphans$ARGS"
 			;;
 
 		"d")
