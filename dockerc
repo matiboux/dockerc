@@ -526,50 +526,50 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="run --build$ARGS"
 			;;
 		"ri")
-			ARGS="run --rm -it$ARGS"
+			ARGS="run -i --rm$ARGS"
 			;;
 		"rwi")
-			ARGS="run -w /pwd -v $(pwd):/pwd --rm -it$ARGS"
+			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm$ARGS"
 			;;
 		"rki")
 			ARGS="run -it$ARGS"
 			;;
 		"rbi")
-			ARGS="run --build --rm -it$ARGS"
+			ARGS="run --build -i --rm$ARGS"
 			;;
 		"rbwi")
-			ARGS="run -w /pwd -v $(pwd):/pwd --build --rm -it$ARGS"
+			ARGS="run -w /pwd -v $(pwd):/pwd --build -i --rm$ARGS"
 			;;
 		"rbki")
 			ARGS="run --build -it$ARGS"
 			;;
 
 		"sh")
-			ARGS="run --rm -it --entrypoint /bin/sh$ARGS"
+			ARGS="run -i --rm --entrypoint /bin/sh$ARGS"
 			;;
 		"shw")
-			ARGS="run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/sh$ARGS"
+			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
 			;;
 		"$")
-			ARGS="run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/sh$ARGS"
+			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
 			;;
 		"shb")
-			ARGS="run --build --rm -it --entrypoint /bin/sh$ARGS"
+			ARGS="run --build -i --rm --entrypoint /bin/sh$ARGS"
 			;;
 		"shbw")
-			ARGS="run -w /pwd -v $(pwd):/pwd --build --rm -it --entrypoint /bin/sh$ARGS"
+			ARGS="run -w /pwd -v $(pwd):/pwd --build -i --rm --entrypoint /bin/sh$ARGS"
 			;;
 		"bash")
-			ARGS="run --rm -it --entrypoint /bin/bash$ARGS"
+			ARGS="run -i --rm --entrypoint /bin/bash$ARGS"
 			;;
 		"bashw")
-			ARGS="run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/bash$ARGS"
+			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash$ARGS"
 			;;
 		"bashb")
-			ARGS="run --build --rm -it --entrypoint /bin/bash$ARGS"
+			ARGS="run --build -i --rm --entrypoint /bin/bash$ARGS"
 			;;
 		"bashbw")
-			ARGS="run -w /pwd -v $(pwd):/pwd --build --rm -it --entrypoint /bin/bash$ARGS"
+			ARGS="run -w /pwd -v $(pwd):/pwd --build -i --rm --entrypoint /bin/bash$ARGS"
 			;;
 
 		"l")
@@ -648,22 +648,22 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		echo "    @rbw   run -w /pwd -v $(pwd):/pwd --build --rm"
 		echo "    @rbd   run --build -d"
 		echo "    @rbk   run --build"
-		echo "    @ri    run --rm -it"
-		echo "    @rwi   run -w /pwd -v $(pwd):/pwd --rm -it"
+		echo "    @ri    run -i --rm"
+		echo "    @rwi   run -w /pwd -v $(pwd):/pwd -i --rm"
 		echo "    @rki   run -it"
-		echo "    @rbi   run --build --rm -it"
-		echo "    @rbwi  run -w /pwd -v $(pwd):/pwd --build --rm -it"
+		echo "    @rbi   run --build -i --rm"
+		echo "    @rbwi  run -w /pwd -v $(pwd):/pwd --build -i --rm"
 		echo "    @rbki  run --build -it"
-		echo "    @sh    run --rm -it --entrypoint /bin/sh"
-		echo "    @shw   run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/sh"
-		echo "    @$     run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/sh"
-		echo "    $      run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/sh"
-		echo "    @shb   run --build --rm -it --entrypoint /bin/sh"
-		echo "    @shbw  run -w /pwd -v $(pwd):/pwd --build --rm -it --entrypoint /bin/sh"
-		echo "    @bash  run --rm -it --entrypoint /bin/bash"
-		echo "    @bashw run -w /pwd -v $(pwd):/pwd --rm -it --entrypoint /bin/bash"
-		echo "    @bashb run --build --rm -it --entrypoint /bin/bash"
-		echo "    @bashbw run -w /pwd -v $(pwd):/pwd --build --rm -it --entrypoint /bin/bash"
+		echo "    @sh    run -i --rm --entrypoint /bin/sh"
+		echo "    @shw   run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh"
+		echo "    @$     run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh"
+		echo "    $      run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh"
+		echo "    @shb   run --build -i --rm --entrypoint /bin/sh"
+		echo "    @shbw  run -w /pwd -v $(pwd):/pwd --build -i --rm --entrypoint /bin/sh"
+		echo "    @bash  run -i --rm --entrypoint /bin/bash"
+		echo "    @bashw run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash"
+		echo "    @bashb run --build -i --rm --entrypoint /bin/bash"
+		echo "    @bashbw run -w /pwd -v $(pwd):/pwd --build -i --rm --entrypoint /bin/bash"
 		echo "    @l     logs"
 		echo "    @rf    rm -f"
 		echo "    @rfv   rm -f -v"
