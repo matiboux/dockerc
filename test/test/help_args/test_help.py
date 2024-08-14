@@ -21,6 +21,7 @@ def get_help_stdout(dockerc_path: str):
         b'    @r     run --rm\n'
         b'    @ri    run --rm -it\n'
         b'    @l     logs\n'
+        b'    @rs    rm --stop\n'
         b'    @rf    rm -f\n'
         b'    @rfv   rm -f -v\n'
         b'  context syntax: [first] | [first]-[second] | "-" | "--"\n'
