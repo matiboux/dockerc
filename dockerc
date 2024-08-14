@@ -566,6 +566,9 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 			ARGS="push$ARGS"
 			;;
 
+		"rs")
+			ARGS="rm --stop$ARGS"
+			;;
 		"rf")
 			ARGS="rm -f$ARGS"
 			;;
@@ -603,6 +606,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 		echo "    @ri    run --rm -it"
 		echo "    @rbi   run --rm --build -it"
 		echo "    @l     logs"
+		echo "    @rs    rm --stop"
 		echo "    @rf    rm -f"
 		echo "    @rfv   rm -f -v"
 		print_context_help
