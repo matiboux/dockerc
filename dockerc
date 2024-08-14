@@ -170,30 +170,30 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = "@" ]; then
 
 	case "$CONTEXT" in
 
-		"")
+		'')
 			PRINT_DOCKER_PRESETS_HELP=true
 			;;
 
-		"rfc")
-			DOCKER_ARGS="container prune -f"
+		'rfc')
+			DOCKER_ARGS='container prune -f'
 			;;
-		"rfca")
-			DOCKER_ARGS="container prune -f -a"
+		'rfca')
+			DOCKER_ARGS='container prune -f -a'
 			;;
-		"rfi")
-			DOCKER_ARGS="image prune -f"
+		'rfi')
+			DOCKER_ARGS='image prune -f'
 			;;
-		"rfia")
-			DOCKER_ARGS="image prune -f -a"
+		'rfia')
+			DOCKER_ARGS='image prune -f -a'
 			;;
-		"rf")
-			DOCKER_ARGS="system prune -f"
+		'rf')
+			DOCKER_ARGS='system prune -f'
 			;;
-		"rfa")
-			DOCKER_ARGS="system prune -f -a"
+		'rfa')
+			DOCKER_ARGS='system prune -f -a'
 			;;
-		"rfav")
-			DOCKER_ARGS="system prune -f -a --volumes"
+		'rfav')
+			DOCKER_ARGS='system prune -f -a --volumes'
 			;;
 
 		*)
@@ -446,208 +446,208 @@ elif [ "$(echo "$ARGS" | cut -c1)" = "@" ]; then
 
 	case "$ARGS_PRESET" in
 
-		"")
+		'')
 			PRINT_ARGS_PRESET_HELP=true
 			;;
 
-		"u")
+		'u')
 			ARGS="up -d$ARGS"
 			;;
-		"ua")
+		'ua')
 			ARGS="up$ARGS"
 			;;
-		"ub")
+		'ub')
 			ARGS="up --build -d$ARGS"
 			;;
-		"uba")
+		'uba')
 			ARGS="up --build$ARGS"
 			;;
-		"ubf")
+		'ubf')
 			ARGS="up --build -d --force-recreate$ARGS"
 			;;
-		"ubfa")
+		'ubfa')
 			ARGS="up --build --force-recreate$ARGS"
 			;;
-		"ubfp")
+		'ubfp')
 			ARGS="up --build -d --force-recreate --pull always$ARGS"
 			;;
-		"ubfap")
+		'ubfap')
 			ARGS="up --build --force-recreate --pull always$ARGS"
 			;;
-		"ubr")
+		'ubr')
 			ARGS="up --build -d --remove-orphans$ARGS"
 			;;
-		"ubar")
+		'ubar')
 			ARGS="up --build --remove-orphans$ARGS"
 			;;
-		"ubfr")
+		'ubfr')
 			ARGS="up --build -d --force-recreate --remove-orphans$ARGS"
 			;;
-		"ubfar")
+		'ubfar')
 			ARGS="up --build --force-recreate --remove-orphans$ARGS"
 			;;
-		"uf")
+		'uf')
 			ARGS="up -d --force-recreate$ARGS"
 			;;
-		"ufa")
+		'ufa')
 			ARGS="up --force-recreate$ARGS"
 			;;
-		"ur")
+		'ur')
 			ARGS="up -d --remove-orphans$ARGS"
 			;;
-		"uar")
+		'uar')
 			ARGS="up --remove-orphans$ARGS"
 			;;
-		"ufr")
+		'ufr')
 			ARGS="up -d --force-recreate --remove-orphans$ARGS"
 			;;
-		"ufar")
+		'ufar')
 			ARGS="up --force-recreate --remove-orphans$ARGS"
 			;;
 
-		"d")
+		'd')
 			ARGS="down$ARGS"
 			;;
-		"da")
+		'da')
 			ARGS="down --remove-orphans$ARGS"
 			;;
-		"dr")
+		'dr')
 			ARGS="down --remove-orphans --rmi local$ARGS"
 			;;
-		"dra")
+		'dra')
 			ARGS="down --remove-orphans --rmi all$ARGS"
 			;;
-		"drav")
+		'drav')
 			ARGS="down --remove-orphans --rmi all -v$ARGS"
 			;;
-		"drv")
+		'drv')
 			ARGS="down --remove-orphans -v$ARGS"
 			;;
 
-		"b")
+		'b')
 			ARGS="build$ARGS"
 			;;
-		"bp")
+		'bp')
 			ARGS="build --pull$ARGS"
 			;;
-		"bf")
+		'bf')
 			ARGS="build --pull --no-cache$ARGS"
 			;;
 
-		"r")
+		'r')
 			ARGS="run --rm$ARGS"
 			;;
-		"rw")
+		'rw')
 			ARGS="run -w /pwd -v $(pwd):/pwd --rm$ARGS"
 			;;
-		"rd")
+		'rd')
 			ARGS="run -d$ARGS"
 			;;
-		"rk")
+		'rk')
 			ARGS="run$ARGS"
 			;;
-		"rb")
+		'rb')
 			ARGS="run --build --rm$ARGS"
 			;;
-		"rbw")
+		'rbw')
 			ARGS="run --build -w /pwd -v $(pwd):/pwd --rm$ARGS"
 			;;
-		"rbd")
+		'rbd')
 			ARGS="run --build -d$ARGS"
 			;;
-		"rbk")
+		'rbk')
 			ARGS="run --build$ARGS"
 			;;
-		"ri")
+		'ri')
 			ARGS="run -i --rm$ARGS"
 			;;
-		"rwi")
+		'rwi')
 			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm$ARGS"
 			;;
-		"rki")
+		'rki')
 			ARGS="run -i$ARGS"
 			;;
-		"rbi")
+		'rbi')
 			ARGS="run --build -i --rm$ARGS"
 			;;
-		"rbwi")
+		'rbwi')
 			ARGS="run --build -w /pwd -v $(pwd):/pwd -i --rm$ARGS"
 			;;
-		"rbki")
+		'rbki')
 			ARGS="run --build -i$ARGS"
 			;;
 
-		"sh")
+		'sh')
 			ARGS="run -i --rm --entrypoint /bin/sh$ARGS"
 			;;
-		"shw")
+		'shw')
 			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
 			;;
-		"$")
+		'$')
 			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
 			;;
-		"shb")
+		'shb')
 			ARGS="run --build -i --rm --entrypoint /bin/sh$ARGS"
 			;;
-		"shbw")
+		'shbw')
 			ARGS="run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
 			;;
-		"bash")
+		'bash')
 			ARGS="run -i --rm --entrypoint /bin/bash$ARGS"
 			;;
-		"bashw")
+		'bashw')
 			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash$ARGS"
 			;;
-		"bashb")
+		'bashb')
 			ARGS="run --build -i --rm --entrypoint /bin/bash$ARGS"
 			;;
-		"bashbw")
+		'bashbw')
 			ARGS="run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash$ARGS"
 			;;
 
-		"l")
+		'l')
 			ARGS="logs -n 100$ARGS"
 			;;
-		"lf")
+		'lf')
 			ARGS="logs -n 100 -f$ARGS"
 			;;
-		"lt")
+		'lt')
 			ARGS="logs -n 100 -t$ARGS"
 			;;
-		"ls")
+		'ls')
 			ARGS="logs -n 100 --no-log-prefix$ARGS"
 			;;
-		"lft")
+		'lft')
 			ARGS="logs -n 100 -f -t$ARGS"
 			;;
-		"lfs")
+		'lfs')
 			ARGS="logs -n 100 -f --no-log-prefix$ARGS"
 			;;
-		"lfts")
+		'lfts')
 			ARGS="logs -n 100 -f -t --no-log-prefix$ARGS"
 			;;
-		"lts")
+		'lts')
 			ARGS="logs -n 100 -t --no-log-prefix$ARGS"
 			;;
 
-		"p")
+		'p')
 			ARGS="ps$ARGS"
 			;;
-		"pa")
+		'pa')
 			ARGS="ps -a$ARGS"
 			;;
 
-		"pu")
+		'pu')
 			ARGS="push$ARGS"
 			;;
 
-		"rs")
+		'rs')
 			ARGS="rm --stop$ARGS"
 			;;
-		"rf")
+		'rf')
 			ARGS="rm -f$ARGS"
 			;;
-		"rfv")
+		'rfv')
 			ARGS="rm -f -v$ARGS"
 			;;
 
