@@ -682,7 +682,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo '    @ufr   up -d --force-recreate --remove-orphans'
 		echo '    @ufar  up --force-recreate --remove-orphans'
 		echo '    @d     down'
-		echo '    @da     down --remove-orphans'
+		echo '    @da    down --remove-orphans'
 		echo '    @dr    down --remove-orphans --rmi local'
 		echo '    @dra   down --remove-orphans --rmi all'
 		echo '    @drav  down --remove-orphans --rmi all -v'
