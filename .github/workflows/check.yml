@@ -1,0 +1,62 @@
+name: Check CI
+
+on:
+
+  # Run on pull requests events on primary branches
+  pull_request:
+    branches:
+      - main
+      - dev
+
+  # Run on manual triggers
+  workflow_dispatch:
+
+# Set GITHUB_TOKEN permissions
+permissions:
+  contents: read
+
+# Allow one concurrent deployment
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # Test job
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      # List of services required to succeed
+      CHECK_SERVICES: app
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build docker images for testing
+        run: docker compose -f ./docker-compose.yml -f ./docker-compose.test.yml build
+
+      - name: Run docker containers for testing
+        env:
+          CHECK_SERVICES: ${{ env.CHECK_SERVICES }}
+        run: |
+          docker compose \
+            -f ./docker-compose.yml -f ./docker-compose.test.yml \
+            --env-file .env --env-file .env.test \
+            up
+
+          # Check services for non-zero exit codes
+          NON_ZERO_EXIT_CODES=$(
+            docker compose -f ./docker-compose.yml -f ./docker-compose.test.yml \
+              ps -a --format '{{json .ExitCode}}' \
+              ${CHECK_SERVICES} \
+            | tr -d '[:space:]0'
+          )
+          if [ -n "${NON_ZERO_EXIT_CODES}" ]; then
+            # Non-zero exit code found
+            exit 1
+          fi
