@@ -629,6 +629,30 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		'lts')
 			ARGS="logs -n 100 -t --no-log-prefix$ARGS"
 			;;
+		'll')
+			ARGS="logs$ARGS"
+			;;
+		"llf")
+			ARGS="logs -f$ARGS"
+			;;
+		"llt")
+			ARGS="logs -t$ARGS"
+			;;
+		"lls")
+			ARGS="logs --no-log-prefix$ARGS"
+			;;
+		"llft")
+			ARGS="logs -f -t$ARGS"
+			;;
+		"llfs")
+			ARGS="logs -f --no-log-prefix$ARGS"
+			;;
+		"llfts")
+			ARGS="logs -f -t --no-log-prefix$ARGS"
+			;;
+		"llts")
+			ARGS="logs -t --no-log-prefix$ARGS"
+			;;
 
 		'p')
 			ARGS="ps$ARGS"
@@ -719,6 +743,14 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo "    @lfs   logs -n 100 -f --no-log-prefix"
 		echo "    @lfts  logs -n 100 -f -t --no-log-prefix"
 		echo "    @lts   logs -n 100 -t --no-log-prefix"
+		echo "    @ll    logs"
+		echo "    @llf   logs -f"
+		echo "    @llt   logs -t"
+		echo "    @lls   logs --no-log-prefix"
+		echo "    @llft  logs -f -t"
+		echo "    @llfs  logs -f --no-log-prefix"
+		echo "    @llfts logs -f -t --no-log-prefix"
+		echo "    @llts  logs -t --no-log-prefix"
 		echo '    @rs    rm --stop'
 		echo '    @rf    rm -f'
 		echo '    @rfv   rm -f -v'
