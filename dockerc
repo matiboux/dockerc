@@ -711,7 +711,14 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo '    @bashw run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
 		echo '    @bashb run --build -i --rm --entrypoint /bin/bash'
 		echo '    @bashbw run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
-		echo '    @l     logs'
+		echo "    @l     logs -n 100"
+		echo "    @lf    logs -n 100 -f"
+		echo "    @lt    logs -n 100 -t"
+		echo "    @ls    logs -n 100 --no-log-prefix"
+		echo "    @lft   logs -n 100 -f -t"
+		echo "    @lfs   logs -n 100 -f --no-log-prefix"
+		echo "    @lfts  logs -n 100 -f -t --no-log-prefix"
+		echo "    @lts   logs -n 100 -t --no-log-prefix"
 		echo '    @rs    rm --stop'
 		echo '    @rf    rm -f'
 		echo '    @rfv   rm -f -v'
