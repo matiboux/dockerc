@@ -505,6 +505,19 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 			ARGS="up --force-recreate --remove-orphans$ARGS"
 			;;
 
+		'b')
+			ARGS="build$ARGS"
+			;;
+		'bp')
+			ARGS="build --pull$ARGS"
+			;;
+		'bf')
+			ARGS="build --pull --no-cache$ARGS"
+			;;
+		'bn')
+			ARGS="build --dry-run --pull --no-cache$ARGS"
+			;;
+
 		'd')
 			ARGS="down$ARGS"
 			;;
@@ -522,16 +535,6 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 			;;
 		'drv')
 			ARGS="down --remove-orphans -v$ARGS"
-			;;
-
-		'b')
-			ARGS="build$ARGS"
-			;;
-		'bp')
-			ARGS="build --pull$ARGS"
-			;;
-		'bf')
-			ARGS="build --pull --no-cache$ARGS"
 			;;
 
 		'r')
@@ -705,6 +708,10 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo '    @uar   up --remove-orphans'
 		echo '    @ufr   up -d --force-recreate --remove-orphans'
 		echo '    @ufar  up --force-recreate --remove-orphans'
+		echo '    @b     build'
+		echo '    @bp    build --pull'
+		echo '    @bf    build --pull --no-cache'
+		echo '    @bn	 build --dry-run --pull --no-cache'
 		echo '    @d     down'
 		echo '    @da    down --remove-orphans'
 		echo '    @dr    down --remove-orphans --rmi local'
