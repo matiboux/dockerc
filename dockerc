@@ -651,7 +651,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 			ARGS="logs -f -t --no-log-prefix$ARGS"
 			;;
 		"llts")
-			ARGS="logs -t --no-log-prefix$ARGS"dockerc
+			ARGS="logs -t --no-log-prefix$ARGS"
 			;;
 
 		'p')
