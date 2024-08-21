@@ -751,6 +751,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo "    @llfs  logs -f --no-log-prefix"
 		echo "    @llfts logs -f -t --no-log-prefix"
 		echo "    @llts  logs -t --no-log-prefix"
+		echo '    @pu	 push'
 		echo '    @rs    rm --stop'
 		echo '    @rf    rm -f'
 		echo '    @rfv   rm -f -v'
