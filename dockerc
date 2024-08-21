@@ -505,6 +505,19 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 			ARGS="up --force-recreate --remove-orphans$ARGS"
 			;;
 
+		'b')
+			ARGS="build$ARGS"
+			;;
+		'bp')
+			ARGS="build --pull$ARGS"
+			;;
+		'bf')
+			ARGS="build --pull --no-cache$ARGS"
+			;;
+		'bn')
+			ARGS="build --dry-run --pull --no-cache$ARGS"
+			;;
+
 		'd')
 			ARGS="down$ARGS"
 			;;
