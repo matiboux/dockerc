@@ -3,7 +3,7 @@ import re
 from test.src.TestDirContext import TestDirContext
 
 VERSION_STDOUT_SHORT_REGEX = (
-    'DockerC \(v[0-9]+\.[0-9]+\.[0-9]+\) - https:\/\/github\.com\/matiboux\/dockerc\n'
+    '^DockerC \(v[0-9]+\.[0-9]+\.[0-9]+\) - https://github\.com/matiboux/dockerc\n$'
 )
 
 def test_version(file = __file__):
