@@ -665,6 +665,10 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 			ARGS="push$ARGS"
 			;;
 
+		'pl')
+			ARGS="pull$ARGS"
+			;;
+
 		'rs')
 			ARGS="rm --stop$ARGS"
 			;;
