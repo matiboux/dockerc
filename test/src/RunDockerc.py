@@ -1,3 +1,4 @@
+import re
 import subprocess
 
 class RunDockerc():
@@ -27,8 +28,8 @@ class RunDockerc():
 
     def assert_context(
         self,
-        stdout: bytes | None = None,
-        stderr: bytes | None = None,
+        stdout: bytes | re.Pattern | None = None,
+        stderr: bytes | re.Pattern | None = None,
         returncode: int = 0,
     ):
         if self.proc_stdout != stdout:
@@ -40,13 +41,21 @@ class RunDockerc():
             )
             print(''.join(diff))
 
-        assert self.proc_stdout == stdout
-        assert self.proc_stderr == stderr
+        if isinstance(stdout, re.Pattern):
+            assert stdout.match(self.proc_stdout.decode('utf-8'))
+        else:
+            assert self.proc_stdout == stdout
+
+        if isinstance(stderr, re.Pattern):
+            assert stderr.match(self.proc_stderr.decode('utf-8'))
+        else:
+            assert self.proc_stderr == stderr
+
         assert self.proc.returncode == returncode
 
     def assert_context_found(
         self,
-        stdout: bytes = b'',
+        stdout: bytes | re.Pattern = b'',
     ):
         return self.assert_context(
             stdout = stdout,
@@ -54,8 +63,8 @@ class RunDockerc():
 
     def assert_context_error(
         self,
-        stdout: bytes | None = None,
-        stderr: bytes | None = None,
+        stdout: bytes | re.Pattern | None = None,
+        stderr: bytes | re.Pattern | None = None,
     ):
         return self.assert_context(
             **({'stdout': stdout} if stdout is not None else {}),
