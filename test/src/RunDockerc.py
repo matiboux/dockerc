@@ -32,14 +32,20 @@ class RunDockerc():
         stderr: bytes | re.Pattern | None = None,
         returncode: int = 0,
     ):
-        if self.proc_stdout != stdout:
-            # Debugging
-            import difflib
-            diff = difflib.unified_diff(
-                self.proc_stdout.decode('utf-8').splitlines(keepends = True),
-                stdout.decode('utf-8').splitlines(keepends = True),
-            )
-            print(''.join(diff))
+        # if self.proc_stdout != stdout:
+        #     # Debugging
+        #     import difflib
+        #     diff = difflib.unified_diff(
+        #         self.proc_stdout.decode('utf-8').splitlines(keepends = True),
+        #         (
+        #             stdout.decode('utf-8').splitlines(keepends = True)
+        #             if isinstance(stdout, bytes) else
+        #             stdout.pattern.splitlines(keepends = True)
+        #             if isinstance(stdout, re.Pattern) else
+        #             stdout
+        #         ),
+        #     )
+        #     print(''.join(diff))
 
         if isinstance(stdout, re.Pattern):
             assert stdout.match(self.proc_stdout.decode('utf-8'))
