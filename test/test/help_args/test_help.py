@@ -76,6 +76,7 @@ def get_help_stdout(dockerc_path: str):
         b'    @p     ps\n'
         b'    @pa    ps -a\n'
         b'    @pu    push\n'
+        b'    @pl    pull\n'
         b'    @rs    rm --stop\n'
         b'    @rf    rm -f\n'
         b'    @rfv   rm -f -v\n'

@@ -668,6 +668,10 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 			ARGS="push$ARGS"
 			;;
 
+		'pl')
+			ARGS="pull$ARGS"
+			;;
+
 		'rs')
 			ARGS="rm --stop$ARGS"
 			;;
@@ -761,6 +765,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo '    @p     ps'
 		echo '    @pa    ps -a'
 		echo '    @pu	 push'
+		echo '    @pl    pull'
 		echo '    @rs    rm --stop'
 		echo '    @rf    rm -f'
 		echo '    @rfv   rm -f -v'
