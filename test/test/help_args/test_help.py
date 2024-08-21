@@ -73,6 +73,8 @@ def get_help_stdout(dockerc_path: str):
         b'    @llfs  logs -f --no-log-prefix\n'
         b'    @llfts logs -f -t --no-log-prefix\n'
         b'    @llts  logs -t --no-log-prefix\n'
+        b'    @p     ps\n'
+        b'    @pa    ps -a\n'
         b'    @rs    rm --stop\n'
         b'    @rf    rm -f\n'
         b'    @rfv   rm -f -v\n'
