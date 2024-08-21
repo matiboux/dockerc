@@ -715,7 +715,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo '    @b     build'
 		echo '    @bp    build --pull'
 		echo '    @bf    build --pull --no-cache'
-		echo '    @bn	 build --dry-run --pull --no-cache'
+		echo '    @bn    build --dry-run --pull --no-cache'
 		echo '    @d     down'
 		echo '    @da    down --remove-orphans'
 		echo '    @dr    down --remove-orphans --rmi local'
@@ -764,7 +764,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo "    @llts  logs -t --no-log-prefix"
 		echo '    @p     ps'
 		echo '    @pa    ps -a'
-		echo '    @pu	 push'
+		echo '    @pu    push'
 		echo '    @pl    pull'
 		echo '    @rs    rm --stop'
 		echo '    @rf    rm -f'
