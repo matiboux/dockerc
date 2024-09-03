@@ -518,6 +518,22 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 			ARGS="build --dry-run --pull --no-cache$ARGS"
 			;;
 
+		'w')
+			ARGS="watch$ARGS"
+			;;
+		'wq')
+			ARGS="watch --quiet$ARGS"
+			;;
+		'ww')
+			ARGS="watch --no-up$ARGS"
+			;;
+		'wqw')
+			ARGS="watch --quiet --no-up$ARGS"
+			;;
+		'wn')
+			ARGS="watch --dry-run$ARGS"
+			;;
+
 		'd')
 			ARGS="down$ARGS"
 			;;
@@ -716,6 +732,11 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo '    @bp    build --pull'
 		echo '    @bf    build --pull --no-cache'
 		echo '    @bn    build --dry-run --pull --no-cache'
+		echo '    @w	 watch'
+		echo '    @wq	 watch --quiet'
+		echo '    @ww	 watch --no-up'
+		echo '    @wqw	 watch --quiet --no-up'
+		echo '    @wn	 watch --dry-run'
 		echo '    @d     down'
 		echo '    @da    down --remove-orphans'
 		echo '    @dr    down --remove-orphans --rmi local'
