@@ -274,8 +274,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
 		fi
 
-		if [ -f "$dir/docker-compose.yml" ]; then
-			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $dir/docker-compose.yml"
+		COMPOSE_FILE_PATH="$dir/docker-compose.yml"
+		if [ -f "$COMPOSE_FILE_PATH" ]; then
+			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_FILE_PATH"
 		fi
 
 		if [ ! -z "$CONTEXT" ]; then
@@ -307,8 +308,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 				if [ -z "$COMPOSE_FILE_ARGS_2" ]; then
 
 					# Look for docker-compose$PREFIX_1.$part.yml
-					if [ -f "$dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml" ]; then
-						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml"
+					COMPOSE_FILE_PATH="$dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml"
+					if [ -f "$COMPOSE_FILE_PATH" ]; then
+						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $COMPOSE_FILE_PATH"
 						PREFIX_1="$PREFIX_1.$MISSING_PARTS$part"
 						MISSING_PARTS=''
 
@@ -326,8 +328,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 						if [ -z "$PREFIX_2" ]; then
 
 							# Look for docker-compose-$part.yml
-							if [ -f "$dir/docker-compose-$MISSING_PARTS$part.yml" ]; then
-								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose-$MISSING_PARTS$part.yml"
+							COMPOSE_FILE_PATH="$dir/docker-compose-$MISSING_PARTS$part.yml"
+							if [ -f "$COMPOSE_FILE_PATH" ]; then
+								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_FILE_PATH"
 								PREFIX_2="-$MISSING_PARTS$part"
 								MISSING_PARTS=''
 							fi
@@ -339,8 +342,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 						if [ ! -z "$PREFIX_2" ]; then
 
 							# Look for docker-compose$PREFIX_2.$part.yml
-							if [ -f "$dir/docker-compose$PREFIX_2.$part.yml" ]; then
-								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose$PREFIX_2.$part.yml"
+							COMPOSE_FILE_PATH="$dir/docker-compose$PREFIX_2.$part.yml"
+							if [ -f "$COMPOSE_FILE_PATH" ]; then
+								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_FILE_PATH"
 								PREFIX_2="$PREFIX_2.$part"
 
 							else
@@ -384,8 +388,9 @@ EOF
 
 			elif [ -z "$CONTEXT" ] || [ "$CONTEXT" = 'dev' ]; then
 
-				if [ -f "$dir/docker-compose.override.yml" ]; then
-					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $dir/docker-compose.override.yml"
+				COMPOSE_FILE_PATH="$dir/docker-compose.override.yml"
+				if [ -f "$COMPOSE_FILE_PATH" ]; then
+					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $COMPOSE_FILE_PATH"
 					break
 
 				elif [ -z "$CONTEXT" ]; then
