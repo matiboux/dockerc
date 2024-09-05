@@ -203,6 +203,11 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 			DOCKER_ARGS='system prune -f -a --volumes'
 			;;
 
+		'sa')
+			# Stop all containers
+			DOCKER_ARGS='stop $(docker ps -q)'
+			;;
+
 		*)
 			echo "Error: Unknown docker preset '@$CONTEXT'"
 			exit 1
