@@ -208,6 +208,15 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 			DOCKER_ARGS='stop $(docker ps -q)'
 			;;
 
+		'rma')
+			# Remove all containers
+			DOCKER_ARGS='rm $(docker ps -q)'
+			;;
+		'rmfa')
+			# Remove all containers, force
+			DOCKER_ARGS='rm -f $(docker ps -q)'
+			;;
+
 		*)
 			echo "Error: Unknown docker preset '@$CONTEXT'"
 			exit 1
