@@ -13,6 +13,7 @@ def get_help_stdout(dockerc_path: str):
         b'    -h, --help     Print this help and exit\n'
         b'    -v, --version  Print version and exit\n'
         b'    --update       Update DockerC and exit\n'
+        b'    -f             Force, for example ignores abstract contexts\n'
         b'    -n             Dry run, print docker compose command without running it\n'
         b'    -q             Quiet, do not print docker compose command\n'
     )
