@@ -458,8 +458,9 @@ EOF
 		exit 1
 	fi
 
+	# Unless force option is set,
 	# If compose file arguments are abstract, exit with error
-	if [ "$ABSTRACT_COMPOSE_FILE_ARGS" = true ]; then
+	if [ "$FORCE" = false ] && [ "$ABSTRACT_COMPOSE_FILE_ARGS" = true ]; then
 		echo 'Error: Abstract context found'
 		exit 1
 	fi
