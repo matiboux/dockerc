@@ -27,7 +27,7 @@ def get_help_stdout(dockerc_path: str):
         b'    @wq    watch --quiet\n'
         b'    @ww    watch --no-up\n'
         b'    @wqw   watch --quiet --no-up\n'
-        b'    @wn	 watch --dry-run\n'
+        b'    @wn    watch --dry-run\n'
         b'    @b     build\n'
         b'    @bp    build --pull\n'
         b'    @bf    build --pull --no-cache\n'
