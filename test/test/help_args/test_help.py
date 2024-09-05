@@ -91,6 +91,7 @@ def get_help_stdout(dockerc_path: str):
         b'    "-"     Use default docker compose files ("override" if it exists)\n'
         b'    "--"    Use docker compose without file arguments\n'
         b'  options:\n'
+        b'    -f  Force, for example ignores abstract contexts\n'
         b'    -n  Dry run, print docker compose command without running it\n'
         b'    -q  Quiet, do not print docker compose command\n'
     )
