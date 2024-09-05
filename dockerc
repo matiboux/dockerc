@@ -12,6 +12,7 @@ VERSION="1.10.0"
 PRINT_HELP=false
 PRINT_VERSION=false
 UPDATE=false
+FORCE=false
 DRY_RUN=false
 QUIET=false
 
@@ -41,6 +42,11 @@ while true; do
 		'--update')
 			# Update DockerC and exit
 			UPDATE=true
+			shift
+			;;
+		'-f')
+			# Force, for example ignores abstract contexts
+			FORCE=true
 			shift
 			;;
 		'-n')
@@ -76,6 +82,7 @@ if [ "$PRINT_HELP" = true ]; then
 	echo '    -h, --help     Print this help and exit'
 	echo '    -v, --version  Print version and exit'
 	echo '    --update       Update DockerC and exit'
+	echo '    -f             Force, for example ignores abstract contexts'
 	echo '    -n             Dry run, print docker compose command without running it'
 	echo '    -q             Quiet, do not print docker compose command'
 	exit 0
@@ -216,6 +223,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		echo '    @rfa   Remove all unused containers, networks and images'
 		echo '    @rfav  Remove all unused containers, networks, images and volumes'
 		echo '  options:'
+		echo '    -f  Force, for example ignores abstract contexts'
 		echo '    -n  Dry run, print docker command without running it'
 		echo '    -q  Quiet, do not print docker command'
 		exit 0
@@ -240,6 +248,7 @@ fi
 
 COMPOSE_FILE_ARGS=''
 NO_COMPOSE_FILE_ARGS=false
+ABSTRACT_COMPOSE_FILE_ARGS=false
 ENV_FILE_ARGS=''
 
 # If context is -, use default docker compose files (override if it exists)
@@ -274,8 +283,15 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
 		fi
 
-		if [ -f "$dir/docker-compose.yml" ]; then
-			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $dir/docker-compose.yml"
+		COMPOSE_FILE_PATH="$dir/docker-compose.yml"
+		if [ -f "$COMPOSE_FILE_PATH" ]; then
+			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_FILE_PATH"
+
+			if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+				ABSTRACT_COMPOSE_FILE_ARGS=true
+			else
+				ABSTRACT_COMPOSE_FILE_ARGS=false
+			fi
 		fi
 
 		if [ ! -z "$CONTEXT" ]; then
@@ -307,10 +323,17 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 				if [ -z "$COMPOSE_FILE_ARGS_2" ]; then
 
 					# Look for docker-compose$PREFIX_1.$part.yml
-					if [ -f "$dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml" ]; then
-						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml"
+					COMPOSE_FILE_PATH="$dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml"
+					if [ -f "$COMPOSE_FILE_PATH" ]; then
+						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $COMPOSE_FILE_PATH"
 						PREFIX_1="$PREFIX_1.$MISSING_PARTS$part"
 						MISSING_PARTS=''
+
+						if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+							ABSTRACT_COMPOSE_FILE_ARGS=true
+						else
+							ABSTRACT_COMPOSE_FILE_ARGS=false
+						fi
 
 					else
 						# Part was not found, invalidate PREFIX_1
@@ -326,10 +349,17 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 						if [ -z "$PREFIX_2" ]; then
 
 							# Look for docker-compose-$part.yml
-							if [ -f "$dir/docker-compose-$MISSING_PARTS$part.yml" ]; then
-								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose-$MISSING_PARTS$part.yml"
+							COMPOSE_FILE_PATH="$dir/docker-compose-$MISSING_PARTS$part.yml"
+							if [ -f "$COMPOSE_FILE_PATH" ]; then
+								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_FILE_PATH"
 								PREFIX_2="-$MISSING_PARTS$part"
 								MISSING_PARTS=''
+
+								if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+									ABSTRACT_COMPOSE_FILE_ARGS=true
+								else
+									ABSTRACT_COMPOSE_FILE_ARGS=false
+								fi
 							fi
 
 						fi
@@ -339,9 +369,16 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 						if [ ! -z "$PREFIX_2" ]; then
 
 							# Look for docker-compose$PREFIX_2.$part.yml
-							if [ -f "$dir/docker-compose$PREFIX_2.$part.yml" ]; then
-								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $dir/docker-compose$PREFIX_2.$part.yml"
+							COMPOSE_FILE_PATH="$dir/docker-compose$PREFIX_2.$part.yml"
+							if [ -f "$COMPOSE_FILE_PATH" ]; then
+								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_FILE_PATH"
 								PREFIX_2="$PREFIX_2.$part"
+
+								if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+									ABSTRACT_COMPOSE_FILE_ARGS=true
+								else
+									ABSTRACT_COMPOSE_FILE_ARGS=false
+								fi
 
 							else
 								# Part was not found, invalidate PREFIX_2
@@ -384,8 +421,16 @@ EOF
 
 			elif [ -z "$CONTEXT" ] || [ "$CONTEXT" = 'dev' ]; then
 
-				if [ -f "$dir/docker-compose.override.yml" ]; then
-					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $dir/docker-compose.override.yml"
+				COMPOSE_FILE_PATH="$dir/docker-compose.override.yml"
+				if [ -f "$COMPOSE_FILE_PATH" ]; then
+					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $COMPOSE_FILE_PATH"
+
+					if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+						ABSTRACT_COMPOSE_FILE_ARGS=true
+					else
+						ABSTRACT_COMPOSE_FILE_ARGS=false
+					fi
+
 					break
 
 				elif [ -z "$CONTEXT" ]; then
@@ -410,6 +455,13 @@ EOF
 		else
 			echo "Error: Unknown context '$CONTEXT'"
 		fi
+		exit 1
+	fi
+
+	# Unless force option is set,
+	# If compose file arguments are abstract, exit with error
+	if [ "$FORCE" = false ] && [ "$ABSTRACT_COMPOSE_FILE_ARGS" = true ]; then
+		echo 'Error: Abstract context found'
 		exit 1
 	fi
 
@@ -732,11 +784,11 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo '    @bp    build --pull'
 		echo '    @bf    build --pull --no-cache'
 		echo '    @bn    build --dry-run --pull --no-cache'
-		echo '    @w	 watch'
-		echo '    @wq	 watch --quiet'
-		echo '    @ww	 watch --no-up'
-		echo '    @wqw	 watch --quiet --no-up'
-		echo '    @wn	 watch --dry-run'
+		echo '    @w     watch'
+		echo '    @wq    watch --quiet'
+		echo '    @ww    watch --no-up'
+		echo '    @wqw   watch --quiet --no-up'
+		echo '    @wn    watch --dry-run'
 		echo '    @d     down'
 		echo '    @da    down --remove-orphans'
 		echo '    @dr    down --remove-orphans --rmi local'
@@ -792,6 +844,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		echo '    @rfv   rm -f -v'
 		print_context_help
 		echo '  options:'
+		echo '    -f  Force, for example ignores abstract contexts'
 		echo '    -n  Dry run, print docker compose command without running it'
 		echo '    -q  Quiet, do not print docker compose command'
 		exit 0

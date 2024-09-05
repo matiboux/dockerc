@@ -13,6 +13,7 @@ def get_help_stdout(dockerc_path: str):
         b'    @rfa   Remove all unused containers, networks and images\n'
         b'    @rfav  Remove all unused containers, networks, images and volumes\n'
         b'  options:\n'
+        b'    -f  Force, for example ignores abstract contexts\n'
         b'    -n  Dry run, print docker command without running it\n'
         b'    -q  Quiet, do not print docker command\n'
     )

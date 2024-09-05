@@ -1,3 +1,4 @@
+#:dockerc.abstract
 # Services definition for building & deploying
 services:
 
