@@ -82,7 +82,7 @@ if [ "$PRINT_HELP" = true ]; then
 	echo '    -h, --help     Print this help and exit'
 	echo '    -v, --version  Print version and exit'
 	echo '    --update       Update DockerC and exit'
-	echo '    -f			 Force, for example ignores abstract contexts'
+	echo '    -f             Force, for example ignores abstract contexts'
 	echo '    -n             Dry run, print docker compose command without running it'
 	echo '    -q             Quiet, do not print docker compose command'
 	exit 0
