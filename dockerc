@@ -240,6 +240,7 @@ fi
 
 COMPOSE_FILE_ARGS=''
 NO_COMPOSE_FILE_ARGS=false
+ABSTRACT_COMPOSE_FILE_ARGS=false
 ENV_FILE_ARGS=''
 
 # If context is -, use default docker compose files (override if it exists)
@@ -277,6 +278,12 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 		COMPOSE_FILE_PATH="$dir/docker-compose.yml"
 		if [ -f "$COMPOSE_FILE_PATH" ]; then
 			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_FILE_PATH"
+
+			if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+				ABSTRACT_COMPOSE_FILE_ARGS=true
+			else
+				ABSTRACT_COMPOSE_FILE_ARGS=false
+			fi
 		fi
 
 		if [ ! -z "$CONTEXT" ]; then
@@ -314,6 +321,12 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 						PREFIX_1="$PREFIX_1.$MISSING_PARTS$part"
 						MISSING_PARTS=''
 
+						if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+							ABSTRACT_COMPOSE_FILE_ARGS=true
+						else
+							ABSTRACT_COMPOSE_FILE_ARGS=false
+						fi
+
 					else
 						# Part was not found, invalidate PREFIX_1
 						PREFIX_1=''
@@ -333,6 +346,12 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_FILE_PATH"
 								PREFIX_2="-$MISSING_PARTS$part"
 								MISSING_PARTS=''
+
+								if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+									ABSTRACT_COMPOSE_FILE_ARGS=true
+								else
+									ABSTRACT_COMPOSE_FILE_ARGS=false
+								fi
 							fi
 
 						fi
@@ -346,6 +365,12 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 							if [ -f "$COMPOSE_FILE_PATH" ]; then
 								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_FILE_PATH"
 								PREFIX_2="$PREFIX_2.$part"
+
+								if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+									ABSTRACT_COMPOSE_FILE_ARGS=true
+								else
+									ABSTRACT_COMPOSE_FILE_ARGS=false
+								fi
 
 							else
 								# Part was not found, invalidate PREFIX_2
@@ -391,6 +416,13 @@ EOF
 				COMPOSE_FILE_PATH="$dir/docker-compose.override.yml"
 				if [ -f "$COMPOSE_FILE_PATH" ]; then
 					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $COMPOSE_FILE_PATH"
+
+					if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+						ABSTRACT_COMPOSE_FILE_ARGS=true
+					else
+						ABSTRACT_COMPOSE_FILE_ARGS=false
+					fi
+
 					break
 
 				elif [ -z "$CONTEXT" ]; then
@@ -415,6 +447,12 @@ EOF
 		else
 			echo "Error: Unknown context '$CONTEXT'"
 		fi
+		exit 1
+	fi
+
+	# If compose file arguments are abstract, exit with error
+	if [ "$ABSTRACT_COMPOSE_FILE_ARGS" = true ]; then
+		echo 'Error: Abstract context found'
 		exit 1
 	fi
 
