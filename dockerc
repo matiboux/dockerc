@@ -12,6 +12,7 @@ VERSION="1.10.0"
 PRINT_HELP=false
 PRINT_VERSION=false
 UPDATE=false
+FORCE=false
 DRY_RUN=false
 QUIET=false
 
@@ -41,6 +42,11 @@ while true; do
 		'--update')
 			# Update DockerC and exit
 			UPDATE=true
+			shift
+			;;
+		'-f')
+			# Force, for example ignores abstract contexts
+			FORCE=true
 			shift
 			;;
 		'-n')
