@@ -213,7 +213,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		echo '  args: Arguments passed to docker'
 		echo '  @preset:'
 		echo '    @rfc   Remove unused containers'
-		echo '    @rfi   Remove unused images'
+		echo '    @rfi   Remove dangling images'
 		echo '    @rfia  Remove all unused images'
 		echo '    @rf    Remove unused containers, networks and images'
 		echo '    @rfa   Remove all unused containers, networks and images'
