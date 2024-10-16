@@ -184,9 +184,6 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		'rfc')
 			DOCKER_ARGS='container prune -f'
 			;;
-		'rfca')
-			DOCKER_ARGS='container prune -f -a'
-			;;
 		'rfi')
 			DOCKER_ARGS='image prune -f'
 			;;
@@ -216,7 +213,6 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		echo '  args: Arguments passed to docker'
 		echo '  @preset:'
 		echo '    @rfc   Remove unused containers'
-		echo '    @rfca  Remove all unused containers'
 		echo '    @rfi   Remove unused images'
 		echo '    @rfia  Remove all unused images'
 		echo '    @rf    Remove unused containers, networks and images'
