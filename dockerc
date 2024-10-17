@@ -171,6 +171,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 	PRINT_DOCKER_PRESETS_HELP=false
 	DOCKER_ARGS=''
+	RUN_SHELL=false
 
 	# Remove first char
 	CONTEXT="${CONTEXT#?}"
@@ -203,31 +204,38 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		'sa')
 			# Stop all containers
 			DOCKER_ARGS='stop $(docker ps -q)'
+			RUN_SHELL=true
 			;;
 
 		'rm')
 			# Remove running containers
 			DOCKER_ARGS='rm $(docker ps -q)'
+			RUN_SHELL=true
 			;;
 		'rmf')
 			# Remove running containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q)'
+			RUN_SHELL=true
 			;;
 		'rms')
 			# Remove stopped containers
 			DOCKER_ARGS='rm $(docker ps -a -q -f status=exited -f status=dead)'
+			RUN_SHELL=true
 			;;
 		'rmsf'|'rmfs')
 			# Remove stopped containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q -f status=exited -f status=dead)'
+			RUN_SHELL=true
 			;;
 		'rma')
 			# Remove all containers
 			DOCKER_ARGS='rm $(docker ps -a -q)'
+			RUN_SHELL=true
 			;;
 		'rmaf'|'rmfa')
 			# Remove all containers, force
 			DOCKER_ARGS='rm -f $(docker ps -q)'
+			RUN_SHELL=true
 			;;
 
 		*)
@@ -264,16 +272,34 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		exit 0
 	fi
 
-	if [ "$QUIET" = false ]; then
-		# Print docker command
-		echo ''
-		echo "> docker $DOCKER_ARGS $ARGS"
-		echo ''
-	fi
+	if [ "$RUN_SHELL" = false ]; then
 
-	if [ "$DRY_RUN" = false ]; then
-		# Run docker
-		exec docker $DOCKER_ARGS $ARGS
+		if [ "$QUIET" = false ]; then
+			# Print docker command
+			echo ''
+			echo "> docker $DOCKER_ARGS $ARGS"
+			echo ''
+		fi
+
+		if [ "$DRY_RUN" = false ]; then
+			# Run docker command
+			exec docker $DOCKER_ARGS $ARGS
+		fi
+
+	else # "$RUN_SHELL" = true
+
+		if [ "$QUIET" = false ]; then
+			# Print docker command
+			echo ''
+			echo "> sh -c 'docker $DOCKER_ARGS $ARGS'"
+			echo ''
+		fi
+
+		if [ "$DRY_RUN" = false ]; then
+			# Run docker command
+			exec sh -c "docker $DOCKER_ARGS $ARGS"
+		fi
+
 	fi
 
 	exit 0
