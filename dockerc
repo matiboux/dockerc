@@ -214,11 +214,6 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 			RUN_SHELL=true
 			;;
 
-		'rm')
-			# Remove running containers
-			DOCKER_ARGS='rm $(docker ps -q)'
-			RUN_SHELL=true
-			;;
 		'rmf')
 			# Remove running containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q)'
@@ -264,7 +259,6 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		echo '    @rfa   Remove all unused containers, networks and images'
 		echo '    @rfav  Remove all unused containers, networks, images and volumes'
 		echo '    @sa    Stop all running containers'
-		echo '    @rm    Remove running containers'
 		echo '    @rmf   Remove running containers, force'
 		echo '    @rms   Remove stopped containers'
 		echo '    @rmsf  Remove stopped containers, force'

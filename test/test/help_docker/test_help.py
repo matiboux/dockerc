@@ -12,7 +12,6 @@ def get_help_stdout(dockerc_path: str):
         b'    @rfa   Remove all unused containers, networks and images\n'
         b'    @rfav  Remove all unused containers, networks, images and volumes\n'
         b'    @sa    Stop all running containers\n'
-		b'    @rm    Remove running containers\n'
 		b'    @rmf   Remove running containers, force\n'
 		b'    @rms   Remove stopped containers\n'
         b'    @rmsf  Remove stopped containers, force\n'
