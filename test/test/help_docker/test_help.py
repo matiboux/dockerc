@@ -14,6 +14,8 @@ def get_help_stdout(dockerc_path: str):
         b'    @sa    Stop all running containers\n'
 		b'    @rm    Remove running containers\n'
 		b'    @rmf   Remove running containers, force\n'
+		b'    @rms   Remove stopped containers\n'
+        b'    @rmfs  Remove stopped containers, force\n'
 		b'    @rma   Remove all containers\n'
 		b'    @rmfa  Remove all containers, force\n'
         b'  options:\n'
