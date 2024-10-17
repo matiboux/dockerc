@@ -167,10 +167,12 @@ fi
 if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 	# Other arguments to pass to docker
-	# Quote arguments to sanitize each
+	# Use single quotes to safely pass arguments to shell
+	# Escape single quotes in arguments
 	ARGS=''
 	while [ $# -gt 0 ]; do
-		ARGS="$ARGS '$1'"
+		NEW_ARG=$(echo "$1" | sed "s/'/'\"'\"'/g")
+		ARGS="$ARGS '$NEW_ARG'"
 		shift
 	done
 
