@@ -205,9 +205,17 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 			DOCKER_ARGS='stop $(docker ps -q)'
 			;;
 
+		'rm')
+			# Remove running containers
+			DOCKER_ARGS='rm $(docker ps -q)'
+			;;
+		'rmf')
+			# Remove running containers, force
+			DOCKER_ARGS='rm -f $(docker ps -a -q)'
+			;;
 		'rma')
 			# Remove all containers
-			DOCKER_ARGS='rm $(docker ps -q)'
+			DOCKER_ARGS='rm $(docker ps -a -q)'
 			;;
 		'rmfa')
 			# Remove all containers, force
@@ -233,8 +241,10 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		echo '    @rfa   Remove all unused containers, networks and images'
 		echo '    @rfav  Remove all unused containers, networks, images and volumes'
 		echo '    @sa    Stop all running containers'
-		echo '    @rma   Remove all running containers'
-		echo '    @rmfa  Remove all running containers, force'
+		echo '    @rm    Remove running containers'
+		echo '    @rmf   Remove running containers, force'
+		echo '    @rma   Remove all containers'
+		echo '    @rmfa  Remove all containers, force'
 		echo '  options:'
 		echo '    -f  Force, for example ignores abstract contexts'
 		echo '    -n  Dry run, print docker command without running it'
