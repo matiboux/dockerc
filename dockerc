@@ -217,7 +217,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 			# Remove stopped containers
 			DOCKER_ARGS='rm $(docker ps -a -q -f status=exited -f status=dead)'
 			;;
-		'rmfs')
+		'rmsf'|'rmfs')
 			# Remove stopped containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q -f status=exited -f status=dead)'
 			;;
@@ -225,7 +225,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 			# Remove all containers
 			DOCKER_ARGS='rm $(docker ps -a -q)'
 			;;
-		'rmfa')
+		'rmaf'|'rmfa')
 			# Remove all containers, force
 			DOCKER_ARGS='rm -f $(docker ps -q)'
 			;;
@@ -252,9 +252,11 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		echo '    @rm    Remove running containers'
 		echo '    @rmf   Remove running containers, force'
 		echo '    @rms   Remove stopped containers'
-		echo '    @rmfs  Remove stopped containers, force'
+		echo '    @rmsf  Remove stopped containers, force'
+		echo '    @rmfs  (alias) ↑'
 		echo '    @rma   Remove all containers'
-		echo '    @rmfa  Remove all containers, force'
+		echo '    @rmaf  Remove all containers, force'
+		echo '    @rmfa  (alias) ↑'
 		echo '  options:'
 		echo '    -f  Force, for example ignores abstract contexts'
 		echo '    -n  Dry run, print docker command without running it'
