@@ -12,12 +12,12 @@ ERROR_CODE=''
 # Parse options arguments
 if [ "$#" -gt 0 ]; then
 
-	if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
 		DOCKERC_PRINT_HELP='true'
 		shift
 	fi
 
-	if [ "$1" = "--disable-git" ] || [ "$1" = "-n" ]; then
+	if [ "$1" = '--disable-git' ] || [ "$1" = '-n' ]; then
 		DOCKERC_DISABLE_GIT='true'
 		shift
 	fi
@@ -26,7 +26,7 @@ fi
 
 # Parse version argument
 if [ "$#" -le 0 ] || [ -z "$1" ]; then
-	echo "Error: No version specified." >&2
+	echo 'Error: No version specified.' >&2
 	DOCKERC_PRINT_HELP='true'
 	ERROR_CODE=1
 fi
@@ -56,7 +56,7 @@ if [ "$USE_GIT" = 'true' ]; then
 		# Check that git is installed
 		git --version > /dev/null 2>&1
 		if [ $? -ne 0 ]; then
-			echo "Warning: Git is not installed." >&2
+			echo 'Warning: Git is not installed.' >&2
 			USE_GIT='false'
 		fi
 	fi
@@ -78,7 +78,7 @@ if [ "$USE_GIT" = true ]; then
 	git add ./dockerc > /dev/null 2>&1
 	git commit -m "Bump version to $VERSION" > /dev/null 2>&1
 	if [ $? -ne 0 ]; then
-		echo "Warning: Failed to commit changes."
+		echo 'Warning: Failed to commit changes.'
 	else
 		git tag -a "v$VERSION" -m "Bump version to $VERSION"
 		echo "Info: Commited changes & tagged 'v$VERSION' in git"
