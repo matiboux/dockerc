@@ -2,11 +2,24 @@ name: Check CI
 
 on:
 
-  # Run on pull requests events on primary branches
+  # Run on pull requests to primary branches
   pull_request:
     branches:
+      - master
       - main
+      - prod
+      - production
+      - staging
       - dev
+      - develop
+      - development
+      - test
+    paths:
+      - '.github/workflows/check.yml'
+      - 'dockerx'
+      - 'test/**'
+      - 'docker-compose.yml'
+      - 'docker-compose.test.yml'
 
   # Run on manual triggers
   workflow_dispatch:
