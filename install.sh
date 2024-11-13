@@ -21,6 +21,13 @@ else
 	REQUIRED_TAG="HEAD"
 fi
 
+# Check that docker is installed
+docker --help > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo "Error: Docker is not installed." >&2
+	exit 1
+fi
+
 # Check that docker compose is installed
 docker compose --help > /dev/null 2>&1
 if [ $? -ne 0 ]; then
