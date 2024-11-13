@@ -6,18 +6,48 @@
 # Copyright (c) 2023 Matiboux
 
 if [ "$#" -gt 0 ]; then
-	# Get install directory from parameter and shift
-	INSTALL_DIR="$1"
-	shift
-else
-	INSTALL_DIR="/usr/local/bin"
+
+	if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+		echo "Usage: install.sh [install_dir] [version]"
+		echo "  install_dir: Installation directory (default: /usr/local/bin)"
+		echo "  version: Specific version to install (default: HEAD)"
+		exit 0
+	fi
+
+	if [ "$1" = "--install-dir" ] || [ "$1" = "-i" ]; then
+		# Installation directory argument is provided
+		shift
+		DOCKERC_INSTALL_DIR="$1"
+		shift
+		if [ -z "$DOCKERC_INSTALL_DIR" ]; then
+			echo "Error: Missing installation directory." >&2
+			exit 1
+		fi
+	fi
+
+	if [ -n "$1" ]; then
+		# Version argument is provided
+		DOCKERC_REQUIRED_TAG="v$1"
+		shift
+	fi
+
 fi
 
-if [ "$#" -gt 0 ]; then
-	# Get specific version from parameter and shift
-	REQUIRED_TAG="v$1"
-	shift
+# Get installation directory
+if [ -n "$DOCKERC_INSTALL_DIR" ]; then
+	# Use from argument or environment variable
+	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
 else
+	# Default installation directory
+	INSTALL_DIR='/usr/local/bin'
+fi
+
+# Get required tag to install
+if [ -n "$DOCKERC_REQUIRED_TAG" ]; then
+	# Use from argument or environment variable
+	REQUIRED_TAG="$DOCKERC_REQUIRED_TAG"
+else
+	# Default required tag
 	REQUIRED_TAG="HEAD"
 fi
 
