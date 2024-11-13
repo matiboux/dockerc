@@ -24,11 +24,11 @@ on:
   # Run on manual triggers
   workflow_dispatch:
 
-# Set GITHUB_TOKEN permissions
+# Set GITHUB_TOKEN permissions for the workflow
 permissions:
   contents: read
 
-# Allow one concurrent deployment
+# Set workflow concurrency rules
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
@@ -39,11 +39,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    env:
-      # List of services required to succeed
-      CHECK_SERVICES: app
+    timeout-minutes: 15
 
     steps:
 
@@ -51,25 +47,53 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build docker images for testing
-        run: docker compose -f ./docker-compose.yml -f ./docker-compose.test.yml build
-
-      - name: Run docker containers for testing
-        env:
-          CHECK_SERVICES: ${{ env.CHECK_SERVICES }}
         run: |
+          # docker compose build
+
+          echo "::group::Build tests"
+
           docker compose \
             -f ./docker-compose.yml -f ./docker-compose.test.yml \
-            --env-file .env --env-file .env.test \
+            --env-file .env \
+            build
+
+          echo "::endgroup::"
+
+      - name: Run docker images for testing
+        run: |
+          # docker compose up
+
+          echo "::group::Run tests"
+
+          docker compose \
+            -f ./docker-compose.yml -f ./docker-compose.test.yml \
+            --env-file .env \
             up
+
+          echo "::endgroup::"
+
+          echo '::group::Check tests success'
 
           # Check services for non-zero exit codes
           NON_ZERO_EXIT_CODES=$(
-            docker compose -f ./docker-compose.yml -f ./docker-compose.test.yml \
-              ps -a --format '{{json .ExitCode}}' \
-              ${CHECK_SERVICES} \
-            | tr -d '[:space:]0'
+            docker compose \
+              -f ./docker-compose.yml -f ./docker-compose.test.yml \
+              --env-file .env \
+              ps -a --format '{{.ExitCode}}' \
+            | grep -v '^0$' \
+            || true
           )
           if [ -n "${NON_ZERO_EXIT_CODES}" ]; then
-            # Non-zero exit code found
+            # Non-zero exit codes found
+            echo 'Non-zero exit codes found.'
+            docker compose \
+              -f ./docker-compose.yml -f ./docker-compose.test.yml \
+              --env-file .env \
+              ps -a
             exit 1
+          else
+            # All services succeeded
+            echo 'All services succeeded.'
           fi
+
+          echo '::endgroup::'
