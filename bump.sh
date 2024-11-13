@@ -78,10 +78,10 @@ if [ "$USE_GIT" = true ]; then
 	git add ./dockerc > /dev/null 2>&1
 	git commit -m "Bump version to $VERSION" > /dev/null 2>&1
 	if [ $? -ne 0 ]; then
-		echo 'Warning: Failed to commit changes.'
+		echo 'Warning: Failed to commit changes.' >&2
 	else
 		git tag -a "v$VERSION" -m "Bump version to $VERSION"
-		echo "Info: Commited changes & tagged 'v$VERSION' in git"
+		echo "Info: Commited changes & tagged 'v$VERSION' in git" >&2
 	fi
 fi
 
