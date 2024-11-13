@@ -20,12 +20,12 @@ if [ "$#" -gt 0 ]; then
 	if [ "$1" = '--install-dir' ] || [ "$1" = '-i' ]; then
 		# Installation directory argument is provided
 		shift
-		DOCKERC_INSTALL_DIR="$1"
-		shift
-		if [ -z "$DOCKERC_INSTALL_DIR" ]; then
+		if [ -z "$1" ]; then
 			echo 'Error: Missing installation directory.' >&2
 			exit 1
 		fi
+		DOCKERC_INSTALL_DIR="$1"
+		shift
 	fi
 
 	if [ -n "$1" ]; then
