@@ -74,9 +74,6 @@ dockerc train.gpu ps  # -> docker compose -f docker/docker-compose-train.yml -f 
 
 ## License
 
-**MIT License**  
-Copyright (c) 2023 Matiboux
+Copyright (c) 2023 [Matiboux](https://github.com/matiboux) ([matiboux.me](https://matiboux.me))
 
-You can find a copy of the MIT License in the [LICENSE](LICENSE) file.
-
-Visit [matiboux.me](https://matiboux.me) for contact information.
+Licensed under the [MIT License](https://opensource.org/license/MIT). You can see a copy in the [LICENSE](LICENSE) file.
