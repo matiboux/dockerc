@@ -5,10 +5,10 @@
 
 # Temporary files
 ._*
-*~
 *.cache
 *.log*
 *.swp
+*~
 
 # System files
 .DS_Store
@@ -42,8 +42,8 @@ env/
 .coverage
 cov.json
 
-# Application tests
-!/test/**/.env*.local
+# Application test files
+!/test/**/cwd/.env*
 
 # -- Specific to dockerignore:
 
