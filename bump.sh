@@ -38,7 +38,11 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	echo "Usage: $0 [options] <version>"
 	echo ''
 	echo 'Options:'
+	echo '  --help, -h         Display this help message'
 	echo '  --disable-git, -n  Disable git'
+	echo ''
+	echo 'Arguments:'
+	echo '  version  New version (e.g. 1.1.0)'
 	exit ${ERROR_CODE:-0}
 fi
 
