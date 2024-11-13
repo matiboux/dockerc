@@ -7,15 +7,28 @@
 # Copyright (c) 2023 Matiboux
 # This project is not affiliated with Docker, Inc.
 
-# Get version from first parameter and shift
+# Parse options arguments
 if [ "$#" -gt 0 ]; then
-	VERSION="$1"
-	shift
 
-else
-	echo "Error: No version specified."
-	echo "Usage: $0 [-n] <version>"
+	if [ "$1" = "--disable-git" ] || [ "$1" = "-n" ]; then
+		DOCKERC_DISABLE_GIT='true'
+		shift
+	fi
+
+fi
+
+# Parse version argument
+if [ "$#" -le 0 ] || [ -z "$1" ]; then
+	echo "Error: No version specified." >&2
 	exit 1
+fi
+VERSION="$1"
+shift
+
+HAS_GIT='true'
+if [ "$DOCKERC_DISABLE_GIT" = 'true' ]; then
+	# Disable git
+	HAS_GIT='false'
 fi
 
 # Check that git is installed
