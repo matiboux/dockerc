@@ -8,30 +8,40 @@
 # This project is not affiliated with Docker, Inc.
 
 ERROR_CODE=''
+DOCKERC_PARSE_ARGUMENTS='true'
 
 # Parse options arguments
-if [ "$#" -gt 0 ]; then
+while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 
 	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
 		DOCKERC_PRINT_HELP='true'
 		shift
-	fi
 
-	if [ "$1" = '--disable-git' ] || [ "$1" = '-n' ]; then
+	elif [ "$1" = '--disable-git' ] || [ "$1" = '-n' ]; then
 		DOCKERC_DISABLE_GIT='true'
 		shift
+
+	else
+		# Unknown option, maybe first argument
+		# Stop parsing options
+		break
 	fi
 
-fi
+done
 
-# Parse version argument
-if [ "$#" -le 0 ] || [ -z "$1" ]; then
-	echo 'Error: No version specified.' >&2
-	DOCKERC_PRINT_HELP='true'
-	ERROR_CODE=1
+if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
+	# Parse positional arguments
+
+	# Parse version argument
+	if [ "$#" -le 0 ] || [ -z "$1" ]; then
+		echo 'Error: No version specified.' >&2
+		DOCKERC_PRINT_HELP='true'
+		ERROR_CODE=1
+	fi
+	DOCKERC_VERSION="$1"
+	shift
+
 fi
-VERSION="$1"
-shift
 
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	# Print help & exit
@@ -46,6 +56,7 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
+# Get whether to use git
 USE_GIT='true'
 if [ "$DOCKERC_DISABLE_GIT" = 'true' ]; then
 	# Disable git
@@ -65,6 +76,9 @@ if [ "$USE_GIT" = 'true' ]; then
 		fi
 	fi
 fi
+
+# Get version from argument
+VERSION="$DOCKERC_VERSION"
 
 # Bump version in dockerc
 if [ "$(uname -s)" = 'Darwin' ]; then
