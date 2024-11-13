@@ -56,3 +56,21 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY --link --chmod=755 ./docker/test-command.sh /usr/local/bin/app-test-command
 
 CMD [ "app-test-command" ]
+
+
+# --
+# Test watch image
+
+FROM app_test AS app_test_watch
+
+# Install pytest-watch
+RUN --mount=type=cache,target=/tmp/pip-cache \
+	export PIP_CACHE_DIR=/tmp/pip-cache && \
+	pip install \
+		'pytest-watch ~= 4.2.0' \
+		'pytest-testmon ~= 2.1.1'
+
+ENV TESTMON_DATAFILE='/tmp/pytest/.testmondata'
+
+COPY --link --chmod=755 ./docker/test-watch-command.sh /usr/local/bin/app-test-watch-command
+CMD [ "app-test-watch-command" ]
