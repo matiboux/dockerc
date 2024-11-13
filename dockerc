@@ -919,7 +919,9 @@ fi
 
 if [ "$QUIET" = false ]; then
 	# Print docker compose command
-	echo ''
+	if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
+		echo ''
+	fi
 	echo "> docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS $ARGS"
 	echo ''
 fi
