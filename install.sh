@@ -16,8 +16,6 @@ while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
 		DOCKERC_PRINT_HELP='true'
 		shift
-		# Parse next option argument
-		continue
 
 	elif [ "$1" = '--install-dir' ] || [ "$1" = '-i' ]; then
 		# Installation directory argument is provided
@@ -32,8 +30,6 @@ while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 		fi
 		DOCKERC_INSTALL_DIR="$1"
 		shift
-		# Parse next option argument
-		continue
 
 	else
 		# Unknown option, maybe first argument
