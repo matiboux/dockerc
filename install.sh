@@ -1,9 +1,11 @@
 #!/bin/sh
 
 # DockerC Installer
+# Wrapper for docker compose commands in your project.
 # https://github.com/matiboux/dockerc
 # MIT License
 # Copyright (c) 2023 Matiboux
+# This project is not affiliated with Docker, Inc.
 
 if [ "$#" -gt 0 ]; then
 	# Get install directory from parameter and shift
