@@ -5,6 +5,7 @@
 # https://github.com/matiboux/dockerc
 # MIT License
 # Copyright (c) 2023 Matiboux
+# This project is not affiliated with Docker, Inc.
 
 VERSION="1.10.0"
 
