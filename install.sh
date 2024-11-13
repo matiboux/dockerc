@@ -8,9 +8,10 @@
 # This project is not affiliated with Docker, Inc.
 
 ERROR_CODE=''
+DOCKERC_PARSE_ARGUMENTS='true'
 
 # Parse options arguments
-while [ "$#" -gt 0 ]; do
+while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 
 	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
 		DOCKERC_PRINT_HELP='true'
@@ -25,7 +26,8 @@ while [ "$#" -gt 0 ]; do
 			echo 'Error: Missing installation directory.' >&2
 			DOCKERC_PRINT_HELP='true'
 			ERROR_CODE=1
-			# Stop parsing options
+			# Stop parsing arguments
+			DOCKERC_PARSE_ARGUMENTS='false'
 			break
 		fi
 		DOCKERC_INSTALL_DIR="$1"
@@ -41,19 +43,15 @@ while [ "$#" -gt 0 ]; do
 
 done
 
-# Get installation directory
-INSTALL_DIR='/usr/local/bin' # Default installation directory
-if [ -n "$DOCKERC_INSTALL_DIR" ]; then
-	# Use from argument or environment variable
-	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
-fi
+if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
+	# Parse positional arguments
 
-# Get required tag to install
-INSTALL_TAG='HEAD' # Default required tag
-if [ "$#" -gt 0 ] && [ -n "$1" ]; then
-	# Use from argument
-	INSTALL_TAG="$1"
-	shift
+	# Parse install tag optional argument
+	if [ "$#" -gt 0 ]; then
+		DOCKERC_INSTALL_TAG="$1"
+		shift
+	fi
+
 fi
 
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
@@ -67,6 +65,20 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	echo 'Arguments:'
 	echo '  tag  DockerC tag/version to install (defaults to HEAD)'
 	exit ${ERROR_CODE:-0}
+fi
+
+# Get installation directory
+INSTALL_DIR='/usr/local/bin' # Default installation directory
+if [ -n "$DOCKERC_INSTALL_DIR" ]; then
+	# Use from argument or environment variable
+	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
+fi
+
+# Get install tag
+INSTALL_TAG='HEAD' # Default required tag
+if [ -n "$DOCKERC_INSTALL_TAG" ]; then
+	# Use from argument or environment variable
+	INSTALL_TAG="$DOCKERC_INSTALL_TAG"
 fi
 
 # Check that docker is installed
