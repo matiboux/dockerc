@@ -42,20 +42,23 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-HAS_GIT='true'
+USE_GIT='true'
 if [ "$DOCKERC_DISABLE_GIT" = 'true' ]; then
 	# Disable git
-	HAS_GIT='false'
+	USE_GIT='false'
 fi
 
-# Check that git is installed
-if [ ! -d ".git" ]; then
-	HAS_GIT=false
-else
-	git --version > /dev/null 2>&1
-	if [ $? -ne 0 ]; then
-		echo "Warning: Git is not installed."
-		HAS_GIT=false
+if [ "$USE_GIT" = 'true' ]; then
+	if [ ! -d './.git' ]; then
+		# Directory is not a git repository
+		USE_GIT='false'
+	else
+		# Check that git is installed
+		git --version > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			echo "Warning: Git is not installed." >&2
+			USE_GIT='false'
+		fi
 	fi
 fi
 
