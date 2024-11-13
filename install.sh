@@ -10,25 +10,36 @@
 ERROR_CODE=''
 
 # Parse options arguments
-if [ "$#" -gt 0 ]; then
+while [ "$#" -gt 0 ]; do
 
 	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
 		DOCKERC_PRINT_HELP='true'
 		shift
-	fi
+		# Parse next option argument
+		continue
 
-	if [ "$1" = '--install-dir' ] || [ "$1" = '-i' ]; then
+	elif [ "$1" = '--install-dir' ] || [ "$1" = '-i' ]; then
 		# Installation directory argument is provided
 		shift
 		if [ -z "$1" ]; then
 			echo 'Error: Missing installation directory.' >&2
-			exit 1
+			DOCKERC_PRINT_HELP='true'
+			ERROR_CODE=1
+			# Stop parsing options
+			break
 		fi
 		DOCKERC_INSTALL_DIR="$1"
 		shift
+		# Parse next option argument
+		continue
+
+	else
+		# Unknown option, maybe first argument
+		# Stop parsing options
+		break
 	fi
 
-fi
+done
 
 # Get installation directory
 INSTALL_DIR='/usr/local/bin' # Default installation directory
