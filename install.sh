@@ -36,6 +36,20 @@ if [ "$#" -gt 0 ]; then
 
 fi
 
+# Get installation directory
+INSTALL_DIR='/usr/local/bin' # Default installation directory
+if [ -n "$DOCKERC_INSTALL_DIR" ]; then
+	# Use from argument or environment variable
+	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
+fi
+
+# Get required tag to install
+REQUIRED_TAG='HEAD' # Default required tag
+if [ -n "$DOCKERC_REQUIRED_TAG" ]; then
+	# Use from argument or environment variable
+	REQUIRED_TAG="$DOCKERC_REQUIRED_TAG"
+fi
+
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	# Print help & exit
 	echo "Usage: $0 [options] [version]"
@@ -47,24 +61,6 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	echo 'Arguments:'
 	echo '  version  DockerC version to install (defaults to HEAD)'
 	exit ${ERROR_CODE:-0}
-fi
-
-# Get installation directory
-if [ -n "$DOCKERC_INSTALL_DIR" ]; then
-	# Use from argument or environment variable
-	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
-else
-	# Default installation directory
-	INSTALL_DIR='/usr/local/bin'
-fi
-
-# Get required tag to install
-if [ -n "$DOCKERC_REQUIRED_TAG" ]; then
-	# Use from argument or environment variable
-	REQUIRED_TAG="$DOCKERC_REQUIRED_TAG"
-else
-	# Default required tag
-	REQUIRED_TAG='HEAD'
 fi
 
 # Check that docker is installed
