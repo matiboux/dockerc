@@ -7,8 +7,15 @@
 # Copyright (c) 2023 Matiboux
 # This project is not affiliated with Docker, Inc.
 
+ERROR_CODE=''
+
 # Parse options arguments
 if [ "$#" -gt 0 ]; then
+
+	if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+		DOCKERC_PRINT_HELP='true'
+		shift
+	fi
 
 	if [ "$1" = "--disable-git" ] || [ "$1" = "-n" ]; then
 		DOCKERC_DISABLE_GIT='true'
@@ -20,10 +27,20 @@ fi
 # Parse version argument
 if [ "$#" -le 0 ] || [ -z "$1" ]; then
 	echo "Error: No version specified." >&2
-	exit 1
+	DOCKERC_PRINT_HELP='true'
+	ERROR_CODE=1
 fi
 VERSION="$1"
 shift
+
+if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
+	# Print help & exit
+	echo "Usage: $0 [options] <version>"
+	echo ''
+	echo 'Options:'
+	echo '  --disable-git, -n  Disable git'
+	exit ${ERROR_CODE:-0}
+fi
 
 HAS_GIT='true'
 if [ "$DOCKERC_DISABLE_GIT" = 'true' ]; then
