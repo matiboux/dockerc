@@ -10,9 +10,14 @@
 if [ "$#" -gt 0 ]; then
 
 	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
-		echo "Usage: $0 [install_dir] [version]"
-		echo '  install_dir: Installation directory (default: /usr/local/bin)'
-		echo '  version: Specific version to install (default: HEAD)'
+		echo "Usage: $0 [options] [version]"
+		echo ''
+		echo 'Options:'
+		echo '  --help, -h         Display this help message'
+		echo '  --install-dir, -i  Installation directory (defaults to /usr/local/bin)'
+		echo ''
+		echo 'Arguments:'
+		echo '  version  DockerC version to install (defaults to HEAD)'
 		exit 0
 	fi
 
