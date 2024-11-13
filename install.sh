@@ -7,18 +7,14 @@
 # Copyright (c) 2023 Matiboux
 # This project is not affiliated with Docker, Inc.
 
+ERROR_CODE=''
+
+# Parse options arguments
 if [ "$#" -gt 0 ]; then
 
 	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
-		echo "Usage: $0 [options] [version]"
-		echo ''
-		echo 'Options:'
-		echo '  --help, -h         Display this help message'
-		echo '  --install-dir, -i  Installation directory (defaults to /usr/local/bin)'
-		echo ''
-		echo 'Arguments:'
-		echo '  version  DockerC version to install (defaults to HEAD)'
-		exit 0
+		DOCKERC_PRINT_HELP='true'
+		shift
 	fi
 
 	if [ "$1" = '--install-dir' ] || [ "$1" = '-i' ]; then
@@ -38,6 +34,19 @@ if [ "$#" -gt 0 ]; then
 		shift
 	fi
 
+fi
+
+if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
+	# Print help & exit
+	echo "Usage: $0 [options] [version]"
+	echo ''
+	echo 'Options:'
+	echo '  --help, -h         Display this help message'
+	echo '  --install-dir, -i  Installation directory (defaults to /usr/local/bin)'
+	echo ''
+	echo 'Arguments:'
+	echo '  version  DockerC version to install (defaults to HEAD)'
+	exit ${ERROR_CODE:-0}
 fi
 
 # Get installation directory
