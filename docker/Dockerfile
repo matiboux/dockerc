@@ -15,23 +15,27 @@ FROM python:3.11-slim AS python_upstream
 
 FROM python_upstream AS app_base
 
-# Create app directory
+# Set app directory
 WORKDIR /app
 
 
 # --
-# Dev base image
+# Runtime base image
 
-FROM app_base AS app_dev_base
+FROM app_base AS app_runtime_base
 
+# Set runtime environment
 ENV APP_ENV=dev
 ENV NODE_ENV=development
+
+# Copy application source code
+COPY --link . .
 
 
 # --
 # Test image
 
-FROM app_dev_base AS app_test
+FROM app_runtime_base AS app_test
 
 ENV APP_ENV=test
 ENV PYTHONPATH=/app
@@ -40,7 +44,7 @@ ENV PYTHONPATH=/app
 RUN --mount=type=cache,target=/var/cache/apt \
 	--mount=type=cache,target=/var/lib/apt \
 	apt-get update && \
-	apt-get install -y 'jq=1.6-2.1'
+	apt-get install -y jq
 
 # Install pytest & plugins
 RUN --mount=type=cache,target=/root/.cache/pip \
@@ -49,6 +53,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 		'pytest-cov ~= 5.0.0' \
 		'pytest-shell-utilities ~= 1.9.0'
 
-COPY --link --chmod=755 ./docker/docker-test-command.sh /usr/local/bin/docker-test-command
+COPY --link --chmod=755 ./docker/test-command.sh /usr/local/bin/app-test-command
 
-CMD [ "docker-test-command" ]
+CMD [ "app-test-command" ]

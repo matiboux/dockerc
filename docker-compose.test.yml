@@ -1,4 +1,5 @@
 # Services overrides for testing
+
 services:
 
   app:
@@ -9,5 +10,3 @@ services:
     # Deploy override
     environment:
       COVERAGE_THRESHOLD: ${COVERAGE_THRESHOLD:-}
-    volumes:
-      - .:/app
