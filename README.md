@@ -5,11 +5,11 @@ Wrapper for docker compose commands in your project.
 
 ## Install
 
-First, make sure you have required dependencies installed on your system:
+First, install required dependencies on your system:
 - Docker
-- Docker Compose V2
+- Docker Compose v2
 
-Then, paste this in your terminal to install DockerC:
+Then, install DockerC with the following command:
 
 ```bash
 /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh)"
@@ -17,7 +17,8 @@ Then, paste this in your terminal to install DockerC:
 
 Take a look at the [install.sh](install.sh) script to see what it does.
 
-If you get the error `Failure writing output to destination`, you can try to run the command again with `sudo`:
+If you get the error `Failure writing output to destination`,
+try to run the command again with `sudo` or grant yourself write permissions to install directory (`/usr/local/bin` by default).
 
 ```bash
 sudo /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh)"
