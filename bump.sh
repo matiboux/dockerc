@@ -1,17 +1,11 @@
 #!/bin/sh
 
 # DockerC Version Bumper
+# Wrapper for docker compose commands in your project.
 # https://github.com/matiboux/dockerc
 # MIT License
 # Copyright (c) 2023 Matiboux
-
-HAS_GIT=true
-
-if [ "$1" = "-n" ]; then
-	# Disable git
-	HAS_GIT=false
-	shift
-fi
+# This project is not affiliated with Docker, Inc.
 
 # Get version from first parameter and shift
 if [ "$#" -gt 0 ]; then
