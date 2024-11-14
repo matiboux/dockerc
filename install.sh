@@ -13,29 +13,35 @@ DOCKERC_PARSE_ARGUMENTS='true'
 # Parse options arguments
 while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 
-	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
-		DOCKERC_PRINT_HELP='true'
-		shift
+	case "$1" in
 
-	elif [ "$1" = '--install-dir' ] || [ "$1" = '-i' ]; then
-		# Installation directory argument is provided
-		shift
-		if [ -z "$1" ]; then
-			echo 'Error: Missing installation directory.' >&2
+		'--help' | '-h' )
 			DOCKERC_PRINT_HELP='true'
-			ERROR_CODE=1
-			# Stop parsing arguments
-			DOCKERC_PARSE_ARGUMENTS='false'
-			break
-		fi
-		DOCKERC_INSTALL_DIR="$1"
-		shift
+			shift
+			;;
 
-	else
-		# Unknown option, maybe first argument
-		# Stop parsing options
-		break
-	fi
+		'--install-dir' | '-i' )
+			shift
+			# Get installation directory argument
+			if [ -z "$1" ]; then
+				echo 'Error: Missing installation directory.' >&2
+				DOCKERC_PRINT_HELP='true'
+				ERROR_CODE=1
+				# Stop parsing arguments
+				DOCKERC_PARSE_ARGUMENTS='false'
+				break
+			fi
+			DOCKERC_INSTALL_DIR="$1"
+			shift
+			;;
+
+		* )
+			# Unknown option, maybe first argument
+			# Stop parsing options
+			break
+			;;
+
+	esac
 
 done
 

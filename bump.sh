@@ -13,19 +13,25 @@ DOCKERC_PARSE_ARGUMENTS='true'
 # Parse options arguments
 while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 
-	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
-		DOCKERC_PRINT_HELP='true'
-		shift
+	case "$1" in
 
-	elif [ "$1" = '--disable-git' ] || [ "$1" = '-n' ]; then
-		DOCKERC_DISABLE_GIT='true'
-		shift
+		'--help' | '-h' )
+			DOCKERC_PRINT_HELP='true'
+			shift
+			;;
 
-	else
-		# Unknown option, maybe first argument
-		# Stop parsing options
-		break
-	fi
+		'--disable-git' | '-n' )
+			DOCKERC_DISABLE_GIT='true'
+			shift
+			;;
+
+		* )
+			# Unknown option, maybe first argument
+			# Stop parsing options
+			break
+			;;
+
+	esac
 
 done
 
