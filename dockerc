@@ -80,6 +80,30 @@ if [ "$DOCKERC_PRINT_HELP" = true ]; then
 	exit 0
 fi
 
+UPDATE='false'
+if [ -n "$DOCKERC_UPDATE" ]; then
+	# Use from argument or environment variable
+	UPDATE="$DOCKERC_UPDATE"
+fi
+
+FORCE='false'
+if [ -n "$DOCKERC_FORCE" ]; then
+	# Use from argument or environment variable
+	FORCE="$DOCKERC_FORCE"
+fi
+
+DRY_RUN='false'
+if [ -n "$DOCKERC_DRY_RUN" ]; then
+	# Use from argument or environment variable
+	DRY_RUN="$DOCKERC_DRY_RUN"
+fi
+
+QUIET='false'
+if [ -n "$DOCKERC_QUIET" ]; then
+	# Use from argument or environment variable
+	QUIET="$DOCKERC_QUIET"
+fi
+
 # Function to get latest version
 get_latest_version() {
 	# Syntax: '"tag_name": "v1.0.0",'
@@ -114,30 +138,6 @@ if [ "$DOCKERC_PRINT_VERSION" = true ]; then
 	fi
 
 	exit 0
-fi
-
-UPDATE='false'
-if [ -n "$DOCKERC_UPDATE" ]; then
-	# Use from argument or environment variable
-	UPDATE="$DOCKERC_UPDATE"
-fi
-
-FORCE='false'
-if [ -n "$DOCKERC_FORCE" ]; then
-	# Use from argument or environment variable
-	FORCE="$DOCKERC_FORCE"
-fi
-
-DRY_RUN='false'
-if [ -n "$DOCKERC_DRY_RUN" ]; then
-	# Use from argument or environment variable
-	DRY_RUN="$DOCKERC_DRY_RUN"
-fi
-
-QUIET='false'
-if [ -n "$DOCKERC_QUIET" ]; then
-	# Use from argument or environment variable
-	QUIET="$DOCKERC_QUIET"
 fi
 
 if [ "$UPDATE" = true ]; then
