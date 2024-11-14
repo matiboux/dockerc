@@ -58,6 +58,26 @@ while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 
 done
 
+if
+	[ "$DOCKERC_PRINT_HELP" = 'true' ] ||
+	[ "$DOCKERC_PRINT_VERSION" = 'true' ] ||
+	[ "$DOCKERC_UPDATE" = 'true' ]
+then
+	# Skip parsing positional arguments
+	DOCKERC_PARSE_ARGUMENTS='false'
+fi
+
+if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
+	# Parse positional arguments
+
+	# Parse context optional argument
+	if [ "$#" -gt 0 ]; then
+		DOCKERC_CONTEXT="$1"
+		shift
+	fi
+
+fi
+
 print_context_help() {
 	echo '  context syntax: [first] | [first]-[second] | "-" | "--"'
 	echo '    first   First part of the context'
@@ -103,6 +123,12 @@ QUIET='false'
 if [ -n "$DOCKERC_QUIET" ]; then
 	# Use from argument or environment variable
 	QUIET="$DOCKERC_QUIET"
+fi
+
+CONTEXT=''
+if [ -n "$DOCKERC_CONTEXT" ]; then
+	# Use from argument or environment variable
+	CONTEXT="$DOCKERC_CONTEXT"
 fi
 
 # Function to get latest version
@@ -181,14 +207,6 @@ if [ "$UPDATE" = 'true' ]; then
 	fi
 
 	exit 0
-fi
-
-if [ $# -gt 0 ]; then
-	# Get context from first parameter and shift
-	CONTEXT="$1"
-	shift
-else
-	CONTEXT=''
 fi
 
 # Check for docker preset
