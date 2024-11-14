@@ -148,7 +148,12 @@ fi
 
 if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC and exit
-	INSTALL_DIR=$(dirname "$0")
+
+	INSTALL_DIR=$(dirname "$0") # Default install directory
+	if [ -n "$DOCKERC_INSTALL_DIR" ]; then
+		# Use from environment variable
+		INSTALL_DIR="$DOCKERC_INSTALL_DIR"
+	fi
 
 	if [ ! -d "$INSTALL_DIR" ]; then
 		echo 'Error: Install directory does not exist.'
