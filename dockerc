@@ -67,7 +67,7 @@ print_context_help() {
 }
 
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
-	# Print help and exit
+	# Print help & exit
 	echo "Usage: $0 [options] [context] [...args]"
 	echo '  args: Arguments passed to docker compose'
 	print_context_help
@@ -127,8 +127,8 @@ get_latest_version() {
 }
 
 if [ "$DOCKERC_PRINT_VERSION" = 'true' ]; then
+	# Print version & exit
 
-	# Print version and exit
 	if [ "$QUIET" = 'false' ]; then
 		echo "DockerC (v$VERSION) - https://github.com/matiboux/dockerc"
 
@@ -143,11 +143,12 @@ if [ "$DOCKERC_PRINT_VERSION" = 'true' ]; then
 		echo "v$VERSION"
 	fi
 
-	exit 0
+	exit ${ERROR_CODE:-0}
+
 fi
 
 if [ "$UPDATE" = 'true' ]; then
-	# Update DockerC and exit
+	# Update DockerC & exit
 
 	INSTALL_DIR=$(dirname "$0") # Default install directory
 	if [ -n "$DOCKERC_INSTALL_DIR" ]; then
