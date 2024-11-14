@@ -135,7 +135,7 @@ if [ "$DOCKERC_PRINT_VERSION" = 'true' ]; then
 		if [ "$DRY_RUN" = 'false' ]; then
 			LATEST_VERSION=$(get_latest_version)
 			if [ "$VERSION" != "$LATEST_VERSION" ]; then
-				echo "Notice: DockerC is not up to date, latest version is $LATEST_VERSION!"
+				echo "Notice: DockerC is not up to date, latest version is $LATEST_VERSION!" >&2
 			fi
 		fi
 
@@ -156,7 +156,7 @@ if [ "$UPDATE" = 'true' ]; then
 	fi
 
 	if [ ! -d "$INSTALL_DIR" ]; then
-		echo 'Error: Install directory does not exist.'
+		echo 'Error: Install directory does not exist.' >&2
 		exit 1
 	fi
 
@@ -268,7 +268,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 			;;
 
 		*)
-			echo "Error: Unknown docker preset '@$CONTEXT'"
+			echo "Error: Unknown docker preset '@$CONTEXT'" >&2
 			exit 1
 			;;
 
@@ -542,9 +542,9 @@ EOF
 	# If compose file arguments are empty, exit with error
 	if [ -z "$COMPOSE_FILE_ARGS" ]; then
 		if [ -z "$CONTEXT" ]; then
-			echo 'Error: Default context not found'
+			echo 'Error: Default context not found' >&2
 		else
-			echo "Error: Unknown context '$CONTEXT'"
+			echo "Error: Unknown context '$CONTEXT'" >&2
 		fi
 		exit 1
 	fi
@@ -552,7 +552,7 @@ EOF
 	# Unless force option is set,
 	# If compose file arguments are abstract, exit with error
 	if [ "$FORCE" = 'false' ] && [ "$ABSTRACT_COMPOSE_FILE_ARGS" = 'true' ]; then
-		echo 'Error: Abstract context found'
+		echo 'Error: Abstract context found' >&2
 		exit 1
 	fi
 
@@ -842,7 +842,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 			;;
 
 		*)
-			echo "Error: Unknown args preset '@$ARGS_PRESET'"
+			echo "Error: Unknown args preset '@$ARGS_PRESET'" >&2
 			exit 1
 			;;
 
