@@ -10,57 +10,47 @@
 VERSION="1.10.0"
 
 # Default options
-PRINT_HELP=false
-PRINT_VERSION=false
-UPDATE=false
-FORCE=false
-DRY_RUN=false
-QUIET=false
+PRINT_HELP='false'
+PRINT_VERSION='false'
+UPDATE='false'
+FORCE='false'
+DRY_RUN='false'
+QUIET='false'
 
 # Parse options
 while true; do
 	case "$1" in
-		'-h')
+		'--help' | '-h' )
 			# Print help and exit
-			PRINT_HELP=true
+			PRINT_HELP='true'
 			shift
 			;;
-		'--help')
-			# Print help and exit
-			PRINT_HELP=true
-			shift
-			;;
-		'-v')
+		'--version' | '-v' )
 			# Print version and exit
-			PRINT_VERSION=true
+			PRINT_VERSION='true'
 			shift
 			;;
-		'--version')
-			# Print version and exit
-			PRINT_VERSION=true
-			shift
-			;;
-		'--update')
+		'--update' )
 			# Update DockerC and exit
-			UPDATE=true
+			UPDATE='true'
 			shift
 			;;
-		'-f')
+		'-f' )
 			# Force, for example ignores abstract contexts
-			FORCE=true
+			FORCE='true'
 			shift
 			;;
-		'-n')
+		'--dry-run' | '-n' )
 			# Dry run, print docker compose command without running it
-			DRY_RUN=true
+			DRY_RUN='true'
 			shift
 			;;
-		'-q')
+		'--quiet' | '-q' )
 			# Quiet, do not print docker compose command
-			QUIET=true
+			QUIET='true'
 			shift
 			;;
-		*)
+		* )
 			break
 			;;
 	esac
