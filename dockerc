@@ -66,7 +66,7 @@ print_context_help() {
 	echo '    "--"    Use docker compose without file arguments'
 }
 
-if [ "$DOCKERC_PRINT_HELP" = true ]; then
+if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	# Print help and exit
 	echo "Usage: $0 [options] [context] [...args]"
 	echo '  args: Arguments passed to docker compose'
@@ -121,13 +121,13 @@ get_latest_version() {
 	echo "$LATEST_VERSION"
 }
 
-if [ "$DOCKERC_PRINT_VERSION" = true ]; then
+if [ "$DOCKERC_PRINT_VERSION" = 'true' ]; then
 
 	# Print version and exit
-	if [ "$QUIET" = false ]; then
+	if [ "$QUIET" = 'false' ]; then
 		echo "DockerC (v$VERSION) - https://github.com/matiboux/dockerc"
 
-		if [ "$DRY_RUN" = false ]; then
+		if [ "$DRY_RUN" = 'false' ]; then
 			LATEST_VERSION=$(get_latest_version)
 			if [ "$VERSION" != "$LATEST_VERSION" ]; then
 				echo "Notice: DockerC is not up to date, latest version is $LATEST_VERSION!"
@@ -141,7 +141,7 @@ if [ "$DOCKERC_PRINT_VERSION" = true ]; then
 	exit 0
 fi
 
-if [ "$UPDATE" = true ]; then
+if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC and exit
 	INSTALL_DIR=$(dirname "$0")
 
@@ -161,7 +161,7 @@ if [ "$UPDATE" = true ]; then
 		REQUIRED_VERSION="$(get_latest_version)"
 	fi
 
-	if [ "$DRY_RUN" = false ]; then
+	if [ "$DRY_RUN" = 'false' ]; then
 		echo "Updating DockerC (v$REQUIRED_VERSION)..."
 		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$REQUIRED_VERSION\""
 	else
@@ -193,9 +193,9 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		shift
 	done
 
-	PRINT_DOCKER_PRESETS_HELP=false
+	PRINT_DOCKER_PRESETS_HELP='false'
 	DOCKER_ARGS=''
-	RUN_SHELL=false
+	RUN_SHELL='false'
 
 	# Remove first char
 	CONTEXT="${CONTEXT#?}"
@@ -203,7 +203,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 	case "$CONTEXT" in
 
 		'')
-			PRINT_DOCKER_PRESETS_HELP=true
+			PRINT_DOCKER_PRESETS_HELP='true'
 			;;
 
 		'rfc')
@@ -228,33 +228,33 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		'sa')
 			# Stop all containers
 			DOCKER_ARGS='stop $(docker ps -q)'
-			RUN_SHELL=true
+			RUN_SHELL='true'
 			;;
 
 		'rmf')
 			# Remove running containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q)'
-			RUN_SHELL=true
+			RUN_SHELL='true'
 			;;
 		'rms')
 			# Remove stopped containers
 			DOCKER_ARGS='rm $(docker ps -a -q -f status=exited -f status=dead)'
-			RUN_SHELL=true
+			RUN_SHELL='true'
 			;;
 		'rmsf'|'rmfs')
 			# Remove stopped containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q -f status=exited -f status=dead)'
-			RUN_SHELL=true
+			RUN_SHELL='true'
 			;;
 		'rma')
 			# Remove all containers
 			DOCKER_ARGS='rm $(docker ps -a -q)'
-			RUN_SHELL=true
+			RUN_SHELL='true'
 			;;
 		'rmaf'|'rmfa')
 			# Remove all containers, force
 			DOCKER_ARGS='rm -f $(docker ps -q)'
-			RUN_SHELL=true
+			RUN_SHELL='true'
 			;;
 
 		*)
@@ -264,7 +264,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 	esac
 
-	if [ "$PRINT_DOCKER_PRESETS_HELP" = true ]; then
+	if [ "$PRINT_DOCKER_PRESETS_HELP" = 'true' ]; then
 		# Print help and exit
 		echo "Usage: $0 [options] [@preset] [...args]"
 		echo '  args: Arguments passed to docker'
@@ -290,30 +290,30 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 		exit 0
 	fi
 
-	if [ "$RUN_SHELL" = false ]; then
+	if [ "$RUN_SHELL" = 'false' ]; then
 
-		if [ "$QUIET" = false ]; then
+		if [ "$QUIET" = 'false' ]; then
 			# Print docker command
 			echo ''
 			echo "> docker ${DOCKER_ARGS}${ARGS}"
 			echo ''
 		fi
 
-		if [ "$DRY_RUN" = false ]; then
+		if [ "$DRY_RUN" = 'false' ]; then
 			# Run docker command
 			exec docker ${DOCKER_ARGS}${ARGS}
 		fi
 
-	else # "$RUN_SHELL" = true
+	else # "$RUN_SHELL" = 'true'
 
-		if [ "$QUIET" = false ]; then
+		if [ "$QUIET" = 'false' ]; then
 			# Print docker command
 			echo ''
 			echo "> sh -c 'docker ${DOCKER_ARGS}${ARGS}'"
 			echo ''
 		fi
 
-		if [ "$DRY_RUN" = false ]; then
+		if [ "$DRY_RUN" = 'false' ]; then
 			# Run docker command
 			exec sh -c "docker ${DOCKER_ARGS}${ARGS}"
 		fi
@@ -328,8 +328,8 @@ fi
 ARGS="$@"
 
 COMPOSE_FILE_ARGS=''
-NO_COMPOSE_FILE_ARGS=false
-ABSTRACT_COMPOSE_FILE_ARGS=false
+NO_COMPOSE_FILE_ARGS='false'
+ABSTRACT_COMPOSE_FILE_ARGS='false'
 ENV_FILE_ARGS=''
 
 # If context is -, use default docker compose files (override if it exists)
@@ -338,11 +338,11 @@ if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
 
 # If context is --, ignore context and use docker compose without file arguments
 elif [ "$CONTEXT" = '--' ]; then
-	NO_COMPOSE_FILE_ARGS=true
+	NO_COMPOSE_FILE_ARGS='true'
 
 fi
 
-if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
+if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
 
 	# Check in current directory, then in docker directory
 	while read -r dir; do
@@ -369,9 +369,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_FILE_PATH"
 
 			if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-				ABSTRACT_COMPOSE_FILE_ARGS=true
+				ABSTRACT_COMPOSE_FILE_ARGS='true'
 			else
-				ABSTRACT_COMPOSE_FILE_ARGS=false
+				ABSTRACT_COMPOSE_FILE_ARGS='false'
 			fi
 		fi
 
@@ -411,9 +411,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 						MISSING_PARTS=''
 
 						if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-							ABSTRACT_COMPOSE_FILE_ARGS=true
+							ABSTRACT_COMPOSE_FILE_ARGS='true'
 						else
-							ABSTRACT_COMPOSE_FILE_ARGS=false
+							ABSTRACT_COMPOSE_FILE_ARGS='false'
 						fi
 
 					else
@@ -437,9 +437,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 								MISSING_PARTS=''
 
 								if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-									ABSTRACT_COMPOSE_FILE_ARGS=true
+									ABSTRACT_COMPOSE_FILE_ARGS='true'
 								else
-									ABSTRACT_COMPOSE_FILE_ARGS=false
+									ABSTRACT_COMPOSE_FILE_ARGS='false'
 								fi
 							fi
 
@@ -456,9 +456,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = false ]; then
 								PREFIX_2="$PREFIX_2.$part"
 
 								if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-									ABSTRACT_COMPOSE_FILE_ARGS=true
+									ABSTRACT_COMPOSE_FILE_ARGS='true'
 								else
-									ABSTRACT_COMPOSE_FILE_ARGS=false
+									ABSTRACT_COMPOSE_FILE_ARGS='false'
 								fi
 
 							else
@@ -507,9 +507,9 @@ EOF
 					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $COMPOSE_FILE_PATH"
 
 					if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-						ABSTRACT_COMPOSE_FILE_ARGS=true
+						ABSTRACT_COMPOSE_FILE_ARGS='true'
 					else
-						ABSTRACT_COMPOSE_FILE_ARGS=false
+						ABSTRACT_COMPOSE_FILE_ARGS='false'
 					fi
 
 					break
@@ -541,7 +541,7 @@ EOF
 
 	# Unless force option is set,
 	# If compose file arguments are abstract, exit with error
-	if [ "$FORCE" = false ] && [ "$ABSTRACT_COMPOSE_FILE_ARGS" = true ]; then
+	if [ "$FORCE" = 'false' ] && [ "$ABSTRACT_COMPOSE_FILE_ARGS" = 'true' ]; then
 		echo 'Error: Abstract context found'
 		exit 1
 	fi
@@ -575,12 +575,12 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 		ARGS=" ${ARGS#* }"
 	fi
 
-	PRINT_ARGS_PRESET_HELP=false
+	PRINT_ARGS_PRESET_HELP='false'
 
 	case "$ARGS_PRESET" in
 
 		'')
-			PRINT_ARGS_PRESET_HELP=true
+			PRINT_ARGS_PRESET_HELP='true'
 			;;
 
 		'u')
@@ -838,7 +838,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 
 	esac
 
-	if [ "$PRINT_ARGS_PRESET_HELP" = true ]; then
+	if [ "$PRINT_ARGS_PRESET_HELP" = 'true' ]; then
 		# Print help and exit
 		echo "Usage: $0 [options] [context] [@preset] [...args]"
 		echo '  args: Arguments passed to docker compose'
@@ -933,7 +933,7 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 
 fi
 
-if [ "$QUIET" = false ]; then
+if [ "$QUIET" = 'false' ]; then
 	# Print docker compose command
 	if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 		echo ''
@@ -942,7 +942,7 @@ if [ "$QUIET" = false ]; then
 	echo ''
 fi
 
-if [ "$DRY_RUN" = false ]; then
+if [ "$DRY_RUN" = 'false' ]; then
 	# Run docker compose
 	exec docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS $ARGS
 fi
