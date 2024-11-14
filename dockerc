@@ -9,14 +9,6 @@
 
 VERSION='1.10.0'
 
-# Default options
-PRINT_HELP='false'
-PRINT_VERSION='false'
-UPDATE='false'
-FORCE='false'
-DRY_RUN='false'
-QUIET='false'
-
 DOCKERC_PARSE_ARGUMENTS='true'
 
 # Parse options arguments
@@ -25,35 +17,35 @@ while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 	case "$1" in
 
 		'--help' | '-h' )
-			PRINT_HELP='true'
+			DOCKERC_PRINT_HELP='true'
 			shift
 			;;
 
 		'--version' | '-v' )
-			PRINT_VERSION='true'
+			DOCKERC_PRINT_VERSION='true'
 			shift
 			;;
 
 		'--update' )
-			UPDATE='true'
+			DOCKERC_UPDATE='true'
 			shift
 			;;
 
 		'-f' )
 			# Force, for example ignores abstract contexts
-			FORCE='true'
+			DOCKERC_FORCE='true'
 			shift
 			;;
 
 		'--dry-run' | '-n' )
 			# Dry run, print docker compose command without running it
-			DRY_RUN='true'
+			DOCKERC_DRY_RUN='true'
 			shift
 			;;
 
 		'--quiet' | '-q' )
 			# Quiet, do not print docker compose command
-			QUIET='true'
+			DOCKERC_QUIET='true'
 			shift
 			;;
 
@@ -73,7 +65,7 @@ print_context_help() {
 	echo '    "--"    Use docker compose without file arguments'
 }
 
-if [ "$PRINT_HELP" = true ]; then
+if [ "$DOCKERC_PRINT_HELP" = true ]; then
 	# Print help and exit
 	echo "Usage: $0 [options] [context] [...args]"
 	echo '  args: Arguments passed to docker compose'
@@ -104,7 +96,7 @@ get_latest_version() {
 	echo "$LATEST_VERSION"
 }
 
-if [ "$PRINT_VERSION" = true ]; then
+if [ "$DOCKERC_PRINT_VERSION" = true ]; then
 
 	# Print version and exit
 	if [ "$QUIET" = false ]; then
@@ -122,6 +114,30 @@ if [ "$PRINT_VERSION" = true ]; then
 	fi
 
 	exit 0
+fi
+
+UPDATE='false'
+if [ -n "$DOCKERC_UPDATE" ]; then
+	# Use from argument or environment variable
+	UPDATE="$DOCKERC_UPDATE"
+fi
+
+FORCE='false'
+if [ -n "$DOCKERC_FORCE" ]; then
+	# Use from argument or environment variable
+	FORCE="$DOCKERC_FORCE"
+fi
+
+DRY_RUN='false'
+if [ -n "$DOCKERC_DRY_RUN" ]; then
+	# Use from argument or environment variable
+	DRY_RUN="$DOCKERC_DRY_RUN"
+fi
+
+QUIET='false'
+if [ -n "$DOCKERC_QUIET" ]; then
+	# Use from argument or environment variable
+	QUIET="$DOCKERC_QUIET"
 fi
 
 if [ "$UPDATE" = true ]; then
