@@ -108,17 +108,22 @@ fi
 # Function to get latest version
 get_latest_version() {
 	# Syntax: '"tag_name": "v1.0.0",'
-	LATEST_VERSION_JSON=$(curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" | grep -Eo '"tag_name": "(.+?)",')
+	LATEST_VERSION_JSON=$(
+		curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" 2>/dev/null \
+		| grep -Eo '"tag_name": "(.+?)",'
+	)
 
-	if [ "$(uname -s)" = 'Darwin' ]; then
-		# MacOS
-		LATEST_VERSION="${LATEST_VERSION_JSON:14:$((${#LATEST_VERSION_JSON}-14-2))}"
-	else
-		# Linux
-		LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 14) $(expr length "$LATEST_VERSION_JSON" - 14 - 2))
+	if [ -n "$LATEST_VERSION_JSON" ]; then
+		if [ "$(uname -s)" = 'Darwin' ]; then
+			# MacOS
+			LATEST_VERSION="${LATEST_VERSION_JSON:14:$((${#LATEST_VERSION_JSON}-14-2))}"
+		else
+			# Linux
+			LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 14) $(expr length "$LATEST_VERSION_JSON" - 14 - 2))
+		fi
+
+		echo "$LATEST_VERSION"
 	fi
-
-	echo "$LATEST_VERSION"
 }
 
 if [ "$DOCKERC_PRINT_VERSION" = 'true' ]; then
