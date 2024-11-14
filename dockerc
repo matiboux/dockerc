@@ -78,29 +78,6 @@ if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
 
 fi
 
-print_context_help() {
-	echo '  context syntax: [first] | [first]-[second] | "-" | "--"'
-	echo '    first   First part of the context'
-	echo '    second  Second part of the context'
-	echo '    "-"     Use default docker compose files ("override" if it exists)'
-	echo '    "--"    Use docker compose without file arguments'
-}
-
-if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
-	# Print help & exit
-	echo "Usage: $0 [options] [context] [...args]"
-	echo '  args: Arguments passed to docker compose'
-	print_context_help
-	echo '  options:'
-	echo '    -h, --help     Print this help and exit'
-	echo '    -v, --version  Print version and exit'
-	echo '    --update       Update DockerC and exit'
-	echo '    -f             Force, for example ignores abstract contexts'
-	echo '    -n             Dry run, print docker compose command without running it'
-	echo '    -q             Quiet, do not print docker compose command'
-	exit ${ERROR_CODE:-0}
-fi
-
 UPDATE='false'
 if [ -n "$DOCKERC_UPDATE" ]; then
 	# Use from argument or environment variable
@@ -131,7 +108,29 @@ if [ -n "$DOCKERC_CONTEXT" ]; then
 	CONTEXT="$DOCKERC_CONTEXT"
 fi
 
-# Function to get latest version
+print_context_help() {
+	echo '  context syntax: [first] | [first]-[second] | "-" | "--"'
+	echo '    first   First part of the context'
+	echo '    second  Second part of the context'
+	echo '    "-"     Use default docker compose files ("override" if it exists)'
+	echo '    "--"    Use docker compose without file arguments'
+}
+
+if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
+	# Print help & exit
+	echo "Usage: $0 [options] [context] [...args]"
+	echo '  args: Arguments passed to docker compose'
+	print_context_help
+	echo '  options:'
+	echo '    -h, --help     Print this help and exit'
+	echo '    -v, --version  Print version and exit'
+	echo '    --update       Update DockerC and exit'
+	echo '    -f             Force, for example ignores abstract contexts'
+	echo '    -n             Dry run, print docker compose command without running it'
+	echo '    -q             Quiet, do not print docker compose command'
+	exit ${ERROR_CODE:-0}
+fi
+
 get_latest_version() {
 	# Syntax: '"tag_name": "v1.0.0",'
 	LATEST_VERSION_JSON=$(
