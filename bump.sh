@@ -90,11 +90,11 @@ VERSION="$DOCKERC_VERSION"
 if [ "$(uname -s)" = 'Darwin' ]; then
 	# MacOS
 	sed -i '' "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" ./dockerc
-	sed -i '' "10 s/VERSION=.*/VERSION=\"$VERSION\"/g" ./dockerc
+	sed -i '' "10 s/VERSION=.*/VERSION='$VERSION'/g" ./dockerc
 else
 	# Linux
 	sed -i "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" ./dockerc
-	sed -i "10 s/VERSION=.*/VERSION=\"$VERSION\"/g" ./dockerc
+	sed -i "10 s/VERSION=.*/VERSION='$VERSION'/g" ./dockerc
 fi
 
 if [ "$USE_GIT" = true ]; then

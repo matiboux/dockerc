@@ -7,7 +7,7 @@
 # Copyright (c) 2023 Matiboux
 # This project is not affiliated with Docker, Inc.
 
-VERSION="1.10.0"
+VERSION='1.10.0'
 
 # Default options
 PRINT_HELP='false'
