@@ -1,59 +1,105 @@
 #!/bin/sh
 
 # DockerC Version Bumper
+# Wrapper for docker compose commands in your project.
 # https://github.com/matiboux/dockerc
 # MIT License
 # Copyright (c) 2023 Matiboux
+# This project is not affiliated with Docker, Inc.
 
-HAS_GIT=true
+ERROR_CODE=''
+DOCKERC_PARSE_ARGUMENTS='true'
 
-if [ "$1" = "-n" ]; then
+# Parse options arguments
+while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
+
+	if [ "$1" = '--help' ] || [ "$1" = '-h' ]; then
+		DOCKERC_PRINT_HELP='true'
+		shift
+
+	elif [ "$1" = '--disable-git' ] || [ "$1" = '-n' ]; then
+		DOCKERC_DISABLE_GIT='true'
+		shift
+
+	else
+		# Unknown option, maybe first argument
+		# Stop parsing options
+		break
+	fi
+
+done
+
+if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
+	# Parse positional arguments
+
+	# Parse version argument
+	if [ "$#" -le 0 ] || [ -z "$1" ]; then
+		echo 'Error: No version specified.' >&2
+		DOCKERC_PRINT_HELP='true'
+		ERROR_CODE=1
+	fi
+	DOCKERC_VERSION="$1"
+	shift
+
+fi
+
+if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
+	# Print help & exit
+	echo "Usage: $0 [options] <version>"
+	echo ''
+	echo 'Options:'
+	echo '  --help, -h         Display this help message'
+	echo '  --disable-git, -n  Disable git'
+	echo ''
+	echo 'Arguments:'
+	echo '  version  New version (e.g. 1.1.0)'
+	exit ${ERROR_CODE:-0}
+fi
+
+# Get whether to use git
+USE_GIT='true'
+if [ "$DOCKERC_DISABLE_GIT" = 'true' ]; then
 	# Disable git
-	HAS_GIT=false
-	shift
+	USE_GIT='false'
 fi
 
-# Get version from first parameter and shift
-if [ "$#" -gt 0 ]; then
-	VERSION="$1"
-	shift
-
-else
-	echo "Error: No version specified."
-	echo "Usage: $0 [-n] <version>"
-	exit 1
-fi
-
-# Check that git is installed
-if [ ! -d ".git" ]; then
-	HAS_GIT=false
-else
-	git --version > /dev/null 2>&1
-	if [ $? -ne 0 ]; then
-		echo "Warning: Git is not installed."
-		HAS_GIT=false
+if [ "$USE_GIT" = 'true' ]; then
+	if [ ! -d './.git' ]; then
+		# Directory is not a git repository
+		USE_GIT='false'
+	else
+		# Check that git is installed
+		git --version > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			echo 'Warning: Git is not installed.' >&2
+			USE_GIT='false'
+		fi
 	fi
 fi
 
+# Get version from argument
+VERSION="$DOCKERC_VERSION"
+
 # Bump version in dockerc
-if [ "$(uname)" = "Darwin" ]; then
+if [ "$(uname -s)" = 'Darwin' ]; then
 	# MacOS
-	sed -i "" "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" dockerc
-	sed -i "" "9 s/VERSION=.*/VERSION=\"$VERSION\"/g" dockerc
+	sed -i '' "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" ./dockerc
+	sed -i '' "10 s/VERSION=.*/VERSION=\"$VERSION\"/g" ./dockerc
 else
 	# Linux
-	sed -i "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" dockerc
-	sed -i "9 s/VERSION=.*/VERSION=\"$VERSION\"/g" dockerc
+	sed -i "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" ./dockerc
+	sed -i "10 s/VERSION=.*/VERSION=\"$VERSION\"/g" ./dockerc
 fi
 
-if [ "$HAS_GIT" = true ]; then
-	# Commit changes
-	git add dockerc
-	git commit -m "Bump version to $VERSION"
+if [ "$USE_GIT" = true ]; then
+	# Commit changes in git
+	git add ./dockerc > /dev/null 2>&1
+	git commit -m "Bump version to $VERSION" > /dev/null 2>&1
 	if [ $? -ne 0 ]; then
-		echo "Warning: Failed to commit changes."
+		echo 'Warning: Failed to commit changes.' >&2
 	else
 		git tag -a "v$VERSION" -m "Bump version to $VERSION"
+		echo "Info: Commited changes & tagged 'v$VERSION' in git" >&2
 	fi
 fi
 
