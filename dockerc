@@ -9,6 +9,7 @@
 
 VERSION='1.10.0'
 
+ERROR_CODE=''
 DOCKERC_PARSE_ARGUMENTS='true'
 
 # Parse options arguments
@@ -77,7 +78,7 @@ if [ "$DOCKERC_PRINT_HELP" = true ]; then
 	echo '    -f             Force, for example ignores abstract contexts'
 	echo '    -n             Dry run, print docker compose command without running it'
 	echo '    -q             Quiet, do not print docker compose command'
-	exit 0
+	exit ${ERROR_CODE:-0}
 fi
 
 UPDATE='false'
