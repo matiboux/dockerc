@@ -94,7 +94,7 @@ while true; do
 		break
 	fi
 
-	# Parse context optional positional argument
+	# Parse first optional positional argument
 
 	if [ "$1" = '?' ]; then
 		# Print context help
@@ -103,6 +103,7 @@ while true; do
 		break
 	fi
 
+	# Parse docker command preset
 	if [ "$(echo "$1" | cut -c1)" = '@' ]; then
 		if [ "$1" = '@' ]; then
 			# Print docker preset help
@@ -113,6 +114,8 @@ while true; do
 
 		DOCKERC_DOCKER_PRESET="$1"
 		shift
+
+	# Parse context argument
 	else
 		DOCKERC_CONTEXT="$1"
 		shift
@@ -124,7 +127,9 @@ while true; do
 		break
 	fi
 
-	# Parse docker command preset optional positional argument
+	# Parse second optional positional argument
+
+	# Parse docker command preset
 	if
 		[ -z "$DOCKERC_DOCKER_PRESET" ] &&
 		(
@@ -151,7 +156,8 @@ while true; do
 	# Else, this is a command argument
 	fi
 
-	# Parse command args optional positional arguments
+	# Parse trailing positional arguments
+	# Parse command args
 	DOCKERC_COMMAND_ARGS=''
 	for ARG in "$@"; do
 
