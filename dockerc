@@ -32,12 +32,6 @@ while true; do
 				shift
 				;;
 
-			'--update' )
-				# Update DockerC
-				DOCKERC_UPDATE='true'
-				shift
-				;;
-
 			'--force' | '-f' )
 				# Force, for example ignores abstract contexts
 				DOCKERC_FORCE='true'
@@ -53,6 +47,27 @@ while true; do
 			'--quiet' | '-q' )
 				# Quiet, do not print docker compose command
 				DOCKERC_QUIET='true'
+				shift
+				;;
+
+			'--update' )
+				# Update DockerC
+				DOCKERC_UPDATE='true'
+				shift
+				;;
+
+			'--install-dir' | '-i' )
+				shift
+				# Check for installation directory argument
+				if [ -z "$1" ]; then
+					echo 'Error: Missing installation directory.' >&2
+					DOCKERC_PRINT_HELP='true'
+					DOCKERC_UPDATE='true'
+					ERROR_CODE=1
+					break
+				fi
+				# Set installation directory
+				DOCKERC_INSTALL_DIR="$1"
 				shift
 				;;
 
