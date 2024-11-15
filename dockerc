@@ -509,7 +509,7 @@ if [ "$DOCKERC_PRINT_VERSION" = 'true' ]; then
 			LATEST_VERSION=$(get_latest_version)
 			if [ -z "$LATEST_VERSION" ]; then
 				echo 'Notice: Failed to get DockerC latest version.' >&2
-			elif [ "$VERSION" != "$LATEST_VERSION" ]; then
+			elif [ "$VERSION" != "${LATEST_VERSION#v}" ]; then
 				echo "Notice: DockerC is not up to date, latest version is $LATEST_VERSION!" >&2
 			fi
 		fi
@@ -541,7 +541,6 @@ if [ "$UPDATE" = 'true' ]; then
 
 	if [ "$DRY_RUN" = 'false' ]; then
 		# Run install script command
-		echo "Updating DockerC to ${INSTALL_TAG}..."
 		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARG}"
 	fi
 
