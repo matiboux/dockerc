@@ -636,22 +636,21 @@ if [ -n "$DOCKER_PRESET" ]; then
 
 fi
 
-# Other parameters are arguments passed to docker compose
-ARGS="$@"
-
 COMPOSE_FILE_ARGS=''
-NO_COMPOSE_FILE_ARGS='false'
+NO_COMPOSE_FILE_ARGS='true'
 ABSTRACT_COMPOSE_FILE_ARGS='false'
 ENV_FILE_ARGS=''
 
-# If context is -, use default docker compose files (override if it exists)
-if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
-	CONTEXT=''
+# Handle context
+# If context is '--', ignore context and use docker compose without file arguments
+if [ "$CONTEXT" != '--' ]; then
 
-# If context is --, ignore context and use docker compose without file arguments
-elif [ "$CONTEXT" = '--' ]; then
-	NO_COMPOSE_FILE_ARGS='true'
+	if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
+		# Use default context
+		CONTEXT=''
+	fi
 
+	NO_COMPOSE_FILE_ARGS='false'
 fi
 
 if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
