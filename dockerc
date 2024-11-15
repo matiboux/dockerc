@@ -179,12 +179,6 @@ if [ "$DOCKERC_DEBUG_ARGS" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-UPDATE='false'
-if [ -n "$DOCKERC_UPDATE" ]; then
-	# Use from argument or environment variable
-	UPDATE="$DOCKERC_UPDATE"
-fi
-
 FORCE='false'
 if [ -n "$DOCKERC_FORCE" ]; then
 	# Use from argument or environment variable
@@ -201,6 +195,18 @@ QUIET='false'
 if [ -n "$DOCKERC_QUIET" ]; then
 	# Use from argument or environment variable
 	QUIET="$DOCKERC_QUIET"
+fi
+
+UPDATE='false'
+if [ -n "$DOCKERC_UPDATE" ]; then
+	# Use from argument or environment variable
+	UPDATE="$DOCKERC_UPDATE"
+fi
+
+INSTALL_DIR="$(dirname "$0")"
+if [ -n "$DOCKERC_INSTALL_DIR" ]; then
+	# Use from argument or environment variable
+	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
 fi
 
 CONTEXT=''
