@@ -13,6 +13,7 @@ Then, install DockerC with the following command:
 
 ```bash
 /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh)"
+# Usage: /bin/sh -c "$(cat install.sh)" -- [--help] [--install-dir <dir>] [tag]
 ```
 
 Take a look at the [install.sh](install.sh) script to see what it does.
