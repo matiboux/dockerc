@@ -23,7 +23,7 @@ def test_presets_rw(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run -w /pwd -v ' + dockerc.cwd.encode() + b':/pwd --rm'
+                b' run -w /pwd -v $(pwd):/pwd --rm'
             )
         )
 
@@ -75,7 +75,7 @@ def test_presets_rbw(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run --build -w /pwd -v ' + dockerc.cwd.encode() + b':/pwd --rm'
+                b' run --build -w /pwd -v $(pwd):/pwd --rm'
             )
         )
 
@@ -127,7 +127,7 @@ def test_presets_rwi(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run -w /pwd -v ' + dockerc.cwd.encode() + b':/pwd -i --rm'
+                b' run -w /pwd -v $(pwd):/pwd -i --rm'
             )
         )
 
@@ -166,7 +166,7 @@ def test_presets_rbwi(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run --build -w /pwd -v ' + dockerc.cwd.encode() + b':/pwd -i --rm'
+                b' run --build -w /pwd -v $(pwd):/pwd -i --rm'
             )
         )
 

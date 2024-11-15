@@ -103,15 +103,20 @@ while true; do
 		break
 	fi
 
-	if [ "$1" = '@' ]; then
-		# Print compose preset help
-		DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
-		# Stop parsing arguments
-		break
-	fi
+	if [ "$(echo "$1" | cut -c1)" = '@' ]; then
+		if [ "$1" = '@' ]; then
+			# Print docker preset help
+			DOCKERC_PRINT_HELP_DOCKER_PRESET='true'
+			# Stop parsing arguments
+			break
+		fi
 
-	DOCKERC_CONTEXT="$1"
-	shift
+		DOCKERC_DOCKER_PRESET="$1"
+		shift
+	else
+		DOCKERC_CONTEXT="$1"
+		shift
+	fi
 
 	# Check for optional positional arguments
 	if [ "$#" -le 0 ]; then
@@ -119,22 +124,31 @@ while true; do
 		break
 	fi
 
-	# Parse command preset optional positional argument
+	# Parse docker command preset optional positional argument
+	if
+		[ -z "$DOCKERC_DOCKER_PRESET" ] &&
+		(
+			[ "$1" = '$' ] ||
+			[ "$(echo "$1" | cut -c1)" = '@' ]
+		)
+	then
+		if [ "$1" = '@' ]; then
+			# Print docker command preset help
+			DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
+			# Stop parsing arguments
+			break
+		fi
 
-	if [ "$1" = '@' ]; then
-		# Print command preset help
-		DOCKERC_PRINT_HELP_COMMAND_PRESET='true'
-		# Stop parsing arguments
-		break
-	fi
+		DOCKERC_COMPOSE_PRESET="$1"
+		shift
 
-	DOCKERC_COMMAND_PRESET="$1"
-	shift
+		# Check for optional positional arguments
+		if [ "$#" -le 0 ]; then
+			# No more arguments
+			break
+		fi
 
-	# Check for optional positional arguments
-	if [ "$#" -le 0 ]; then
-		# No more arguments
-		break
+	# Else, this is a command argument
 	fi
 
 	# Parse command args optional positional arguments
@@ -168,8 +182,8 @@ if [ "$DOCKERC_DEBUG_ARGS" = 'true' ]; then
 	# Print parsed arguments
 	echo "DOCKERC_PRINT_HELP: $DOCKERC_PRINT_HELP"
 	echo "DOCKERC_PRINT_HELP_CONTEXT: $DOCKERC_PRINT_HELP_CONTEXT"
+	echo "DOCKERC_PRINT_HELP_DOCKER_PRESET: $DOCKERC_PRINT_HELP_DOCKER_PRESET"
 	echo "DOCKERC_PRINT_HELP_COMPOSE_PRESET: $DOCKERC_PRINT_HELP_COMPOSE_PRESET"
-	echo "DOCKERC_PRINT_HELP_COMMAND_PRESET: $DOCKERC_PRINT_HELP_COMMAND_PRESET"
 	echo "DOCKERC_PRINT_VERSION: $DOCKERC_PRINT_VERSION"
 	echo "DOCKERC_FORCE: $DOCKERC_FORCE"
 	echo "DOCKERC_DRY_RUN: $DOCKERC_DRY_RUN"
@@ -177,7 +191,7 @@ if [ "$DOCKERC_DEBUG_ARGS" = 'true' ]; then
 	echo "DOCKERC_UPDATE: $DOCKERC_UPDATE"
 	echo "DOCKERC_INSTALL_DIR: $DOCKERC_INSTALL_DIR"
 	echo "DOCKERC_CONTEXT: $DOCKERC_CONTEXT"
-	echo "DOCKERC_COMMAND_PRESET: $DOCKERC_COMMAND_PRESET"
+	echo "DOCKERC_COMPOSE_PRESET: $DOCKERC_COMPOSE_PRESET"
 	echo "DOCKERC_COMMAND_ARGS: $DOCKERC_COMMAND_ARGS"
 	exit ${ERROR_CODE:-0}
 fi
@@ -212,16 +226,22 @@ if [ -n "$DOCKERC_INSTALL_DIR" ]; then
 	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
 fi
 
+DOCKER_PRESET=''
+if [ -n "$DOCKERC_DOCKER_PRESET" ]; then
+	# Use from argument or environment variable
+	DOCKER_PRESET="$DOCKERC_DOCKER_PRESET"
+fi
+
 CONTEXT=''
 if [ -n "$DOCKERC_CONTEXT" ]; then
 	# Use from argument or environment variable
 	CONTEXT="$DOCKERC_CONTEXT"
 fi
 
-COMMAND_PRESET=''
-if [ -n "$DOCKERC_COMMAND_PRESET" ]; then
+COMPOSE_PRESET=''
+if [ -n "$DOCKERC_COMPOSE_PRESET" ]; then
 	# Use from argument or environment variable
-	COMMAND_PRESET="$DOCKERC_COMMAND_PRESET"
+	COMPOSE_PRESET="$DOCKERC_COMPOSE_PRESET"
 fi
 
 COMMAND_ARGS=''
@@ -248,8 +268,8 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 
 	# Print help & exit
 	echo 'Usage:'
-	echo "  $0 [options] [ <context> [@command_preset] [...args] ]"
-	echo "  $0 [options] <@compose_preset> [...args]"
+	echo "  $0 [options] [ <context> [@compose_preset] [...args] ]"
+	echo "  $0 [options] <@docker_preset> [...args]"
 	echo ''
 	echo 'Options:'
 	echo '  -h, --help     Print this help message'
@@ -262,14 +282,14 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	echo 'Arguments:'
 	echo '  options          DockerC options'
 	echo '  context          Docker compose files context'
-	echo '  @command_preset  DockerC command preset (shortcut for a command)'
-	echo '  @compose_preset  DockerC compose preset (shortcut for a command)'
+	echo '  @compose_preset  Docker compose command preset (shorthand)'
+	echo '  @docker_preset   Docker command preset (shorthand)'
 	echo '  args             Arguments appended to the docker compose command'
 	echo ''
 	echo 'Help commands:'
 	echo "  $0 ?    See context argument help"
-	echo "  $0 - @  See @command_preset argument help"
-	echo "  $0 @    See @compose_preset argument help"
+	echo "  $0 - @  See @compose_preset argument help"
+	echo "  $0 @    See @docker_preset argument help"
 	exit ${ERROR_CODE:-0}
 fi
 
@@ -281,7 +301,7 @@ if [ "$DOCKERC_PRINT_HELP_CONTEXT" = 'true' ]; then
 	echo '    Look for default docker compose files'
 	echo '    Usage:'
 	echo "      $0 [options]"
-	echo "      $0 [options] - [@command_preset] [...args]"
+	echo "      $0 [options] - [@compose_preset] [...args]"
 	echo '    Used default docker compose files are:'
 	echo '      - docker-compose.yml'
 	echo '      - docker-compose.override.yml (if it exists)'
@@ -289,12 +309,12 @@ if [ "$DOCKERC_PRINT_HELP_CONTEXT" = 'true' ]; then
 	echo '  --'
 	echo '    Run docker compose without file arguments'
 	echo '    Usage:'
-	echo "      $0 [options] -- [@command_preset] [...args]"
+	echo "      $0 [options] -- [@compose_preset] [...args]"
 	echo ''
 	echo '  level1[.level2[...]]]'
 	echo '    Look for docker compose files matching context levels'
 	echo '    Usage:'
-	echo "      $0 [options] level1[.level2[...] [@command_preset] [...args]"
+	echo "      $0 [options] level1[.level2[...] [@compose_preset] [...args]"
 	echo '    Example:'
 	echo "      '$0 prod.boosted' will look for:"
 	echo '        - docker-compose.yml'
@@ -308,25 +328,28 @@ if [ "$DOCKERC_PRINT_HELP_CONTEXT" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
-	# Print compose preset help & exit
-	echo "Usage: $0 [options] <@compose_preset> [...args]"
+if [ "$DOCKERC_PRINT_HELP_DOCKER_PRESET" = 'true' ]; then
+	# Print docker preset help & exit
+	echo "Usage: $0 [options] <@docker_preset> [...args]"
 	echo ''
-	echo 'Compose presets:'
-	echo '  @rfc   Remove unused containers'
-	echo '  @rfi   Remove dangling images'
-	echo '  @rfia  Remove all unused images'
-	echo '  @rf    Remove unused containers, networks and images'
-	echo '  @rfa   Remove all unused containers, networks and images'
-	echo '  @rfav  Remove all unused containers, networks, images and volumes'
-	echo '  @sa    Stop all running containers'
-	echo '  @rmf   Remove running containers, force'
-	echo '  @rms   Remove stopped containers'
-	echo '  @rmsf  Remove stopped containers, force'
-	echo '    (aliases: @rmfs)'
-	echo '  @rma   Remove all containers'
-	echo '  @rmaf  Remove all containers, force'
-	echo '    (aliases: @rmfa)'
+	echo 'Docker command presets:'
+	echo '  prune:'
+	echo '    @rfc   Remove unused containers'
+	echo '    @rfi   Remove dangling images'
+	echo '    @rfia  Remove all unused images'
+	echo '    @rf    Remove unused containers, networks and images'
+	echo '    @rfa   Remove all unused containers, networks and images'
+	echo '    @rfav  Remove all unused containers, networks, images and volumes'
+	echo '  stop:'
+	echo '    @sa    Stop all running containers'
+	echo '  rm:'
+	echo '    @rmf   Remove running containers, force'
+	echo '    @rms   Remove stopped containers'
+	echo '    @rmsf  Remove stopped containers, force'
+	echo '      (aliases: @rmfs)'
+	echo '    @rma   Remove all containers'
+	echo '    @rmaf  Remove all containers, force'
+	echo '      (aliases: @rmfa)'
 	echo ''
 	echo 'Arguments will be appended to the docker command that will be run.'
 	echo ''
@@ -334,11 +357,11 @@ if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-if [ "$DOCKERC_PRINT_HELP_COMMAND_PRESET" = 'true' ]; then
+if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
 	# Print compose preset help & exit
-	echo "Usage: $0 [options] <context> [@command_preset] [...args]"
+	echo "Usage: $0 [options] <context> [@compose_preset] [...args]"
 	echo ''
-	echo 'Command presets:'
+	echo 'Compose command presets:'
 	echo '  up:'
 	echo '    @u     up -d'
 	echo '    @ua    up'
@@ -431,7 +454,7 @@ if [ "$DOCKERC_PRINT_HELP_COMMAND_PRESET" = 'true' ]; then
 	echo '    @rfv   rm -f -v'
 	echo ''
 	echo 'Arguments will be appended to the docker command that will be run.'
-	echo 'If the command preset is empty, the arguments should include the command.'
+	echo 'If the preset is empty, the arguments should include the command.'
 	echo ''
 	echo "Use '$0 --help' for more help."
 	exit ${ERROR_CODE:-0}
@@ -500,137 +523,93 @@ if [ "$UPDATE" = 'true' ]; then
 		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 			echo ''
 		fi
-		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$INSTALL_TAG\""
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"${INSTALL_DIR}\" \"${INSTALL_TAG}\""
 		echo ''
 	fi
 
 	if [ "$DRY_RUN" = 'false' ]; then
-		# Run install script
-		echo "Updating DockerC to $INSTALL_TAG..."
-		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$INSTALL_TAG\""
+		# Run install script command
+		echo "Updating DockerC to ${INSTALL_TAG}..."
+		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"${INSTALL_DIR}\" \"${INSTALL_TAG}\""
 	fi
 
 	exit ${ERROR_CODE:-0}
 fi
 
-# Check for docker preset
-if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
+# Handle docker presets
+if [ -n "$DOCKER_PRESET" ]; then
 
-	# Other arguments to pass to docker
-	# Use single quotes to safely pass arguments to shell
-	# Escape single quotes in arguments
-	ARGS=''
-	while [ $# -gt 0 ]; do
-		NEW_ARG=$(echo "$1" | sed "s/'/'\"'\"'/g")
-		ARGS="$ARGS '$NEW_ARG'"
-		shift
-	done
-
-	PRINT_DOCKER_PRESETS_HELP='false'
 	DOCKER_ARGS=''
-	RUN_SHELL='false'
 
-	# Remove first char
-	CONTEXT="${CONTEXT#?}"
+	case "$DOCKER_PRESET" in
 
-	case "$CONTEXT" in
-
-		'')
-			PRINT_DOCKER_PRESETS_HELP='true'
-			;;
-
-		'rfc')
+		# Prune presets
+		'@rfc' )
 			DOCKER_ARGS='container prune -f'
 			;;
-		'rfi')
+		'@rfi' )
 			DOCKER_ARGS='image prune -f'
 			;;
-		'rfia')
+		'@rfia' )
 			DOCKER_ARGS='image prune -f -a'
 			;;
-		'rf')
+		'@rf' )
 			DOCKER_ARGS='system prune -f'
 			;;
-		'rfa')
+		'@rfa' )
 			DOCKER_ARGS='system prune -f -a'
 			;;
-		'rfav')
+		'@rfav' )
 			DOCKER_ARGS='system prune -f -a --volumes'
 			;;
 
-		'sa')
+		# Stop presets
+		'@sa' )
 			# Stop all containers
 			DOCKER_ARGS='stop $(docker ps -q)'
-			RUN_SHELL='true'
 			;;
 
-		'rmf')
+		# Remove presets
+		'@rmf' )
 			# Remove running containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q)'
-			RUN_SHELL='true'
 			;;
-		'rms')
+		'@rms' )
 			# Remove stopped containers
 			DOCKER_ARGS='rm $(docker ps -a -q -f status=exited -f status=dead)'
-			RUN_SHELL='true'
 			;;
-		'rmsf'|'rmfs')
+		'@rmsf' | '@rmfs' )
 			# Remove stopped containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q -f status=exited -f status=dead)'
-			RUN_SHELL='true'
 			;;
-		'rma')
+		'@rma' )
 			# Remove all containers
 			DOCKER_ARGS='rm $(docker ps -a -q)'
-			RUN_SHELL='true'
 			;;
-		'rmaf'|'rmfa')
+		'@rmaf' | '@rmfa' )
 			# Remove all containers, force
 			DOCKER_ARGS='rm -f $(docker ps -q)'
-			RUN_SHELL='true'
-			;;
-
-		*)
-			echo "Error: Unknown docker preset '@$CONTEXT'" >&2
-			exit 1
 			;;
 
 	esac
 
-	if [ "$PRINT_DOCKER_PRESETS_HELP" = 'true' ]; then
-		# Print help and exit
-		echo 'DEPRECATED'
+	if [ -z "$DOCKER_ARGS" ]; then
+		echo "Error: Unknown docker preset '$DOCKER_PRESET'" >&2
 		exit 1
 	fi
 
-	if [ "$RUN_SHELL" = 'false' ]; then
-
-		if [ "$QUIET" = 'false' ]; then
-			# Print docker command
-			echo ''
-			echo "> docker ${DOCKER_ARGS}${ARGS}"
+	if [ "$QUIET" = 'false' ]; then
+		# Print docker command
+		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 			echo ''
 		fi
+		echo "> docker ${DOCKER_ARGS}${ARGS}"
+		echo ''
+	fi
 
-		if [ "$DRY_RUN" = 'false' ]; then
-			# Run docker command
-			exec docker ${DOCKER_ARGS}${ARGS}
-		fi
-
-	else # "$RUN_SHELL" = 'true'
-
-		if [ "$QUIET" = 'false' ]; then
-			# Print docker command
-			echo ''
-			echo "> sh -c 'docker ${DOCKER_ARGS}${ARGS}'"
-			echo ''
-		fi
-
-		if [ "$DRY_RUN" = 'false' ]; then
-			# Run docker command
-			exec sh -c "docker ${DOCKER_ARGS}${ARGS}"
-		fi
-
+	if [ "$DRY_RUN" = 'false' ]; then
+		# Run docker command
+		exec sh -c "docker ${DOCKER_ARGS}${ARGS}"
 	fi
 
 	exit ${ERROR_CODE:-0}
@@ -861,301 +840,283 @@ EOF
 
 fi
 
-# Get args
-ARGS=''
-if [ -n "$COMMAND_ARGS" ]; then
-	ARGS=" $COMMAND_ARGS"
-fi
+# Handle compose presets
+COMPOSE_ARGS=''
+if [ -n "$COMPOSE_PRESET" ]; then
 
-# Check for shell arguments preset shortcut
-if [ "$COMMAND_PRESET" = '$' ]; then
-	# Replace command preset shortcut
-	COMMAND_PRESET='@$'
-fi
+	case "$COMPOSE_PRESET" in
 
-# Check for arguments
-if [ -z "$COMMAND_PRESET" ]; then
-	# If arguments are empty, set to the default arguments
-	ARGS="up -d$ARGS"
-
-# Check for arguments preset
-elif [ "$(echo "$COMMAND_PRESET" | cut -c1)" = '@' ]; then
-
-	# Get preset name
-	ARGS_PRESET="${COMMAND_PRESET#?}"
-
-	PRINT_ARGS_PRESET_HELP='false'
-
-	case "$ARGS_PRESET" in
-
-		'')
-			PRINT_ARGS_PRESET_HELP='true'
+		'@u')
+			COMPOSE_ARGS='up -d'
 			;;
-
-		'u')
-			ARGS="up -d$ARGS"
+		'@ua')
+			COMPOSE_ARGS='up'
 			;;
-		'ua')
-			ARGS="up$ARGS"
+		'@ub')
+			COMPOSE_ARGS='up --build -d'
 			;;
-		'ub')
-			ARGS="up --build -d$ARGS"
+		'@uba')
+			COMPOSE_ARGS='up --build'
 			;;
-		'uba')
-			ARGS="up --build$ARGS"
+		'@ubf')
+			COMPOSE_ARGS='up --build -d --force-recreate'
 			;;
-		'ubf')
-			ARGS="up --build -d --force-recreate$ARGS"
+		'@ubfa')
+			COMPOSE_ARGS='up --build --force-recreate'
 			;;
-		'ubfa')
-			ARGS="up --build --force-recreate$ARGS"
+		'@ubfp')
+			COMPOSE_ARGS='up --build -d --force-recreate --pull always'
 			;;
-		'ubfp')
-			ARGS="up --build -d --force-recreate --pull always$ARGS"
+		'@ubfap')
+			COMPOSE_ARGS='up --build --force-recreate --pull always'
 			;;
-		'ubfap')
-			ARGS="up --build --force-recreate --pull always$ARGS"
+		'@ubr')
+			COMPOSE_ARGS='up --build -d --remove-orphans'
 			;;
-		'ubr')
-			ARGS="up --build -d --remove-orphans$ARGS"
+		'@ubar')
+			COMPOSE_ARGS='up --build --remove-orphans'
 			;;
-		'ubar')
-			ARGS="up --build --remove-orphans$ARGS"
+		'@ubfr')
+			COMPOSE_ARGS='up --build -d --force-recreate --remove-orphans'
 			;;
-		'ubfr')
-			ARGS="up --build -d --force-recreate --remove-orphans$ARGS"
+		'@ubfar')
+			COMPOSE_ARGS='up --build --force-recreate --remove-orphans'
 			;;
-		'ubfar')
-			ARGS="up --build --force-recreate --remove-orphans$ARGS"
+		'@uf')
+			COMPOSE_ARGS='up -d --force-recreate'
 			;;
-		'uf')
-			ARGS="up -d --force-recreate$ARGS"
+		'@ufa')
+			COMPOSE_ARGS='up --force-recreate'
 			;;
-		'ufa')
-			ARGS="up --force-recreate$ARGS"
+		'@ur')
+			COMPOSE_ARGS='up -d --remove-orphans'
 			;;
-		'ur')
-			ARGS="up -d --remove-orphans$ARGS"
+		'@uar')
+			COMPOSE_ARGS='up --remove-orphans'
 			;;
-		'uar')
-			ARGS="up --remove-orphans$ARGS"
+		'@ufr')
+			COMPOSE_ARGS='up -d --force-recreate --remove-orphans'
 			;;
-		'ufr')
-			ARGS="up -d --force-recreate --remove-orphans$ARGS"
-			;;
-		'ufar')
-			ARGS="up --force-recreate --remove-orphans$ARGS"
+		'@ufar')
+			COMPOSE_ARGS='up --force-recreate --remove-orphans'
 			;;
 
-		'b')
-			ARGS="build$ARGS"
+		'@b')
+			COMPOSE_ARGS='build'
 			;;
-		'bp')
-			ARGS="build --pull$ARGS"
+		'@bp')
+			COMPOSE_ARGS='build --pull'
 			;;
-		'bf')
-			ARGS="build --pull --no-cache$ARGS"
+		'@bf')
+			COMPOSE_ARGS='build --pull --no-cache'
 			;;
-		'bn')
-			ARGS="build --dry-run --pull --no-cache$ARGS"
-			;;
-
-		'w')
-			ARGS="watch$ARGS"
-			;;
-		'wq')
-			ARGS="watch --quiet$ARGS"
-			;;
-		'ww')
-			ARGS="watch --no-up$ARGS"
-			;;
-		'wqw')
-			ARGS="watch --quiet --no-up$ARGS"
-			;;
-		'wn')
-			ARGS="watch --dry-run$ARGS"
+		'@bn')
+			COMPOSE_ARGS='build --dry-run --pull --no-cache'
 			;;
 
-		'd')
-			ARGS="down$ARGS"
+		'@w')
+			COMPOSE_ARGS='watch'
 			;;
-		'da')
-			ARGS="down --remove-orphans$ARGS"
+		'@wq')
+			COMPOSE_ARGS='watch --quiet'
 			;;
-		'dr')
-			ARGS="down --remove-orphans --rmi local$ARGS"
+		'@ww')
+			COMPOSE_ARGS='watch --no-up'
 			;;
-		'dra')
-			ARGS="down --remove-orphans --rmi all$ARGS"
+		'@wqw')
+			COMPOSE_ARGS='watch --quiet --no-up'
 			;;
-		'drav')
-			ARGS="down --remove-orphans --rmi all -v$ARGS"
-			;;
-		'drv')
-			ARGS="down --remove-orphans -v$ARGS"
+		'@wn')
+			COMPOSE_ARGS='watch --dry-run'
 			;;
 
-		'r')
-			ARGS="run --rm$ARGS"
+		'@d')
+			COMPOSE_ARGS='down'
 			;;
-		'rw')
-			ARGS="run -w /pwd -v $(pwd):/pwd --rm$ARGS"
+		'@da')
+			COMPOSE_ARGS='down --remove-orphans'
 			;;
-		'rd')
-			ARGS="run -d$ARGS"
+		'@dr')
+			COMPOSE_ARGS='down --remove-orphans --rmi local'
 			;;
-		'rk')
-			ARGS="run$ARGS"
+		'@dra')
+			COMPOSE_ARGS='down --remove-orphans --rmi all'
 			;;
-		'rb')
-			ARGS="run --build --rm$ARGS"
+		'@drav')
+			COMPOSE_ARGS='down --remove-orphans --rmi all -v'
 			;;
-		'rbw')
-			ARGS="run --build -w /pwd -v $(pwd):/pwd --rm$ARGS"
-			;;
-		'rbd')
-			ARGS="run --build -d$ARGS"
-			;;
-		'rbk')
-			ARGS="run --build$ARGS"
-			;;
-		'ri')
-			ARGS="run -i --rm$ARGS"
-			;;
-		'rwi')
-			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm$ARGS"
-			;;
-		'rki')
-			ARGS="run -i$ARGS"
-			;;
-		'rbi')
-			ARGS="run --build -i --rm$ARGS"
-			;;
-		'rbwi')
-			ARGS="run --build -w /pwd -v $(pwd):/pwd -i --rm$ARGS"
-			;;
-		'rbki')
-			ARGS="run --build -i$ARGS"
+		'@drv')
+			COMPOSE_ARGS='down --remove-orphans -v'
 			;;
 
-		'sh')
-			ARGS="run -i --rm --entrypoint /bin/sh$ARGS"
+		'@r')
+			COMPOSE_ARGS='run --rm'
 			;;
-		'shw')
-			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
+		'@rw')
+			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd --rm'
+			;;
+		'@rd')
+			COMPOSE_ARGS='run -d'
+			;;
+		'@rk')
+			COMPOSE_ARGS='run'
+			;;
+		'@rb')
+			COMPOSE_ARGS='run --build --rm'
+			;;
+		'@rbw')
+			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd --rm'
+			;;
+		'@rbd')
+			COMPOSE_ARGS='run --build -d'
+			;;
+		'@rbk')
+			COMPOSE_ARGS='run --build'
+			;;
+		'@ri')
+			COMPOSE_ARGS='run -i --rm'
+			;;
+		'@rwi')
+			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm'
+			;;
+		'@rki')
+			COMPOSE_ARGS='run -i'
+			;;
+		'@rbi')
+			COMPOSE_ARGS='run --build -i --rm'
+			;;
+		'@rbwi')
+			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd -i --rm'
+			;;
+		'@rbki')
+			COMPOSE_ARGS='run --build -i'
+			;;
+
+		'@sh')
+			COMPOSE_ARGS='run -i --rm --entrypoint /bin/sh'
+			;;
+		'@shw')
+			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+			;;
+		'@$')
+			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
 			;;
 		'$')
-			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
+			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
 			;;
-		'shb')
-			ARGS="run --build -i --rm --entrypoint /bin/sh$ARGS"
+		'@shb')
+			COMPOSE_ARGS='run --build -i --rm --entrypoint /bin/sh'
 			;;
-		'shbw')
-			ARGS="run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh$ARGS"
+		'@shbw')
+			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
 			;;
-		'bash')
-			ARGS="run -i --rm --entrypoint /bin/bash$ARGS"
+		'@bash')
+			COMPOSE_ARGS='run -i --rm --entrypoint /bin/bash'
 			;;
-		'bashw')
-			ARGS="run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash$ARGS"
+		'@bashw')
+			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
 			;;
-		'bashb')
-			ARGS="run --build -i --rm --entrypoint /bin/bash$ARGS"
+		'@bashb')
+			COMPOSE_ARGS='run --build -i --rm --entrypoint /bin/bash'
 			;;
-		'bashbw')
-			ARGS="run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash$ARGS"
-			;;
-
-		'l')
-			ARGS="logs -n 100$ARGS"
-			;;
-		'lf')
-			ARGS="logs -n 100 -f$ARGS"
-			;;
-		'lt')
-			ARGS="logs -n 100 -t$ARGS"
-			;;
-		'ls')
-			ARGS="logs -n 100 --no-log-prefix$ARGS"
-			;;
-		'lft')
-			ARGS="logs -n 100 -f -t$ARGS"
-			;;
-		'lfs')
-			ARGS="logs -n 100 -f --no-log-prefix$ARGS"
-			;;
-		'lfts')
-			ARGS="logs -n 100 -f -t --no-log-prefix$ARGS"
-			;;
-		'lts')
-			ARGS="logs -n 100 -t --no-log-prefix$ARGS"
-			;;
-		'll')
-			ARGS="logs$ARGS"
-			;;
-		"llf")
-			ARGS="logs -f$ARGS"
-			;;
-		"llt")
-			ARGS="logs -t$ARGS"
-			;;
-		"lls")
-			ARGS="logs --no-log-prefix$ARGS"
-			;;
-		"llft")
-			ARGS="logs -f -t$ARGS"
-			;;
-		"llfs")
-			ARGS="logs -f --no-log-prefix$ARGS"
-			;;
-		"llfts")
-			ARGS="logs -f -t --no-log-prefix$ARGS"
-			;;
-		"llts")
-			ARGS="logs -t --no-log-prefix$ARGS"
+		'@bashbw')
+			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
 			;;
 
-		'p')
-			ARGS="ps$ARGS"
+		'@l')
+			COMPOSE_ARGS='logs -n 100'
 			;;
-		'pa')
-			ARGS="ps -a$ARGS"
+		'@lf')
+			COMPOSE_ARGS='logs -n 100 -f'
+			;;
+		'@lt')
+			COMPOSE_ARGS='logs -n 100 -t'
+			;;
+		'@ls')
+			COMPOSE_ARGS='logs -n 100 --no-log-prefix'
+			;;
+		'@lft')
+			COMPOSE_ARGS='logs -n 100 -f -t'
+			;;
+		'@lfs')
+			COMPOSE_ARGS='logs -n 100 -f --no-log-prefix'
+			;;
+		'@lfts')
+			COMPOSE_ARGS='logs -n 100 -f -t --no-log-prefix'
+			;;
+		'@lts')
+			COMPOSE_ARGS='logs -n 100 -t --no-log-prefix'
+			;;
+		'@ll')
+			COMPOSE_ARGS='logs'
+			;;
+		'@llf')
+			COMPOSE_ARGS='logs -f'
+			;;
+		'@llt')
+			COMPOSE_ARGS='logs -t'
+			;;
+		'@lls')
+			COMPOSE_ARGS='logs --no-log-prefix'
+			;;
+		'@llft')
+			COMPOSE_ARGS='logs -f -t'
+			;;
+		'@llfs')
+			COMPOSE_ARGS='logs -f --no-log-prefix'
+			;;
+		'@llfts')
+			COMPOSE_ARGS='logs -f -t --no-log-prefix'
+			;;
+		'@llts')
+			COMPOSE_ARGS='logs -t --no-log-prefix'
 			;;
 
-		'pu')
-			ARGS="push$ARGS"
+		'@p')
+			COMPOSE_ARGS='ps'
+			;;
+		'@pa')
+			COMPOSE_ARGS='ps -a'
 			;;
 
-		'pl')
-			ARGS="pull$ARGS"
+		'@pu')
+			COMPOSE_ARGS='push'
 			;;
 
-		'rs')
-			ARGS="rm --stop$ARGS"
-			;;
-		'rf')
-			ARGS="rm -f$ARGS"
-			;;
-		'rfv')
-			ARGS="rm -f -v$ARGS"
+		'@pl')
+			COMPOSE_ARGS='pull'
 			;;
 
-		*)
-			echo "Error: Unknown args preset '@$ARGS_PRESET'" >&2
-			exit 1
+		'@rs')
+			COMPOSE_ARGS='rm --stop'
+			;;
+		'@rf')
+			COMPOSE_ARGS='rm -f'
+			;;
+		'@rfv')
+			COMPOSE_ARGS='rm -f -v'
 			;;
 
 	esac
 
-	if [ "$PRINT_ARGS_PRESET_HELP" = 'true' ]; then
-		# Print help and exit
-		echo 'DEPRECATED'
+	if [ -z "$COMPOSE_ARGS" ]; then
+		echo "Error: Unknown compose preset '$COMPOSE_PRESET'" >&2
 		exit 1
 	fi
 
-# No arguments preset, use the command preset as arguments
-else
-	ARGS="$COMMAND_PRESET$ARGS"
+fi
+
+if [ -z "$COMPOSE_ARGS" ] && [ -z "$COMMAND_ARGS" ]; then
+	# No command preset or arguments, use the default compose command arguments
+	COMPOSE_ARGS='up -d'
+fi
+
+# Format variables with leading space
+if [ -n "$COMPOSE_ARGS" ]; then
+	COMPOSE_ARGS=" $COMPOSE_ARGS"
+fi
+if [ -n "$COMMAND_ARGS" ]; then
+	COMMAND_ARGS=" $COMMAND_ARGS"
 fi
 
 if [ "$QUIET" = 'false' ]; then
@@ -1163,11 +1124,11 @@ if [ "$QUIET" = 'false' ]; then
 	if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 		echo ''
 	fi
-	echo "> docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS $ARGS"
+	echo "> docker compose${COMPOSE_FILE_ARGS}${ENV_FILE_ARGS}${COMPOSE_ARGS}${COMMAND_ARGS}"
 	echo ''
 fi
 
 if [ "$DRY_RUN" = 'false' ]; then
-	# Run docker compose
-	exec docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS $ARGS
+	# Run docker compose command
+	exec sh -c "docker compose${COMPOSE_FILE_ARGS}${ENV_FILE_ARGS}${COMPOSE_ARGS}${COMMAND_ARGS}"
 fi

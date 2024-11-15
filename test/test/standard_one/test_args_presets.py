@@ -64,5 +64,5 @@ def test_default_uabc_not_found(file = __file__):
             '@uabc',
         )
         dockerc.assert_context_error(
-            stderr = b'Error: Unknown args preset \'@uabc\'\n',
+            stderr = b'Error: Unknown compose preset \'@uabc\'\n',
         )
