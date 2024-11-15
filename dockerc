@@ -706,8 +706,8 @@ look_compose_file() {
 }
 
 COMPOSE_FILE_ARGS=''
-ABSTRACT_COMPOSE_FILE_ARGS='false'
 ENV_FILE_ARGS=''
+ABSTRACT_CONTEXT='false'
 
 # Handle context
 # Unless context is '--': in this case, use no compose file argument
@@ -771,7 +771,7 @@ if [ "$CONTEXT" != '--' ]; then
 		if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
 			# Compose file found
 			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_LOOK_FILE"
-			ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+			ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 		fi
 
 		if [ ! -z "$CONTEXT" ]; then
@@ -816,7 +816,7 @@ if [ "$CONTEXT" != '--' ]; then
 						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $COMPOSE_LOOK_FILE"
 						PREFIX_1="$PREFIX_1.$MISSING_PARTS$part"
 						MISSING_PARTS=''
-						ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+						ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 
 					else
 						# Context compose file not found, invalidate PREFIX_1
@@ -839,7 +839,7 @@ if [ "$CONTEXT" != '--' ]; then
 								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_LOOK_FILE"
 								PREFIX_2="-$MISSING_PARTS$part"
 								MISSING_PARTS=''
-								ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+								ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 							fi
 
 						fi
@@ -855,7 +855,7 @@ if [ "$CONTEXT" != '--' ]; then
 								# Context compose file found
 								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_LOOK_FILE"
 								PREFIX_2="$PREFIX_2.$part"
-								ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+								ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 
 							else
 								# Context compose file not found, invalidate PREFIX_2
@@ -904,7 +904,7 @@ if [ "$CONTEXT" != '--' ]; then
 				if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
 					# Standard override compose file found
 					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $COMPOSE_LOOK_FILE"
-					ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+					ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 					break
 
 				elif [ -z "$CONTEXT" ]; then
@@ -934,7 +934,7 @@ if [ "$CONTEXT" != '--' ]; then
 
 	# Unless force option is set,
 	# If compose file arguments are abstract, exit with error
-	if [ "$FORCE" = 'false' ] && [ "$ABSTRACT_COMPOSE_FILE_ARGS" = 'true' ]; then
+	if [ "$FORCE" = 'false' ] && [ "$ABSTRACT_CONTEXT" = 'true' ]; then
 		echo 'Error: Abstract context found' >&2
 		exit 1
 	fi
