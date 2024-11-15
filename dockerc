@@ -78,10 +78,16 @@ if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
 		shift
 	fi
 
+	if [ "$DOCKERC_CONTEXT" = '?' ]; then
+		# Print context help
+		DOCKERC_PRINT_HELP_CONTEXT='true'
+		# Stop parsing positional arguments
+		DOCKERC_PARSE_ARGUMENTS='false'
+	fi
+
 	if [ "$DOCKERC_CONTEXT" = '@' ]; then
 		# Print context help
-		DOCKERC_PRINT_HELP='true'
-		DOCKERC_PRINT_HELP_CONTEXT='true'
+		DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
 		# Stop parsing positional arguments
 		DOCKERC_PARSE_ARGUMENTS='false'
 	fi
@@ -98,8 +104,7 @@ if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
 
 	if [ "$DOCKERC_COMMAND_PRESET" = '@' ]; then
 		# Print context help
-		DOCKERC_PRINT_HELP='true'
-		DOCKERC_PRINT_HELP_COMMAND='true'
+		DOCKERC_PRINT_HELP_COMMAND_PRESET='true'
 		# Stop parsing positional arguments
 		DOCKERC_PARSE_ARGUMENTS='false'
 	fi
