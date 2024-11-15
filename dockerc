@@ -650,8 +650,8 @@ if [ "$CONTEXT" != '--' ]; then
 	fi
 
 	# Iterate over:
-	# - Current directory
-	# - 'docker/' directory
+	# - Current directory '.'
+	# - Directory './docker'
 	while read -r dir; do
 
 		ENV_FILE_ARGS=''
@@ -663,6 +663,8 @@ if [ "$CONTEXT" != '--' ]; then
 		PREFIX_2=''
 		MISSING_PARTS=''
 
+		# Look for global env files
+
 		if [ -f "$dir/.env" ]; then
 			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env"
 		fi
@@ -670,6 +672,8 @@ if [ "$CONTEXT" != '--' ]; then
 		if [ -f "$dir/.env.local" ]; then
 			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
 		fi
+
+		# Look for root compose files
 
 		COMPOSE_FILE_PATH="$dir/docker-compose.yml"
 		if [ -f "$COMPOSE_FILE_PATH" ]; then
