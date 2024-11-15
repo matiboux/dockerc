@@ -540,7 +540,6 @@ fi
 if [ -n "$DOCKER_PRESET" ]; then
 
 	DOCKER_ARGS=''
-	RUN_SHELL='false'
 
 	case "$DOCKER_PRESET" in
 
@@ -568,34 +567,28 @@ if [ -n "$DOCKER_PRESET" ]; then
 		'@sa' )
 			# Stop all containers
 			DOCKER_ARGS='stop $(docker ps -q)'
-			RUN_SHELL='true'
 			;;
 
 		# Remove presets
 		'@rmf' )
 			# Remove running containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q)'
-			RUN_SHELL='true'
 			;;
 		'@rms' )
 			# Remove stopped containers
 			DOCKER_ARGS='rm $(docker ps -a -q -f status=exited -f status=dead)'
-			RUN_SHELL='true'
 			;;
 		'@rmsf' | '@rmfs' )
 			# Remove stopped containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q -f status=exited -f status=dead)'
-			RUN_SHELL='true'
 			;;
 		'@rma' )
 			# Remove all containers
 			DOCKER_ARGS='rm $(docker ps -a -q)'
-			RUN_SHELL='true'
 			;;
 		'@rmaf' | '@rmfa' )
 			# Remove all containers, force
 			DOCKER_ARGS='rm -f $(docker ps -q)'
-			RUN_SHELL='true'
 			;;
 
 	esac
@@ -605,38 +598,18 @@ if [ -n "$DOCKER_PRESET" ]; then
 		exit 1
 	fi
 
-	if [ "$RUN_SHELL" = 'false' ]; then
-
-		if [ "$QUIET" = 'false' ]; then
-			# Print docker command
-			if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
-				echo ''
-			fi
-			echo "> docker ${DOCKER_ARGS}${ARGS}"
+	if [ "$QUIET" = 'false' ]; then
+		# Print docker command
+		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 			echo ''
 		fi
+		echo "> docker ${DOCKER_ARGS}${ARGS}"
+		echo ''
+	fi
 
-		if [ "$DRY_RUN" = 'false' ]; then
-			# Run docker command
-			exec docker ${DOCKER_ARGS}${ARGS}
-		fi
-
-	else # "$RUN_SHELL" = 'true'
-
-		if [ "$QUIET" = 'false' ]; then
-			# Print docker command
-			if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
-				echo ''
-			fi
-			echo "> sh -c 'docker ${DOCKER_ARGS}${ARGS}'"
-			echo ''
-		fi
-
-		if [ "$DRY_RUN" = 'false' ]; then
-			# Run docker command
-			exec sh -c "docker ${DOCKER_ARGS}${ARGS}"
-		fi
-
+	if [ "$DRY_RUN" = 'false' ]; then
+		# Run docker command
+		exec sh -c "docker ${DOCKER_ARGS}${ARGS}"
 	fi
 
 	exit ${ERROR_CODE:-0}
@@ -1156,6 +1129,6 @@ if [ "$QUIET" = 'false' ]; then
 fi
 
 if [ "$DRY_RUN" = 'false' ]; then
-	# Run docker compose
-	exec docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS$COMPOSE_ARGS$COMMAND_ARGS
+	# Run docker compose command
+	exec sh -c "docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS$COMPOSE_ARGS$COMMAND_ARGS"
 fi
