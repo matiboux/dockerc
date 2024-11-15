@@ -713,9 +713,17 @@ ABSTRACT_CONTEXT='false'
 # Unless context is '--': in this case, use no compose file argument
 if [ "$CONTEXT" != '--' ]; then
 
+	ROOT_CONTEXT='false'
+
 	if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
 		# Use default context
 		CONTEXT=''
+
+	elif [ "$(echo "$CONTEXT" | cut -c1)" = '.' ]; then
+		# Only look for root compose files
+		ROOT_CONTEXT='true'
+		# Remove leading dot
+		CONTEXT="${CONTEXT#.}"
 	fi
 
 	# Iterate over directories:
