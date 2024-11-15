@@ -125,7 +125,13 @@ while true; do
 	fi
 
 	# Parse docker command preset optional positional argument
-	if [ -z "$DOCKERC_DOCKER_PRESET" ] && [ "$(echo "$1" | cut -c1)" = '@' ]; then
+	if
+		[ -z "$DOCKERC_DOCKER_PRESET" ] &&
+		(
+			[ "$1" = '$' ] ||
+			[ "$(echo "$1" | cut -c1)" = '@' ]
+		)
+	then
 		if [ "$1" = '@' ]; then
 			# Print docker command preset help
 			DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
