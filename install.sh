@@ -82,7 +82,7 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-# Get installation directory
+# Get install directory
 INSTALL_DIR='/usr/local/bin' # Default installation directory
 if [ -n "$DOCKERC_INSTALL_DIR" ]; then
 	# Use from argument or environment variable
@@ -94,6 +94,11 @@ INSTALL_TAG='HEAD' # Default required tag
 if [ -n "$DOCKERC_INSTALL_TAG" ]; then
 	# Use from argument or environment variable
 	INSTALL_TAG="$DOCKERC_INSTALL_TAG"
+fi
+
+if [ ! -d "$INSTALL_DIR" ]; then
+	echo 'Error: Install directory does not exist.' >&2
+	exit 1
 fi
 
 # Check that docker is installed
