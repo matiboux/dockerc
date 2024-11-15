@@ -505,7 +505,9 @@ if [ "$DOCKERC_PRINT_VERSION" = 'true' ]; then
 
 		if [ "$DRY_RUN" = 'false' ]; then
 			LATEST_VERSION=$(get_latest_version)
-			if [ "$VERSION" != "$LATEST_VERSION" ]; then
+			if [ -z "$LATEST_VERSION" ]; then
+				echo 'Notice: Failed to get DockerC latest version.' >&2
+			elif [ "$VERSION" != "$LATEST_VERSION" ]; then
 				echo "Notice: DockerC is not up to date, latest version is $LATEST_VERSION!" >&2
 			fi
 		fi
