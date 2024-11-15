@@ -93,16 +93,17 @@ if [ "$USE_GIT" = 'true' ]; then
 fi
 
 # Get version from argument
-VERSION="$DOCKERC_VERSION"
+VERSION="${DOCKERC_VERSION#v}"
+VERSION_TAG="v${VERSION}"
 
 # Bump version in dockerc
 if [ "$(uname -s)" = 'Darwin' ]; then
 	# MacOS
-	sed -i '' "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" ./dockerc
+	sed -i '' "3 s/\# DockerC.*/\# DockerC ($VERSION_TAG)/g" ./dockerc
 	sed -i '' "10 s/VERSION=.*/VERSION='$VERSION'/g" ./dockerc
 else
 	# Linux
-	sed -i "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" ./dockerc
+	sed -i "3 s/\# DockerC.*/\# DockerC ($VERSION_TAG)/g" ./dockerc
 	sed -i "10 s/VERSION=.*/VERSION='$VERSION'/g" ./dockerc
 fi
 
@@ -113,8 +114,8 @@ if [ "$USE_GIT" = true ]; then
 	if [ $? -ne 0 ]; then
 		echo 'Warning: Failed to commit changes.' >&2
 	else
-		git tag -a "v$VERSION" -m "Bump version to $VERSION"
-		echo "Info: Commited changes & tagged 'v$VERSION' in git" >&2
+		git tag -a "$VERSION_TAG" -m "Bump version to $VERSION"
+		echo "Info: Commited changes & tagged '$VERSION_TAG' in git" >&2
 	fi
 fi
 
