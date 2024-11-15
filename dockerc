@@ -35,7 +35,7 @@ while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 			shift
 			;;
 
-		'-f' )
+		'--force' | '-f' )
 			# Force, for example ignores abstract contexts
 			DOCKERC_FORCE='true'
 			shift
@@ -181,16 +181,29 @@ print_context_help() {
 
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	# Print help & exit
-	echo "Usage: $0 [options] [context] [...args]"
-	echo '  args: Arguments passed to docker compose'
-	print_context_help
-	echo '  options:'
-	echo '    -h, --help     Print this help and exit'
-	echo '    -v, --version  Print version and exit'
-	echo '    --update       Update DockerC and exit'
-	echo '    -f             Force, for example ignores abstract contexts'
-	echo '    -n             Dry run, print docker compose command without running it'
-	echo '    -q             Quiet, do not print docker compose command'
+	echo 'Usage:'
+	echo "  $0 [options] [ <context> [@command_preset] [...args] ]"
+	echo "  $0 [options] <@compose_preset> [...args]"
+	echo ''
+	echo 'Options:'
+	echo '  -h, --help     Print this help message'
+	echo '  -v, --version  Print version'
+	echo '  --update       Update DockerC'
+	echo '  -f, --force    Force, for example ignores abstract contexts'
+	echo '  -n, --dry-run  Dry run, print docker compose command without running it'
+	echo '  -q, --quiet    Quiet, do not print docker compose command'
+	echo ''
+	echo 'Arguments:'
+	echo '  options          DockerC options'
+	echo '  context          Docker compose files context'
+	echo '  @command_preset  DockerC command preset (shortcut for a command)'
+	echo '  @compose_preset  DockerC compose preset (shortcut for a command)'
+	echo '  args             Arguments appended to the docker compose command'
+	echo ''
+	echo 'Help commands:'
+	echo "  $0 ?    See context argument help"
+	echo "  $0 - @  See @command_preset argument help"
+	echo "  $0 @    See @compose_preset argument help"
 	exit ${ERROR_CODE:-0}
 fi
 
