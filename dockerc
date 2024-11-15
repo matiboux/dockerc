@@ -10,78 +10,173 @@
 VERSION='1.10.0'
 
 ERROR_CODE=''
-DOCKERC_PARSE_ARGUMENTS='true'
 
-# Parse options arguments
-while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
+# Parse arguments
+# Dummy while loop to allow breaking
+while true; do
 
-	case "$1" in
+	# Parse options arguments
+	while [ "$#" -gt 0 ]; do
 
-		'--help' | '-h' )
-			DOCKERC_PRINT_HELP='true'
-			shift
-			;;
+		case "$1" in
 
-		'--version' | '-v' )
-			DOCKERC_PRINT_VERSION='true'
-			shift
-			;;
+			'--help' | '-h' )
+				# Print general help
+				DOCKERC_PRINT_HELP='true'
+				shift
+				;;
 
-		'--update' )
-			DOCKERC_UPDATE='true'
-			shift
-			;;
+			'--version' | '-v' )
+				# Print version
+				DOCKERC_PRINT_VERSION='true'
+				shift
+				;;
 
-		'-f' )
-			# Force, for example ignores abstract contexts
-			DOCKERC_FORCE='true'
-			shift
-			;;
+			'--force' | '-f' )
+				# Force, for example ignores abstract contexts
+				DOCKERC_FORCE='true'
+				shift
+				;;
 
-		'--dry-run' | '-n' )
-			# Dry run, print docker compose command without running it
-			DOCKERC_DRY_RUN='true'
-			shift
-			;;
+			'--dry-run' | '-n' )
+				# Dry run, print docker compose command without running it
+				DOCKERC_DRY_RUN='true'
+				shift
+				;;
 
-		'--quiet' | '-q' )
-			# Quiet, do not print docker compose command
-			DOCKERC_QUIET='true'
-			shift
-			;;
+			'--quiet' | '-q' )
+				# Quiet, do not print docker compose command
+				DOCKERC_QUIET='true'
+				shift
+				;;
 
-		* )
-			break
-			;;
+			'--update' )
+				# Update DockerC
+				DOCKERC_UPDATE='true'
+				shift
+				;;
 
-	esac
+			'--install-dir' | '-i' )
+				shift
+				# Check for installation directory argument
+				if [ -z "$1" ]; then
+					echo 'Error: Missing installation directory.' >&2
+					DOCKERC_PRINT_HELP='true'
+					DOCKERC_UPDATE='true'
+					ERROR_CODE=1
+					break
+				fi
+				# Set installation directory
+				DOCKERC_INSTALL_DIR="$1"
+				shift
+				;;
+
+			* )
+				break
+				;;
+
+		esac
+
+	done
+
+	if
+		[ "$DOCKERC_PRINT_HELP" = 'true' ] ||
+		[ "$DOCKERC_PRINT_VERSION" = 'true' ] ||
+		[ "$DOCKERC_UPDATE" = 'true' ]
+	then
+		# Stop parsing arguments
+		break
+	fi
+
+	# Check for optional positional arguments
+	if [ "$#" -le 0 ]; then
+		# No more arguments
+		break
+	fi
+
+	# Parse context optional positional argument
+
+	if [ "$1" = '?' ]; then
+		# Print context help
+		DOCKERC_PRINT_HELP_CONTEXT='true'
+		# Stop parsing arguments
+		break
+	fi
+
+	if [ "$1" = '@' ]; then
+		# Print compose preset help
+		DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
+		# Stop parsing arguments
+		break
+	fi
+
+	DOCKERC_CONTEXT="$1"
+	shift
+
+	# Check for optional positional arguments
+	if [ "$#" -le 0 ]; then
+		# No more arguments
+		break
+	fi
+
+	# Parse command preset optional positional argument
+
+	if [ "$1" = '@' ]; then
+		# Print command preset help
+		DOCKERC_PRINT_HELP_COMMAND_PRESET='true'
+		# Stop parsing arguments
+		break
+	fi
+
+	DOCKERC_COMMAND_PRESET="$1"
+	shift
+
+	# Check for optional positional arguments
+	if [ "$#" -le 0 ]; then
+		# No more arguments
+		break
+	fi
+
+	# Parse command args optional positional arguments
+	DOCKERC_COMMAND_ARGS=''
+	for ARG in "$@"; do
+
+		if [ -z "$ARG" ]; then
+			# Skip empty arguments
+			continue
+		fi
+
+		if [ "$(echo "$ARG" | grep "[ '\"\$\`;*&#<>|]")" ]; then
+			# Escape argument with spaces or special shell characters
+			# Replace single quotes with escaped single quotes
+			ARG="'$(echo "$ARG" | sed "s/'/'\"'\"'/g")'"
+		fi
+
+		DOCKERC_COMMAND_ARGS="$DOCKERC_COMMAND_ARGS $ARG"
+
+	done
+
+	# Stop parsing arguments
+	break
 
 done
 
-if
-	[ "$DOCKERC_PRINT_HELP" = 'true' ] ||
-	[ "$DOCKERC_PRINT_VERSION" = 'true' ] ||
-	[ "$DOCKERC_UPDATE" = 'true' ]
-then
-	# Skip parsing positional arguments
-	DOCKERC_PARSE_ARGUMENTS='false'
-fi
-
-if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
-	# Parse positional arguments
-
-	# Parse context optional argument
-	if [ "$#" -gt 0 ]; then
-		DOCKERC_CONTEXT="$1"
-		shift
-	fi
-
-fi
-
-UPDATE='false'
-if [ -n "$DOCKERC_UPDATE" ]; then
-	# Use from argument or environment variable
-	UPDATE="$DOCKERC_UPDATE"
+if [ "$DOCKERC_DEBUG_ARGS" = 'true' ]; then
+	# Print parsed arguments
+	echo "DOCKERC_PRINT_HELP: $DOCKERC_PRINT_HELP"
+	echo "DOCKERC_PRINT_HELP_CONTEXT: $DOCKERC_PRINT_HELP_CONTEXT"
+	echo "DOCKERC_PRINT_HELP_COMPOSE_PRESET: $DOCKERC_PRINT_HELP_COMPOSE_PRESET"
+	echo "DOCKERC_PRINT_HELP_COMMAND_PRESET: $DOCKERC_PRINT_HELP_COMMAND_PRESET"
+	echo "DOCKERC_PRINT_VERSION: $DOCKERC_PRINT_VERSION"
+	echo "DOCKERC_FORCE: $DOCKERC_FORCE"
+	echo "DOCKERC_DRY_RUN: $DOCKERC_DRY_RUN"
+	echo "DOCKERC_QUIET: $DOCKERC_QUIET"
+	echo "DOCKERC_UPDATE: $DOCKERC_UPDATE"
+	echo "DOCKERC_INSTALL_DIR: $DOCKERC_INSTALL_DIR"
+	echo "DOCKERC_CONTEXT: $DOCKERC_CONTEXT"
+	echo "DOCKERC_COMMAND_PRESET: $DOCKERC_COMMAND_PRESET"
+	echo "DOCKERC_COMMAND_ARGS: $DOCKERC_COMMAND_ARGS"
+	exit ${ERROR_CODE:-0}
 fi
 
 FORCE='false'
@@ -102,32 +197,240 @@ if [ -n "$DOCKERC_QUIET" ]; then
 	QUIET="$DOCKERC_QUIET"
 fi
 
+UPDATE='false'
+if [ -n "$DOCKERC_UPDATE" ]; then
+	# Use from argument or environment variable
+	UPDATE="$DOCKERC_UPDATE"
+fi
+
+INSTALL_DIR="$(dirname "$0")"
+if [ -n "$DOCKERC_INSTALL_DIR" ]; then
+	# Use from argument or environment variable
+	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
+fi
+
 CONTEXT=''
 if [ -n "$DOCKERC_CONTEXT" ]; then
 	# Use from argument or environment variable
 	CONTEXT="$DOCKERC_CONTEXT"
 fi
 
-print_context_help() {
-	echo '  context syntax: [first] | [first]-[second] | "-" | "--"'
-	echo '    first   First part of the context'
-	echo '    second  Second part of the context'
-	echo '    "-"     Use default docker compose files ("override" if it exists)'
-	echo '    "--"    Use docker compose without file arguments'
-}
+COMMAND_PRESET=''
+if [ -n "$DOCKERC_COMMAND_PRESET" ]; then
+	# Use from argument or environment variable
+	COMMAND_PRESET="$DOCKERC_COMMAND_PRESET"
+fi
+
+COMMAND_ARGS=''
+if [ -n "$DOCKERC_COMMAND_ARGS" ]; then
+	# Use from argument or environment variable
+	COMMAND_ARGS="$DOCKERC_COMMAND_ARGS"
+fi
 
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
+
+	if [ "$UPDATE" = 'true' ]; then
+		# Print update help & exit
+		echo "Usage: $0 --update [options] [tag]"
+		echo ''
+		echo 'Options:'
+		echo '  -h, --help         Print this help message'
+		echo '  -i, --install-dir  Set installation directory'
+		echo "    (defaults to directory '$(dirname "$0")')"
+		echo ''
+		echo 'Arguments:'
+		echo '  tag  DockerC tag/version to install (defaults to HEAD)'
+		exit ${ERROR_CODE:-0}
+	fi
+
 	# Print help & exit
-	echo "Usage: $0 [options] [context] [...args]"
-	echo '  args: Arguments passed to docker compose'
-	print_context_help
-	echo '  options:'
-	echo '    -h, --help     Print this help and exit'
-	echo '    -v, --version  Print version and exit'
-	echo '    --update       Update DockerC and exit'
-	echo '    -f             Force, for example ignores abstract contexts'
-	echo '    -n             Dry run, print docker compose command without running it'
-	echo '    -q             Quiet, do not print docker compose command'
+	echo 'Usage:'
+	echo "  $0 [options] [ <context> [@command_preset] [...args] ]"
+	echo "  $0 [options] <@compose_preset> [...args]"
+	echo ''
+	echo 'Options:'
+	echo '  -h, --help     Print this help message'
+	echo '  -v, --version  Print version'
+	echo '  --update       Update DockerC'
+	echo '  -f, --force    Force, for example ignores abstract contexts'
+	echo '  -n, --dry-run  Dry run, print docker compose command without running it'
+	echo '  -q, --quiet    Quiet, do not print docker compose command'
+	echo ''
+	echo 'Arguments:'
+	echo '  options          DockerC options'
+	echo '  context          Docker compose files context'
+	echo '  @command_preset  DockerC command preset (shortcut for a command)'
+	echo '  @compose_preset  DockerC compose preset (shortcut for a command)'
+	echo '  args             Arguments appended to the docker compose command'
+	echo ''
+	echo 'Help commands:'
+	echo "  $0 ?    See context argument help"
+	echo "  $0 - @  See @command_preset argument help"
+	echo "  $0 @    See @compose_preset argument help"
+	exit ${ERROR_CODE:-0}
+fi
+
+if [ "$DOCKERC_PRINT_HELP_CONTEXT" = 'true' ]; then
+	# Print context help & exit
+	echo 'DockerC context argument values:'
+	echo ''
+	echo '  (empty), -'
+	echo '    Look for default docker compose files'
+	echo '    Usage:'
+	echo "      $0 [options]"
+	echo "      $0 [options] - [@command_preset] [...args]"
+	echo '    Used default docker compose files are:'
+	echo '      - docker-compose.yml'
+	echo '      - docker-compose.override.yml (if it exists)'
+	echo ''
+	echo '  --'
+	echo '    Run docker compose without file arguments'
+	echo '    Usage:'
+	echo "      $0 [options] -- [@command_preset] [...args]"
+	echo ''
+	echo '  level1[.level2[...]]]'
+	echo '    Look for docker compose files matching context levels'
+	echo '    Usage:'
+	echo "      $0 [options] level1[.level2[...] [@command_preset] [...args]"
+	echo '    Example:'
+	echo "      '$0 prod.boosted' will look for:"
+	echo '        - docker-compose.yml'
+	echo '        - docker-compose.prod.yml'
+	echo '        - docker-compose.prod.boosted.yml'
+	echo ''
+	echo 'Use dry run option (--dry-run or -n) to see the docker compose command'
+	echo 'and files that will be used without running it.'
+	echo ''
+	echo "Use '$0 --help' for more help."
+	exit ${ERROR_CODE:-0}
+fi
+
+if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
+	# Print compose preset help & exit
+	echo "Usage: $0 [options] <@compose_preset> [...args]"
+	echo ''
+	echo 'Compose presets:'
+	echo '  @rfc   Remove unused containers'
+	echo '  @rfi   Remove dangling images'
+	echo '  @rfia  Remove all unused images'
+	echo '  @rf    Remove unused containers, networks and images'
+	echo '  @rfa   Remove all unused containers, networks and images'
+	echo '  @rfav  Remove all unused containers, networks, images and volumes'
+	echo '  @sa    Stop all running containers'
+	echo '  @rmf   Remove running containers, force'
+	echo '  @rms   Remove stopped containers'
+	echo '  @rmsf  Remove stopped containers, force'
+	echo '    (aliases: @rmfs)'
+	echo '  @rma   Remove all containers'
+	echo '  @rmaf  Remove all containers, force'
+	echo '    (aliases: @rmfa)'
+	echo ''
+	echo 'Arguments will be appended to the docker command that will be run.'
+	echo ''
+	echo "Use '$0 --help' for more help."
+	exit ${ERROR_CODE:-0}
+fi
+
+if [ "$DOCKERC_PRINT_HELP_COMMAND_PRESET" = 'true' ]; then
+	# Print compose preset help & exit
+	echo "Usage: $0 [options] <context> [@command_preset] [...args]"
+	echo ''
+	echo 'Command presets:'
+	echo '  up:'
+	echo '    @u     up -d'
+	echo '    @ua    up'
+	echo '    @ub    up --build -d'
+	echo '    @uba   up --build'
+	echo '    @ubf   up --build -d --force-recreate'
+	echo '    @ubfa  up --build --force-recreate'
+	echo '    @ubfp  up --build -d --force-recreate --pull always'
+	echo '    @ubfap up --build --force-recreate --pull always'
+	echo '    @ubr   up --build -d --remove-orphans'
+	echo '    @ubar  up --build --remove-orphans'
+	echo '    @ubfr  up --build -d --force-recreate --remove-orphans'
+	echo '    @ubfar up --build --force-recreate --remove-orphans'
+	echo '    @uf    up -d --force-recreate'
+	echo '    @ufa   up --force-recreate'
+	echo '    @ur    up -d --remove-orphans'
+	echo '    @uar   up --remove-orphans'
+	echo '    @ufr   up -d --force-recreate --remove-orphans'
+	echo '    @ufar  up --force-recreate --remove-orphans'
+	echo '  build:'
+	echo '    @b     build'
+	echo '    @bp    build --pull'
+	echo '    @bf    build --pull --no-cache'
+	echo '    @bn    build --dry-run --pull --no-cache'
+	echo '  watch:'
+	echo '    @w     watch'
+	echo '    @wq    watch --quiet'
+	echo '    @ww    watch --no-up'
+	echo '    @wqw   watch --quiet --no-up'
+	echo '    @wn    watch --dry-run'
+	echo '  down:'
+	echo '    @d     down'
+	echo '    @da    down --remove-orphans'
+	echo '    @dr    down --remove-orphans --rmi local'
+	echo '    @dra   down --remove-orphans --rmi all'
+	echo '    @drav  down --remove-orphans --rmi all -v'
+	echo '    @drv   down --remove-orphans -v'
+	echo '  run:'
+	echo '    @r     run --rm'
+	echo '    @rw    run -w /pwd -v $(pwd):/pwd --rm'
+	echo '    @rd    run -d'
+	echo '    @rk    run'
+	echo '    @rb    run --build --rm'
+	echo '    @rbw   run --build -w /pwd -v $(pwd):/pwd --rm'
+	echo '    @rbd   run --build -d'
+	echo '    @rbk   run --build'
+	echo '    @ri    run -i --rm'
+	echo '    @rwi   run -w /pwd -v $(pwd):/pwd -i --rm'
+	echo '    @rki   run -i'
+	echo '    @rbi   run --build -i --rm'
+	echo '    @rbwi  run --build -w /pwd -v $(pwd):/pwd -i --rm'
+	echo '    @rbki  run --build -i'
+	echo '  run shells:'
+	echo '    @sh    run -i --rm --entrypoint /bin/sh'
+	echo '    @shw   run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+	echo '      (aliases: $, @$)'
+	echo '    @shb   run --build -i --rm --entrypoint /bin/sh'
+	echo '    @shbw  run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+	echo '    @bash  run -i --rm --entrypoint /bin/bash'
+	echo '    @bashw run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
+	echo '    @bashb run --build -i --rm --entrypoint /bin/bash'
+	echo '    @bashbw run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
+	echo '  logs:'
+	echo '    @l     logs -n 100'
+	echo '    @lf    logs -n 100 -f'
+	echo '    @lt    logs -n 100 -t'
+	echo '    @ls    logs -n 100 --no-log-prefix'
+	echo '    @lft   logs -n 100 -f -t'
+	echo '    @lfs   logs -n 100 -f --no-log-prefix'
+	echo '    @lfts  logs -n 100 -f -t --no-log-prefix'
+	echo '    @lts   logs -n 100 -t --no-log-prefix'
+	echo '    @ll    logs'
+	echo '    @llf   logs -f'
+	echo '    @llt   logs -t'
+	echo '    @lls   logs --no-log-prefix'
+	echo '    @llft  logs -f -t'
+	echo '    @llfs  logs -f --no-log-prefix'
+	echo '    @llfts logs -f -t --no-log-prefix'
+	echo '    @llts  logs -t --no-log-prefix'
+	echo '  ps:'
+	echo '    @p     ps'
+	echo '    @pa    ps -a'
+	echo '  push:'
+	echo '    @pu    push'
+	echo '  pull:'
+	echo '    @pl    pull'
+	echo '  rm:'
+	echo '    @rs    rm --stop'
+	echo '    @rf    rm -f'
+	echo '    @rfv   rm -f -v'
+	echo ''
+	echo 'Arguments will be appended to the docker command that will be run.'
+	echo 'If the command preset is empty, the arguments should include the command.'
+	echo ''
+	echo "Use '$0 --help' for more help."
 	exit ${ERROR_CODE:-0}
 fi
 
@@ -175,37 +478,36 @@ fi
 if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC & exit
 
-	INSTALL_DIR=$(dirname "$0") # Default install directory
-	if [ -n "$DOCKERC_INSTALL_DIR" ]; then
-		# Use from environment variable
-		INSTALL_DIR="$DOCKERC_INSTALL_DIR"
-	fi
-
 	if [ ! -d "$INSTALL_DIR" ]; then
 		echo 'Error: Install directory does not exist.' >&2
 		exit 1
 	fi
 
-	if [ $# -gt 0 ]; then
-		if [ "$1" = 'HEAD' ] || [ "$1" = 'head' ] || [ "$1" = '.' ] || [ "$1" = '-' ]; then
-			REQUIRED_VERSION='HEAD'
-		else
-			REQUIRED_VERSION="$1"
-		fi
-		shift
+	# Read install tag from first positional argument: context
+	if [ -z "$CONTEXT" ]; then
+		INSTALL_TAG="$(get_latest_version)"
+	elif [ "$CONTEXT" = 'HEAD' ] || [ "$CONTEXT" = 'head' ] || [ "$CONTEXT" = '.' ] || [ "$CONTEXT" = '-' ]; then
+		INSTALL_TAG='HEAD'
 	else
-		REQUIRED_VERSION="$(get_latest_version)"
+		INSTALL_TAG="$CONTEXT"
+	fi
+
+	if [ "$QUIET" = 'false' ]; then
+		# Print install script command
+		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
+			echo ''
+		fi
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$INSTALL_TAG\""
+		echo ''
 	fi
 
 	if [ "$DRY_RUN" = 'false' ]; then
-		echo "Updating DockerC (v$REQUIRED_VERSION)..."
-		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$REQUIRED_VERSION\""
-	else
-		echo 'Updating DockerC (dry run):'
-		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$REQUIRED_VERSION\""
+		# Run install script
+		echo "Updating DockerC to $INSTALL_TAG..."
+		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$INSTALL_TAG\""
 	fi
 
-	exit 0
+	exit ${ERROR_CODE:-0}
 fi
 
 # Check for docker preset
@@ -294,28 +596,8 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 	if [ "$PRINT_DOCKER_PRESETS_HELP" = 'true' ]; then
 		# Print help and exit
-		echo "Usage: $0 [options] [@preset] [...args]"
-		echo '  args: Arguments passed to docker'
-		echo '  @preset:'
-		echo '    @rfc   Remove unused containers'
-		echo '    @rfi   Remove dangling images'
-		echo '    @rfia  Remove all unused images'
-		echo '    @rf    Remove unused containers, networks and images'
-		echo '    @rfa   Remove all unused containers, networks and images'
-		echo '    @rfav  Remove all unused containers, networks, images and volumes'
-		echo '    @sa    Stop all running containers'
-		echo '    @rmf   Remove running containers, force'
-		echo '    @rms   Remove stopped containers'
-		echo '    @rmsf  Remove stopped containers, force'
-		echo '      (aliases: @rmfs)'
-		echo '    @rma   Remove all containers'
-		echo '    @rmaf  Remove all containers, force'
-		echo '      (aliases: @rmfa)'
-		echo '  options:'
-		echo '    -f  Force, for example ignores abstract contexts'
-		echo '    -n  Dry run, print docker command without running it'
-		echo '    -q  Quiet, do not print docker command'
-		exit 0
+		echo 'DEPRECATED'
+		exit 1
 	fi
 
 	if [ "$RUN_SHELL" = 'false' ]; then
@@ -348,7 +630,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 	fi
 
-	exit 0
+	exit ${ERROR_CODE:-0}
 
 fi
 
@@ -868,95 +1150,8 @@ elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
 
 	if [ "$PRINT_ARGS_PRESET_HELP" = 'true' ]; then
 		# Print help and exit
-		echo "Usage: $0 [options] [context] [@preset] [...args]"
-		echo '  args: Arguments passed to docker compose'
-		echo '  @preset:'
-		echo '    @u     up -d'
-		echo '    @ua    up'
-		echo '    @ub    up --build -d'
-		echo '    @uba   up --build'
-		echo '    @ubf   up --build -d --force-recreate'
-		echo '    @ubfa  up --build --force-recreate'
-		echo '    @ubfp  up --build -d --force-recreate --pull always'
-		echo '    @ubfap up --build --force-recreate --pull always'
-		echo '    @ubr   up --build -d --remove-orphans'
-		echo '    @ubar  up --build --remove-orphans'
-		echo '    @ubfr  up --build -d --force-recreate --remove-orphans'
-		echo '    @ubfar up --build --force-recreate --remove-orphans'
-		echo '    @uf    up -d --force-recreate'
-		echo '    @ufa   up --force-recreate'
-		echo '    @ur    up -d --remove-orphans'
-		echo '    @uar   up --remove-orphans'
-		echo '    @ufr   up -d --force-recreate --remove-orphans'
-		echo '    @ufar  up --force-recreate --remove-orphans'
-		echo '    @b     build'
-		echo '    @bp    build --pull'
-		echo '    @bf    build --pull --no-cache'
-		echo '    @bn    build --dry-run --pull --no-cache'
-		echo '    @w     watch'
-		echo '    @wq    watch --quiet'
-		echo '    @ww    watch --no-up'
-		echo '    @wqw   watch --quiet --no-up'
-		echo '    @wn    watch --dry-run'
-		echo '    @d     down'
-		echo '    @da    down --remove-orphans'
-		echo '    @dr    down --remove-orphans --rmi local'
-		echo '    @dra   down --remove-orphans --rmi all'
-		echo '    @drav  down --remove-orphans --rmi all -v'
-		echo '    @drv   down --remove-orphans -v'
-		echo '    @r     run --rm'
-		echo '    @rw    run -w /pwd -v $(pwd):/pwd --rm'
-		echo '    @rd    run -d'
-		echo '    @rk    run'
-		echo '    @rb    run --build --rm'
-		echo '    @rbw   run --build -w /pwd -v $(pwd):/pwd --rm'
-		echo '    @rbd   run --build -d'
-		echo '    @rbk   run --build'
-		echo '    @ri    run -i --rm'
-		echo '    @rwi   run -w /pwd -v $(pwd):/pwd -i --rm'
-		echo '    @rki   run -i'
-		echo '    @rbi   run --build -i --rm'
-		echo '    @rbwi  run --build -w /pwd -v $(pwd):/pwd -i --rm'
-		echo '    @rbki  run --build -i'
-		echo '    @sh    run -i --rm --entrypoint /bin/sh'
-		echo '    @shw   run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
-		echo '    @$     run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
-		echo '    $      run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
-		echo '    @shb   run --build -i --rm --entrypoint /bin/sh'
-		echo '    @shbw  run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
-		echo '    @bash  run -i --rm --entrypoint /bin/bash'
-		echo '    @bashw run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
-		echo '    @bashb run --build -i --rm --entrypoint /bin/bash'
-		echo '    @bashbw run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
-		echo '    @l     logs -n 100'
-		echo '    @lf    logs -n 100 -f'
-		echo '    @lt    logs -n 100 -t'
-		echo '    @ls    logs -n 100 --no-log-prefix'
-		echo '    @lft   logs -n 100 -f -t'
-		echo '    @lfs   logs -n 100 -f --no-log-prefix'
-		echo '    @lfts  logs -n 100 -f -t --no-log-prefix'
-		echo '    @lts   logs -n 100 -t --no-log-prefix'
-		echo '    @ll    logs'
-		echo '    @llf   logs -f'
-		echo '    @llt   logs -t'
-		echo '    @lls   logs --no-log-prefix'
-		echo '    @llft  logs -f -t'
-		echo '    @llfs  logs -f --no-log-prefix'
-		echo '    @llfts logs -f -t --no-log-prefix'
-		echo '    @llts  logs -t --no-log-prefix'
-		echo '    @p     ps'
-		echo '    @pa    ps -a'
-		echo '    @pu    push'
-		echo '    @pl    pull'
-		echo '    @rs    rm --stop'
-		echo '    @rf    rm -f'
-		echo '    @rfv   rm -f -v'
-		print_context_help
-		echo '  options:'
-		echo '    -f  Force, for example ignores abstract contexts'
-		echo '    -n  Dry run, print docker compose command without running it'
-		echo '    -q  Quiet, do not print docker compose command'
-		exit 0
+		echo 'DEPRECATED'
+		exit 1
 	fi
 
 fi
