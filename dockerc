@@ -1162,9 +1162,9 @@ if [ "$CONTEXT" != '--' ]; then
 		exit 1
 	fi
 
-	# Context found, ensure one leading space in arguments variables
-	COMPOSE_FILE_ARGS="$(echo "$COMPOSE_FILE_ARGS" | sed 's/^ */ /')"
-	ENV_FILE_ARGS="$(echo "$ENV_FILE_ARGS" | sed 's/^ */ /')"
+	# Context found, trim leading spaces
+	COMPOSE_FILE_ARGS="$(echo "$COMPOSE_FILE_ARGS" | sed 's/^ *//')"
+	ENV_FILE_ARGS="$(echo "$ENV_FILE_ARGS" | sed 's/^ *//')"
 
 	# Unless force option is set,
 	# If compose file arguments are abstract, exit with error
@@ -1447,6 +1447,12 @@ if [ -z "$COMPOSE_ARGS" ] && [ -z "$COMMAND_ARGS" ]; then
 fi
 
 # Format variables with leading space
+if [ -n "$COMPOSE_FILE_ARGS" ]; then
+	COMPOSE_FILE_ARGS=" $COMPOSE_FILE_ARGS"
+fi
+if [ -n "$ENV_FILE_ARGS" ]; then
+	ENV_FILE_ARGS=" $ENV_FILE_ARGS"
+fi
 if [ -n "$COMPOSE_ARGS" ]; then
 	COMPOSE_ARGS=" $COMPOSE_ARGS"
 fi
