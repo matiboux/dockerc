@@ -13,14 +13,19 @@ class RunDockerc():
         self.dockerc_path = dockerc_path
         self.dockerc_args = dockerc_args
         self.cwd = cwd
-        self.context = context
+        self.context = (
+            context
+            if context is not None else
+            dockerc_args[0]
+            if dockerc_args and not dockerc_args[0].startswith('-') else
+            None
+        )
         self.env = env
 
         self.proc = subprocess.Popen(
             [
                 self.dockerc_path,
                 '-n',
-                *([self.context] if self.context else []),
                 *self.dockerc_args,
             ],
             cwd = self.cwd,
