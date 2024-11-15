@@ -1153,6 +1153,9 @@ elif [ "$(echo "$COMMAND_PRESET" | cut -c1)" = '@' ]; then
 		exit 1
 	fi
 
+# No arguments preset, use the command preset as arguments
+else
+	ARGS="$COMMAND_PRESET $ARGS"
 fi
 
 if [ "$QUIET" = 'false' ]; then
