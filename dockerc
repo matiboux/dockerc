@@ -655,7 +655,9 @@ fi
 
 if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
 
-	# Check in current directory, then in docker directory
+	# Iterate over:
+	# - Current directory
+	# - 'docker/' directory
 	while read -r dir; do
 
 		ENV_FILE_ARGS=''
@@ -791,9 +793,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
 					fi
 				fi
 
-			done <<EOF
-$(echo "$CONTEXT" | tr '-' "\n" | tr '.' "\n")
-EOF
+			done <<-EOF
+			$(echo "$CONTEXT" | tr '-' "\n" | tr '.' "\n")
+			EOF
 
 		fi
 
@@ -835,10 +837,10 @@ EOF
 
 		fi
 
-	done <<EOF
-.
-./docker
-EOF
+	done <<-EOF
+	.
+	./docker
+	EOF
 
 	# If compose file arguments are empty, exit with error
 	if [ -z "$COMPOSE_FILE_ARGS" ]; then
