@@ -85,6 +85,24 @@ if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
 
 fi
 
+# Parse command preset optional positional argument
+if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
+
+	if [ "$#" -gt 0 ]; then
+		DOCKERC_COMMAND_PRESET="$1"
+		shift
+	fi
+
+	if [ "$DOCKERC_COMMAND_PRESET" = '@' ]; then
+		# Print context help
+		DOCKERC_PRINT_HELP='true'
+		DOCKERC_PRINT_HELP_COMMAND='true'
+		# Stop parsing positional arguments
+		DOCKERC_PARSE_ARGUMENTS='false'
+	fi
+
+fi
+
 UPDATE='false'
 if [ -n "$DOCKERC_UPDATE" ]; then
 	# Use from argument or environment variable
