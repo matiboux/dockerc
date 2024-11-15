@@ -7,7 +7,7 @@ def test_default_u(file = __file__):
             '-',
             '@u',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -21,7 +21,7 @@ def test_default_ub(file = __file__):
             '-',
             '@ub',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -35,7 +35,7 @@ def test_default_uf(file = __file__):
             '-',
             '@uf',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -49,7 +49,7 @@ def test_default_ubf(file = __file__):
             '-',
             '@ubf',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -64,5 +64,5 @@ def test_default_uabc_not_found(file = __file__):
             '@uabc',
         )
         dockerc.assert_context_error(
-            stdout = b'Error: Unknown args preset \'@uabc\'\n',
+            stderr = b'Error: Unknown args preset \'@uabc\'\n',
         )

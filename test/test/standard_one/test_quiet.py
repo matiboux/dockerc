@@ -6,11 +6,11 @@ def test_quiet(file = __file__):
         dockerc = ctx.run_dockerc(
             '-q',
         )
-        dockerc.assert_context_found()
+        dockerc.assert_context_ok()
 
 def test_quiet_up(file = __file__):
     with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc(
             '-q', '-', 'up',
         )
-        dockerc.assert_context_found()
+        dockerc.assert_context_ok()

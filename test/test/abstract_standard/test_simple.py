@@ -5,7 +5,7 @@ def test_abstract_standard(file = __file__):
     with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc()
         dockerc.assert_context_error(
-            stdout = b'Error: Abstract context found\n',
+            stderr = b'Error: Abstract context found\n',
         )
 
 def test_abstract_standard_forced(file = __file__):
@@ -13,7 +13,7 @@ def test_abstract_standard_forced(file = __file__):
         dockerc = ctx.run_dockerc(
             '-f',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'

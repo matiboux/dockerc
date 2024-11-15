@@ -2,9 +2,7 @@ from test.src.TestDirContext import TestDirContext
 
 def test_default_not_found(file = __file__):
     with TestDirContext(file) as ctx:
-        dockerc = ctx.run_dockerc(
-            None,
-        )
+        dockerc = ctx.run_dockerc()
         dockerc.assert_context_not_found()
 
 def test_dev_not_found(file = __file__):

@@ -6,7 +6,7 @@ def test_presets_sh(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@sh',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -19,7 +19,7 @@ def test_presets_shw(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@shw',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -38,7 +38,7 @@ def test_presets_shb(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@shb',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -51,7 +51,7 @@ def test_presets_shbw(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@shbw',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -64,7 +64,7 @@ def test_presets_bash(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@bash',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -77,7 +77,7 @@ def test_presets_bashw(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@bashw',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -90,7 +90,7 @@ def test_presets_bashb(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@bashb',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -103,7 +103,7 @@ def test_presets_bashbw(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@bashbw',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'

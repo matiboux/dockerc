@@ -6,7 +6,7 @@ def test_prod_simple(file = __file__):
         dockerc = ctx.run_dockerc(
             'prod',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose' \
                 b' -f ./docker-compose.yml -f ./docker-compose.prod.yml' \

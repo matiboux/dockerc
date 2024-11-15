@@ -6,7 +6,7 @@ def test_presets_rs(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@rs',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -19,7 +19,7 @@ def test_presets_rf(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@rf',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -32,7 +32,7 @@ def test_presets_rfv(file = __file__):
         dockerc = ctx.run_dockerc(
             '-', '@rfv',
         )
-        dockerc.assert_context(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
