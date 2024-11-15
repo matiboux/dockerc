@@ -636,10 +636,6 @@ if [ -n "$DOCKER_PRESET" ]; then
 
 fi
 
-COMPOSE_FILE_ARGS=''
-ABSTRACT_COMPOSE_FILE_ARGS='false'
-ENV_FILE_ARGS=''
-
 look_env_files() {
 	# Usage: look_env_files <dir> <base> <part>
 
@@ -708,6 +704,10 @@ look_compose_file() {
 
 	return 0
 }
+
+COMPOSE_FILE_ARGS=''
+ABSTRACT_COMPOSE_FILE_ARGS='false'
+ENV_FILE_ARGS=''
 
 # Handle context
 # Unless context is '--': in this case, use no compose file argument
