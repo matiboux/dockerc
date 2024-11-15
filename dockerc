@@ -126,20 +126,24 @@ while true; do
 
 	# Parse command preset optional positional argument
 
-	if [ "$1" = '@' ]; then
-		# Print command preset help
-		DOCKERC_PRINT_HELP_COMMAND_PRESET='true'
-		# Stop parsing arguments
-		break
-	fi
+	if [ "${echo "$1" | cut -c1}" = '@' ]; then
+		if [ "$1" = '@' ]; then
+			# Print command preset help
+			DOCKERC_PRINT_HELP_COMMAND_PRESET='true'
+			# Stop parsing arguments
+			break
+		fi
 
-	DOCKERC_COMMAND_PRESET="$1"
-	shift
+		DOCKERC_COMMAND_PRESET="$1"
+		shift
 
-	# Check for optional positional arguments
-	if [ "$#" -le 0 ]; then
-		# No more arguments
-		break
+		# Check for optional positional arguments
+		if [ "$#" -le 0 ]; then
+			# No more arguments
+			break
+		fi
+
+	# Else, this is a command argument
 	fi
 
 	# Parse command args optional positional arguments
