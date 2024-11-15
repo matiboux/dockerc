@@ -1138,6 +1138,14 @@ if [ -z "$COMPOSE_ARGS" ] && [ -z "$COMMAND_ARGS" ]; then
 	COMPOSE_ARGS='up -d'
 fi
 
+# Format variables with leading space
+if [ -n "$COMPOSE_ARGS" ]; then
+	COMPOSE_ARGS=" $COMPOSE_ARGS"
+fi
+if [ -n "$COMMAND_ARGS" ]; then
+	COMMAND_ARGS=" $COMMAND_ARGS"
+fi
+
 if [ "$QUIET" = 'false' ]; then
 	# Print docker compose command
 	if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
