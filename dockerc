@@ -115,6 +115,11 @@ while true; do
 		DOCKERC_DOCKER_PRESET="$1"
 		shift
 
+	# Parse update install tag argument
+	elif [ "$DOCKERC_UPDATE" = 'true' ]; then
+		DOCKERC_INSTALL_TAG="$1"
+		shift
+
 	# Parse context argument
 	else
 		DOCKERC_CONTEXT="$1"
@@ -230,6 +235,19 @@ INSTALL_DIR="$(dirname "$0")"
 if [ -n "$DOCKERC_INSTALL_DIR" ]; then
 	# Use from argument or environment variable
 	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
+fi
+
+INSTALL_TAG=''
+if [ -n "$DOCKERC_INSTALL_TAG" ]; then
+	# Use from argument or environment variable
+	if
+		[ "$DOCKERC_INSTALL_TAG" = 'HEAD' ] || [ "$DOCKERC_INSTALL_TAG" = 'head' ] ||
+		[ "$DOCKERC_INSTALL_TAG" = '.' ] || [ "$DOCKERC_INSTALL_TAG" = '-' ]
+	then
+		INSTALL_TAG='HEAD'
+	else
+		INSTALL_TAG="$DOCKERC_INSTALL_TAG"
+	fi
 fi
 
 DOCKER_PRESET=''
