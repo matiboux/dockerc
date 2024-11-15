@@ -4,7 +4,6 @@ from test.src.TestDirContext import TestDirContext
 def test_default_config_syntax_error(file = __file__):
     with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc(
-            None,
             'config',
         )
         dockerc.assert_context_error(
