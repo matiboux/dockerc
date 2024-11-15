@@ -116,6 +116,8 @@ get_latest_version() {
 	)
 
 	if [ -n "$LATEST_VERSION_JSON" ]; then
+		# Extract version from matched string
+		# Remove `"tag_name": "` (13 characters) and `",` (2 characters)
 		if [ "$(uname -s)" = 'Darwin' ]; then
 			# MacOS
 			LATEST_VERSION="${LATEST_VERSION_JSON:13:$((${#LATEST_VERSION_JSON}-13-2))}"
