@@ -713,17 +713,17 @@ ABSTRACT_CONTEXT='false'
 # Unless context is '--': in this case, use no compose file argument
 if [ "$CONTEXT" != '--' ]; then
 
-	CONTEXT_ONLY_ROOT_STANDARD='false'
+	CONTEXT_SKIP_ROOT_STANDARD='false'
 
 	if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
 		# Use default context
 		CONTEXT=''
 
-	elif [ "$(echo "$CONTEXT" | cut -c1)" = '.' ]; then
+	elif [ "$(echo "$CONTEXT" | cut -c1)" = '-' ]; then
 		# Only look for standard root level compose files
-		CONTEXT_ONLY_ROOT_STANDARD='true'
-		# Remove leading dot
-		CONTEXT="${CONTEXT#.}"
+		CONTEXT_SKIP_ROOT_STANDARD='true'
+		# Remove leading dash
+		CONTEXT="${CONTEXT#-}"
 	fi
 
 	# Iterate over directories:
@@ -761,15 +761,19 @@ if [ "$CONTEXT" != '--' ]; then
 				EOF
 			fi
 
-			# Check for standard root level compose file
+			if [ "$CONTEXT_SKIP_ROOT_STANDARD" != 'true' ]; then
 
-			# Look for root compose file
-			COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" "$COMPOSE_PREFIX" '' '' "$COMPOSE_EXTENSION")
-			COMPOSE_LOOK_CODE=$?
-			if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
-				# Compose file found
-				LVL1_COMPOSE_FILE_ARGS="$LVL1_COMPOSE_FILE_ARGS -f $COMPOSE_LOOK_FILE"
-				LVL1_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+				# Check for standard root level compose file
+
+				# Look for root compose file
+				COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" "$COMPOSE_PREFIX" '' '' "$COMPOSE_EXTENSION")
+				COMPOSE_LOOK_CODE=$?
+				if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+					# Compose file found
+					LVL1_COMPOSE_FILE_ARGS="$LVL1_COMPOSE_FILE_ARGS -f $COMPOSE_LOOK_FILE"
+					LVL1_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+				fi
+
 			fi
 
 			# Parse context parts
@@ -840,108 +844,104 @@ if [ "$CONTEXT" != '--' ]; then
 
 				fi
 
-				if [ "$CONTEXT_ONLY_ROOT_STANDARD" != 'true' ]; then
+				LVL2_COMPOSE_FILE_ARGS=''
+				LVL2_ENV_FILE_ARGS="$LVL1_ENV_FILE_ARGS"
+				LVL2_ABSTRACT_CONTEXT='false'
 
-					LVL2_COMPOSE_FILE_ARGS=''
-					LVL2_ENV_FILE_ARGS="$LVL1_ENV_FILE_ARGS"
-					LVL2_ABSTRACT_CONTEXT='false'
+				# Check for non-standard root level compose files
 
-					# Check for non-standard root level compose files
+				# Extract first context part
+				CONTEXT_FIRST="${CONTEXT%%.*}"
+				CONTEXT_REST="$([ "$CONTEXT" = "$CONTEXT_FIRST" ] && echo '' || echo "${CONTEXT#*.}")"
 
-					# Extract first context part
-					CONTEXT_FIRST="${CONTEXT%%.*}"
-					CONTEXT_REST="$([ "$CONTEXT" = "$CONTEXT_FIRST" ] && echo '' || echo "${CONTEXT#*.}")"
+				# Look for universal env files
+				ENV_LOOK_FILES=$(look_env_files "$COMPOSE_DIR" '.-' "$CONTEXT_FIRST")
+				ENV_LOOK_CODE=$?
+				if [ "$ENV_LOOK_CODE" -eq 0 ]; then
+					while read -r ENV_LOOK_FILE; do
+						LVL2_ENV_FILE_ARGS="$LVL2_ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
+					done <<-EOF
+					$(echo "$ENV_LOOK_FILES")
+					EOF
+				fi
 
-					# Look for universal env files
-					ENV_LOOK_FILES=$(look_env_files "$COMPOSE_DIR" '.-' "$CONTEXT_FIRST")
-					ENV_LOOK_CODE=$?
-					if [ "$ENV_LOOK_CODE" -eq 0 ]; then
-						while read -r ENV_LOOK_FILE; do
-							LVL2_ENV_FILE_ARGS="$LVL2_ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
-						done <<-EOF
-						$(echo "$ENV_LOOK_FILES")
-						EOF
-					fi
+				# Look for context env files
+				ENV_LOOK_FILES=$(look_env_files "$COMPOSE_DIR" '' "$CONTEXT_FIRST")
+				ENV_LOOK_CODE=$?
+				if [ "$ENV_LOOK_CODE" -eq 0 ]; then
+					while read -r ENV_LOOK_FILE; do
+						LVL2_ENV_FILE_ARGS="$LVL2_ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
+					done <<-EOF
+					$(echo "$ENV_LOOK_FILES")
+					EOF
+				fi
 
-					# Look for context env files
-					ENV_LOOK_FILES=$(look_env_files "$COMPOSE_DIR" '' "$CONTEXT_FIRST")
-					ENV_LOOK_CODE=$?
-					if [ "$ENV_LOOK_CODE" -eq 0 ]; then
-						while read -r ENV_LOOK_FILE; do
-							LVL2_ENV_FILE_ARGS="$LVL2_ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
-						done <<-EOF
-						$(echo "$ENV_LOOK_FILES")
-						EOF
-					fi
+				# Look for root compose file
+				COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" "$COMPOSE_PREFIX" "-$CONTEXT_FIRST" '' "$COMPOSE_EXTENSION")
+				COMPOSE_LOOK_CODE=$?
+				if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+					# Compose file found
+					LVL2_COMPOSE_FILE_ARGS="$LVL2_COMPOSE_FILE_ARGS -f $COMPOSE_LOOK_FILE"
+					LVL2_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+				fi
 
-					# Look for root compose file
-					COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" "$COMPOSE_PREFIX" "-$CONTEXT_FIRST" '' "$COMPOSE_EXTENSION")
-					COMPOSE_LOOK_CODE=$?
-					if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
-						# Compose file found
-						LVL2_COMPOSE_FILE_ARGS="$LVL2_COMPOSE_FILE_ARGS -f $COMPOSE_LOOK_FILE"
-						LVL2_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
-					fi
+				# Parse context parts
+				if [ -n "$CONTEXT_REST" ]; then
 
-					# Parse context parts
-					if [ -n "$CONTEXT_REST" ]; then
+					LVL2_PREFIX=''
 
-						LVL2_PREFIX=''
+					while read -r CONTEXT_PART; do
 
-						while read -r CONTEXT_PART; do
+						if [ -z "$CONTEXT_PART" ]; then
+							# Skip empty parts
+							continue
+						fi
 
-							if [ -z "$CONTEXT_PART" ]; then
-								# Skip empty parts
-								continue
-							fi
+						LVL2_PREFIX="$LVL2_PREFIX.$CONTEXT_PART"
 
-							LVL2_PREFIX="$LVL2_PREFIX.$CONTEXT_PART"
+						# Look for universal env files
+						ENV_LOOK_FILES=$(look_env_files "$COMPOSE_DIR" '.-' "$CONTEXT_PART")
+						ENV_LOOK_CODE=$?
+						if [ "$ENV_LOOK_CODE" -eq 0 ]; then
+							while read -r ENV_LOOK_FILE; do
+								LVL2_ENV_FILE_ARGS="$LVL2_ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
+							done <<-EOF
+							$(echo "$ENV_LOOK_FILES")
+							EOF
+						fi
 
-							# Look for universal env files
-							ENV_LOOK_FILES=$(look_env_files "$COMPOSE_DIR" '.-' "$CONTEXT_PART")
-							ENV_LOOK_CODE=$?
-							if [ "$ENV_LOOK_CODE" -eq 0 ]; then
-								while read -r ENV_LOOK_FILE; do
-									LVL2_ENV_FILE_ARGS="$LVL2_ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
-								done <<-EOF
-								$(echo "$ENV_LOOK_FILES")
-								EOF
-							fi
+						# Look for context env files
+						ENV_LOOK_FILES=$(look_env_files "$COMPOSE_DIR" '' "$LVL2_PREFIX")
+						ENV_LOOK_CODE=$?
+						if [ "$ENV_LOOK_CODE" -eq 0 ]; then
+							while read -r ENV_LOOK_FILE; do
+								LVL2_ENV_FILE_ARGS="$LVL2_ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
+							done <<-EOF
+							$(echo "$ENV_LOOK_FILES")
+							EOF
+						fi
 
-							# Look for context env files
-							ENV_LOOK_FILES=$(look_env_files "$COMPOSE_DIR" '' "$LVL2_PREFIX")
-							ENV_LOOK_CODE=$?
-							if [ "$ENV_LOOK_CODE" -eq 0 ]; then
-								while read -r ENV_LOOK_FILE; do
-									LVL2_ENV_FILE_ARGS="$LVL2_ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
-								done <<-EOF
-								$(echo "$ENV_LOOK_FILES")
-								EOF
-							fi
+						# Look for context compose file
+						COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" "$COMPOSE_PREFIX" "-$CONTEXT_FIRST" "$LVL2_PREFIX" "$COMPOSE_EXTENSION")
+						COMPOSE_LOOK_CODE=$?
+						if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+							# Context compose file found
+							LVL2_COMPOSE_FILE_ARGS="$LVL2_COMPOSE_FILE_ARGS -f $COMPOSE_LOOK_FILE"
+							LVL2_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 
-							# Look for context compose file
-							COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" "$COMPOSE_PREFIX" "-$CONTEXT_FIRST" "$LVL2_PREFIX" "$COMPOSE_EXTENSION")
-							COMPOSE_LOOK_CODE=$?
-							if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
-								# Context compose file found
-								LVL2_COMPOSE_FILE_ARGS="$LVL2_COMPOSE_FILE_ARGS -f $COMPOSE_LOOK_FILE"
-								LVL2_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
-
-							else
-								# Context compose file not found: invalidate LVL2 and break loop
-								LVL2_COMPOSE_FILE_ARGS=''
-								break
-							fi
-
-						done <<-EOF
-						$(echo "$CONTEXT_REST" | tr '-' "\n" | tr '.' "\n")
-						EOF
-
-						if [ -n "$LVL2_COMPOSE_FILE_ARGS" ]; then
-							# Context resolved: break loop
+						else
+							# Context compose file not found: invalidate LVL2 and break loop
+							LVL2_COMPOSE_FILE_ARGS=''
 							break
 						fi
 
+					done <<-EOF
+					$(echo "$CONTEXT_REST" | tr '-' "\n" | tr '.' "\n")
+					EOF
+
+					if [ -n "$LVL2_COMPOSE_FILE_ARGS" ]; then
+						# Context resolved: break loop
+						break
 					fi
 
 				fi
