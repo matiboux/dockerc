@@ -18,12 +18,14 @@ Then, install DockerC with the following command:
 
 Take a look at the [install.sh](install.sh) script to see what it does.
 
-If you get the error `Failure writing output to destination`,
-try to run the command again with `sudo` or grant yourself write permissions to install directory (`/usr/local/bin` by default).
+If you get a cURL error, check the following:
 
-```bash
-sudo /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh)"
-```
+- cURL error `22`: Requested tag was not found. Verify your network and that the tag exists.
+
+- cURL error `23`: Failed to install DockerC. Verify your permissions in the install directory or try to run the command again with `sudo`.
+  ```bash
+  sudo /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh)"
+  ```
 
 
 ## Usage
