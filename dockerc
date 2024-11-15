@@ -1032,62 +1032,54 @@ if [ "$CONTEXT" != '--' ]; then
 				# EOF
 			fi
 
-
-			# LVL2_COMPOSE_FILE_ARGS=''
-			# LVL2_ENV_FILE_ARGS=''
-			# LVL2_ABSTRACT_CONTEXT='false'
-
 			if [ -n "$LVL2_COMPOSE_FILE_ARGS" ]; then
-				# Context resolved, use LVL2 arguments & break loop
-				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS $LVL2_COMPOSE_FILE_ARGS"
-				ENV_FILE_ARGS="$ENV_FILE_ARGS $LVL2_ENV_FILE_ARGS"
-				ABSTRACT_CONTEXT="$LVL2_ABSTRACT_CONTEXT"
+				# Context resolved (late): break loop
+				echo 'Notice: Context resolved later than expected, you may report this issue.' >&2
 				break
-			fi
-
-			if [ -z "$LVL1_COMPOSE_FILE_ARGS" ]; then
-				# Root compose file not found, use nothing & break loop
-				break
-			fi
-
-			# Check for special contexts
-
-			# if [ "$CONTEXT" = 'prod' ]; then
-			# 	# Context resolved, use LVL1 arguments & break loop
-			# 	COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS $LVL1_COMPOSE_FILE_ARGS"
-			# 	ENV_FILE_ARGS="$ENV_FILE_ARGS $LVL1_ENV_FILE_ARGS"
-			# 	ABSTRACT_CONTEXT="$LVL1_ABSTRACT_CONTEXT"
-			# 	break
-			# fi
-
-			if [ -z "$CONTEXT" ] || [ "$CONTEXT" = 'dev' ]; then
-
-				# Look for standard override compose file
-				COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" "$COMPOSE_PREFIX" '' 'override' "$COMPOSE_EXTENSION")
-				COMPOSE_LOOK_CODE=$?
-				if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
-					# Standard override compose file found
-					LVL1_COMPOSE_FILE_ARGS="$LVL1_COMPOSE_FILE_ARGS -f $COMPOSE_LOOK_FILE"
-					LVL1_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
-					break
-
-				elif [ "$CONTEXT" = 'dev' ]; then
-					# Standard override compose file not found, but was required: invalidate LVL1
-					LVL1_COMPOSE_FILE_ARGS=''
-				fi
-
-			elif [ "$CONTEXT" != 'prod' ]; then
-				# Context not resolved: invalidate LVL1
-				LVL1_COMPOSE_FILE_ARGS=''
 			fi
 
 			if [ -n "$LVL1_COMPOSE_FILE_ARGS" ]; then
-				# Context resolved, use LVL1 arguments & break loop
-				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS $LVL1_COMPOSE_FILE_ARGS"
-				ENV_FILE_ARGS="$ENV_FILE_ARGS $LVL1_ENV_FILE_ARGS"
-				ABSTRACT_CONTEXT="$LVL1_ABSTRACT_CONTEXT"
-				break
+
+				# Check for special contexts
+
+				if [ -z "$CONTEXT" ] || [ "$CONTEXT" = 'dev' ]; then
+
+					# Look for standard override compose file
+					COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" "$COMPOSE_PREFIX" '' 'override' "$COMPOSE_EXTENSION")
+					COMPOSE_LOOK_CODE=$?
+					if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+						# Standard override compose file found
+						LVL1_COMPOSE_FILE_ARGS="$LVL1_COMPOSE_FILE_ARGS -f $COMPOSE_LOOK_FILE"
+						LVL1_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+						break
+
+					elif [ "$CONTEXT" = 'dev' ]; then
+						# Standard override compose file not found, but was required: invalidate LVL1 & break loop
+						LVL1_COMPOSE_FILE_ARGS=''
+						break
+					fi
+
+				elif [ "$CONTEXT" != 'prod' ]; then
+					# Context not resolved: invalidate LVL1 & break loop
+					LVL1_COMPOSE_FILE_ARGS=''
+					break
+				fi
+
+				if [ -n "$LVL1_COMPOSE_FILE_ARGS" ]; then
+					# Context resolved: break loop
+					break
+				fi
+
 			fi
+
+
+
+
+			# if [ -z "$LVL1_COMPOSE_FILE_ARGS" ]; then
+			# 	# Root compose file not found, use nothing & break loop
+			# 	break
+			# fi
+
 
 			# Found no context, use nothing & end loop
 
@@ -1134,8 +1126,23 @@ if [ "$CONTEXT" != '--' ]; then
 		4
 		EOF
 
+		if [ -n "$LVL2_COMPOSE_FILE_ARGS" ]; then
+			# Context resolved: use LVL2 arguments & break loop
+			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS $LVL2_COMPOSE_FILE_ARGS"
+			ENV_FILE_ARGS="$ENV_FILE_ARGS $LVL2_ENV_FILE_ARGS"
+			ABSTRACT_CONTEXT="$LVL2_ABSTRACT_CONTEXT"
+			break
+
+		elif [ -n "$LVL1_COMPOSE_FILE_ARGS" ]; then
+			# Context resolved: use LVL1 arguments & break loop
+			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS $LVL1_COMPOSE_FILE_ARGS"
+			ENV_FILE_ARGS="$ENV_FILE_ARGS $LVL1_ENV_FILE_ARGS"
+			ABSTRACT_CONTEXT="$LVL1_ABSTRACT_CONTEXT"
+			break
+		fi
+
 		if [ -n "$COMPOSE_FILE_ARGS" ]; then
-			# Context resolved, break loop
+			# Context resolved: break loop
 			break
 		fi
 
@@ -1153,12 +1160,11 @@ if [ "$CONTEXT" != '--' ]; then
 			echo "Error: Unknown context '$CONTEXT'" >&2
 		fi
 		exit 1
-
-	else
-		# Context found, ensure one leading space in arguments variables
-		COMPOSE_FILE_ARGS="$(echo "$COMPOSE_FILE_ARGS" | sed 's/^ */ /')"
-		ENV_FILE_ARGS="$(echo "$ENV_FILE_ARGS" | sed 's/^ */ /')"
 	fi
+
+	# Context found, ensure one leading space in arguments variables
+	COMPOSE_FILE_ARGS="$(echo "$COMPOSE_FILE_ARGS" | sed 's/^ */ /')"
+	ENV_FILE_ARGS="$(echo "$ENV_FILE_ARGS" | sed 's/^ */ /')"
 
 	# Unless force option is set,
 	# If compose file arguments are abstract, exit with error
