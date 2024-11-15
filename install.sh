@@ -90,15 +90,51 @@ if [ -n "$DOCKERC_INSTALL_DIR" ]; then
 fi
 
 # Get install tag
-INSTALL_TAG='HEAD' # Default required tag
+INSTALL_TAG='latest'
 if [ -n "$DOCKERC_INSTALL_TAG" ]; then
 	# Use from argument or environment variable
-	INSTALL_TAG="$DOCKERC_INSTALL_TAG"
+	if
+		[ "$DOCKERC_INSTALL_TAG" = 'HEAD' ] || [ "$DOCKERC_INSTALL_TAG" = 'head' ] ||
+		[ "$DOCKERC_INSTALL_TAG" = '.' ] || [ "$DOCKERC_INSTALL_TAG" = '-' ]
+	then
+		INSTALL_TAG='HEAD'
+	else
+		INSTALL_TAG="$DOCKERC_INSTALL_TAG"
+	fi
 fi
 
 if [ ! -d "$INSTALL_DIR" ]; then
 	echo 'Error: Install directory does not exist.' >&2
 	exit 1
+fi
+
+get_latest_version() {
+	# Syntax: '"tag_name": "v1.0.0",'
+	LATEST_VERSION_JSON=$(
+		curl -fsSL "https://api.github.com/repos/matiboux/dockerc/releases/latest" 2>/dev/null \
+		| grep -Eo '"tag_name": "(.+?)",'
+	)
+
+	if [ -n "$LATEST_VERSION_JSON" ]; then
+		if [ "$(uname -s)" = 'Darwin' ]; then
+			# MacOS
+			LATEST_VERSION="${LATEST_VERSION_JSON:14:$((${#LATEST_VERSION_JSON}-14-2))}"
+		else
+			# Linux
+			LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 14) $(expr length "$LATEST_VERSION_JSON" - 14 - 2))
+		fi
+
+		echo "$LATEST_VERSION"
+	fi
+}
+
+if [ "$INSTALL_TAG" = 'latest' ]; then
+	# Default install tag is latest released version
+	INSTALL_TAG="$(get_latest_version)"
+	if [ -z "$INSTALL_TAG" ]; then
+		echo 'Error: Failed to get latest version.' >&2
+		exit 1
+	fi
 fi
 
 # Check that docker is installed
