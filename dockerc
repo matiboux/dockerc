@@ -10,110 +10,119 @@
 VERSION='1.10.0'
 
 ERROR_CODE=''
-DOCKERC_PARSE_ARGUMENTS='true'
 
-# Parse options arguments
-while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
+# Parse arguments
+# Dummy while loop to allow breaking
+while true; do
 
-	case "$1" in
+	# Parse options arguments
+	while [ "$#" -gt 0 ]; do
 
-		'--help' | '-h' )
-			# Print general help
-			DOCKERC_PRINT_HELP='true'
-			shift
-			;;
+		case "$1" in
 
-		'--version' | '-v' )
-			# Print version
-			DOCKERC_PRINT_VERSION='true'
-			shift
-			;;
+			'--help' | '-h' )
+				# Print general help
+				DOCKERC_PRINT_HELP='true'
+				shift
+				;;
 
-		'--update' )
-			# Update DockerC
-			DOCKERC_UPDATE='true'
-			shift
-			;;
+			'--version' | '-v' )
+				# Print version
+				DOCKERC_PRINT_VERSION='true'
+				shift
+				;;
 
-		'--force' | '-f' )
-			# Force, for example ignores abstract contexts
-			DOCKERC_FORCE='true'
-			shift
-			;;
+			'--update' )
+				# Update DockerC
+				DOCKERC_UPDATE='true'
+				shift
+				;;
 
-		'--dry-run' | '-n' )
-			# Dry run, print docker compose command without running it
-			DOCKERC_DRY_RUN='true'
-			shift
-			;;
+			'--force' | '-f' )
+				# Force, for example ignores abstract contexts
+				DOCKERC_FORCE='true'
+				shift
+				;;
 
-		'--quiet' | '-q' )
-			# Quiet, do not print docker compose command
-			DOCKERC_QUIET='true'
-			shift
-			;;
+			'--dry-run' | '-n' )
+				# Dry run, print docker compose command without running it
+				DOCKERC_DRY_RUN='true'
+				shift
+				;;
 
-		* )
-			break
-			;;
+			'--quiet' | '-q' )
+				# Quiet, do not print docker compose command
+				DOCKERC_QUIET='true'
+				shift
+				;;
 
-	esac
+			* )
+				break
+				;;
 
-done
+		esac
 
-if
-	[ "$DOCKERC_PRINT_HELP" = 'true' ] ||
-	[ "$DOCKERC_PRINT_VERSION" = 'true' ] ||
-	[ "$DOCKERC_UPDATE" = 'true' ]
-then
-	# Stop parsing positional arguments
-	DOCKERC_PARSE_ARGUMENTS='false'
-fi
+	done
 
-# Parse context optional positional argument
-if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
-
-	if [ "$#" -gt 0 ]; then
-		DOCKERC_CONTEXT="$1"
-		shift
+	if
+		[ "$DOCKERC_PRINT_HELP" = 'true' ] ||
+		[ "$DOCKERC_PRINT_VERSION" = 'true' ] ||
+		[ "$DOCKERC_UPDATE" = 'true' ]
+	then
+		# Stop parsing arguments
+		break
 	fi
 
-	if [ "$DOCKERC_CONTEXT" = '?' ]; then
+	# Check for optional positional arguments
+	if [ "$#" -le 0 ]; then
+		# No more arguments
+		break
+	fi
+
+	# Parse context optional positional argument
+
+	if [ "$1" = '?' ]; then
 		# Print context help
 		DOCKERC_PRINT_HELP_CONTEXT='true'
-		# Stop parsing positional arguments
-		DOCKERC_PARSE_ARGUMENTS='false'
+		# Stop parsing arguments
+		break
 	fi
 
-	if [ "$DOCKERC_CONTEXT" = '@' ]; then
-		# Print context help
+	if [ "$1" = '@' ]; then
+		# Print compose preset help
 		DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
-		# Stop parsing positional arguments
-		DOCKERC_PARSE_ARGUMENTS='false'
+		# Stop parsing arguments
+		break
 	fi
 
-fi
+	DOCKERC_CONTEXT="$1"
+	shift
 
-# Parse command preset optional positional argument
-if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
-
-	if [ "$#" -gt 0 ]; then
-		DOCKERC_COMMAND_PRESET="$1"
-		shift
+	# Check for optional positional arguments
+	if [ "$#" -le 0 ]; then
+		# No more arguments
+		break
 	fi
 
-	if [ "$DOCKERC_COMMAND_PRESET" = '@' ]; then
-		# Print context help
+	# Parse command preset optional positional argument
+
+	if [ "$1" = '@' ]; then
+		# Print command preset help
 		DOCKERC_PRINT_HELP_COMMAND_PRESET='true'
-		# Stop parsing positional arguments
-		DOCKERC_PARSE_ARGUMENTS='false'
+		# Stop parsing arguments
+		break
 	fi
 
-fi
+	DOCKERC_COMMAND_PRESET="$1"
+	shift
 
-# Parse command args optional positional arguments
-if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; then
+	# Check for optional positional arguments
+	if [ "$#" -le 0 ]; then
+		# No more arguments
+		break
+	fi
 
+	# Parse command args optional positional arguments
 	DOCKERC_COMMAND_ARGS=''
 	for ARG in "$@"; do
 
@@ -132,7 +141,10 @@ if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; then
 
 	done
 
-fi
+	# Stop parsing arguments
+	break
+
+done
 
 UPDATE='false'
 if [ -n "$DOCKERC_UPDATE" ]; then
