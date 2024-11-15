@@ -507,7 +507,7 @@ if [ "$UPDATE" = 'true' ]; then
 		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$INSTALL_TAG\""
 	fi
 
-	exit 0
+	exit ${ERROR_CODE:-0}
 fi
 
 # Check for docker preset
@@ -630,7 +630,7 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 	fi
 
-	exit 0
+	exit ${ERROR_CODE:-0}
 
 fi
 
