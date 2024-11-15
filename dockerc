@@ -640,6 +640,26 @@ COMPOSE_FILE_ARGS=''
 ABSTRACT_COMPOSE_FILE_ARGS='false'
 ENV_FILE_ARGS=''
 
+look_compose_file() {
+	# Usage: look_compose_file <dir> <compose_prefix> <base> <part> <extension>
+
+	COMPOSE_FILE_PATH="${1:-.}/${2:-docker-compose}${3:-}${4:-}.${5:-yml}"
+	if [ ! -f "$COMPOSE_FILE_PATH" ]; then
+		# Compose file not found
+		return 1
+	fi
+
+	# Return found compose file path
+	echo "$COMPOSE_FILE_PATH"
+
+	if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+		# Compose file is abstract
+		return 2
+	fi
+
+	return 0
+}
+
 # Handle context
 # Unless context is '--': in this case, use no compose file argument
 if [ "$CONTEXT" != '--' ]; then
@@ -675,15 +695,12 @@ if [ "$CONTEXT" != '--' ]; then
 
 		# Look for root compose files
 
-		COMPOSE_FILE_PATH="$dir/docker-compose.yml"
-		if [ -f "$COMPOSE_FILE_PATH" ]; then
-			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_FILE_PATH"
-
-			if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-				ABSTRACT_COMPOSE_FILE_ARGS='true'
-			else
-				ABSTRACT_COMPOSE_FILE_ARGS='false'
-			fi
+		COMPOSE_LOOK_FILE=$(look_compose_file "$dir" 'docker-compose' '' '' 'yml')
+		COMPOSE_LOOK_CODE=$?
+		if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+			# Compose file found
+			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_LOOK_FILE"
+			ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 		fi
 
 		if [ ! -z "$CONTEXT" ]; then
