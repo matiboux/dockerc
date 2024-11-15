@@ -637,23 +637,17 @@ if [ -n "$DOCKER_PRESET" ]; then
 fi
 
 COMPOSE_FILE_ARGS=''
-NO_COMPOSE_FILE_ARGS='true'
 ABSTRACT_COMPOSE_FILE_ARGS='false'
 ENV_FILE_ARGS=''
 
 # Handle context
-# If context is '--', ignore context and use docker compose without file arguments
+# Unless context is '--': in this case, use no compose file argument
 if [ "$CONTEXT" != '--' ]; then
 
 	if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
 		# Use default context
 		CONTEXT=''
 	fi
-
-	NO_COMPOSE_FILE_ARGS='false'
-fi
-
-if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
 
 	# Iterate over:
 	# - Current directory
