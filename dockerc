@@ -1033,8 +1033,7 @@ if [ "$CONTEXT" != '--' ]; then
 			fi
 
 			if [ -n "$LVL2_COMPOSE_FILE_ARGS" ]; then
-				# Context resolved (late): break loop
-				echo 'Notice: Context resolved later than expected, you may report this issue.' >&2
+				# Context resolved: break loop
 				break
 			fi
 
