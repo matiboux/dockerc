@@ -834,7 +834,7 @@ if [ "$CONTEXT" != '--' ]; then
 						fi
 
 					done <<-EOF
-					$(echo "$CONTEXT" | tr '-' "\n" | tr '.' "\n")
+					$(echo "$CONTEXT" | tr '.' "\n")
 					EOF
 
 					if [ -n "$LVL2_COMPOSE_FILE_ARGS" ]; then
@@ -936,7 +936,7 @@ if [ "$CONTEXT" != '--' ]; then
 						fi
 
 					done <<-EOF
-					$(echo "$CONTEXT_REST" | tr '-' "\n" | tr '.' "\n")
+					$(echo "$CONTEXT_REST" | tr '.' "\n")
 					EOF
 
 					if [ -n "$LVL2_COMPOSE_FILE_ARGS" ]; then
