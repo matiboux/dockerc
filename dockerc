@@ -174,14 +174,6 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-print_context_help() {
-	echo '  context syntax: [first] | [first]-[second] | "-" | "--"'
-	echo '    first   First part of the context'
-	echo '    second  Second part of the context'
-	echo '    "-"     Use default docker compose files ("override" if it exists)'
-	echo '    "--"    Use docker compose without file arguments'
-}
-
 if [ "$DOCKERC_PRINT_HELP_CONTEXT" = 'true' ]; then
 	# Print context help & exit
 	echo 'DockerC context argument values:'
