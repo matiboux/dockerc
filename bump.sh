@@ -8,46 +8,55 @@
 # This project is not affiliated with Docker, Inc.
 
 ERROR_CODE=''
-DOCKERC_PARSE_ARGUMENTS='true'
 
-# Parse options arguments
-while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
+# Parse arguments
+# Dummy while loop to allow breaking
+while true; do
 
-	case "$1" in
+	# Parse options arguments
+	while [ "$#" -gt 0 ]; do
 
-		'--help' | '-h' )
-			DOCKERC_PRINT_HELP='true'
-			shift
-			;;
+		case "$1" in
 
-		'--disable-git' | '-n' )
-			DOCKERC_DISABLE_GIT='true'
-			shift
-			;;
+			'--help' | '-h' )
+				# Print help
+				DOCKERC_PRINT_HELP='true'
+				shift
+				;;
 
-		* )
-			# Unknown option, maybe first argument
-			# Stop parsing options
-			break
-			;;
+			'--disable-git' | '-n' )
+				# Disable git support
+				DOCKERC_DISABLE_GIT='true'
+				shift
+				;;
 
-	esac
+			* )
+				break
+				;;
 
-done
+		esac
 
-if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
-	# Parse positional arguments
+	done
 
-	# Parse version argument
+	if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
+		# Stop parsing arguments
+		break
+	fi
+
+	# Parse mandatory version positional argument
 	if [ "$#" -le 0 ] || [ -z "$1" ]; then
 		echo 'Error: No version specified.' >&2
 		DOCKERC_PRINT_HELP='true'
 		ERROR_CODE=1
+		break
 	fi
 	DOCKERC_VERSION="$1"
 	shift
 
-fi
+	# Stop parsing arguments
+	break
+
+done
 
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	# Print help & exit
