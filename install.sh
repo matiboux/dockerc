@@ -132,7 +132,7 @@ if [ "$INSTALL_TAG" = 'latest' ]; then
 	# Default install tag is latest released version
 	INSTALL_TAG="$(get_latest_version)"
 	if [ -z "$INSTALL_TAG" ]; then
-		echo 'Error: Failed to get latest version.' >&2
+		echo 'Error: Failed to get DockerC latest version.' >&2
 		exit 1
 	fi
 fi
