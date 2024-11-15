@@ -883,6 +883,7 @@ if [ "$CONTEXT" != '--' ]; then
 					# Standard override compose file found
 					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $COMPOSE_LOOK_FILE"
 					ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
+					break
 
 				elif [ -z "$CONTEXT" ]; then
 					# Standard override compose file not found & empty context
