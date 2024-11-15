@@ -104,7 +104,7 @@ if [ -n "$DOCKERC_INSTALL_TAG" ]; then
 fi
 
 if [ ! -d "$INSTALL_DIR" ]; then
-	echo 'Error: Install directory does not exist.' >&2
+	echo "Error: Install directory '$INSTALL_DIR' does not exist." >&2
 	exit 1
 fi
 
