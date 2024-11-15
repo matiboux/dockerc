@@ -8,53 +8,64 @@
 # This project is not affiliated with Docker, Inc.
 
 ERROR_CODE=''
-DOCKERC_PARSE_ARGUMENTS='true'
 
-# Parse options arguments
-while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
+# Parse arguments
+# Dummy while loop to allow breaking
+while true; do
 
-	case "$1" in
+	# Parse options arguments
+	while [ "$#" -gt 0 ]; do
 
-		'--help' | '-h' )
-			DOCKERC_PRINT_HELP='true'
-			shift
-			;;
+		case "$1" in
 
-		'--install-dir' | '-i' )
-			shift
-			# Get installation directory argument
-			if [ -z "$1" ]; then
-				echo 'Error: Missing installation directory.' >&2
+			'--help' | '-h' )
+				# Print help
 				DOCKERC_PRINT_HELP='true'
-				ERROR_CODE=1
-				# Stop parsing arguments
-				DOCKERC_PARSE_ARGUMENTS='false'
+				shift
+				;;
+
+			'--install-dir' | '-i' )
+				shift
+				# Check for installation directory argument
+				if [ -z "$1" ]; then
+					echo 'Error: Missing installation directory.' >&2
+					DOCKERC_PRINT_HELP='true'
+					ERROR_CODE=1
+					break
+				fi
+				# Set installation directory
+				DOCKERC_INSTALL_DIR="$1"
+				shift
+				;;
+
+			* )
 				break
-			fi
-			DOCKERC_INSTALL_DIR="$1"
-			shift
-			;;
+				;;
 
-		* )
-			# Unknown option, maybe first argument
-			# Stop parsing options
-			break
-			;;
+		esac
 
-	esac
+	done
 
-done
-
-if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
-	# Parse positional arguments
-
-	# Parse install tag optional argument
-	if [ "$#" -gt 0 ]; then
-		DOCKERC_INSTALL_TAG="$1"
-		shift
+	if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
+		# Stop parsing arguments
+		break
 	fi
 
-fi
+	# Check for optional positional arguments
+	if [ "$#" -le 0 ]; then
+		# No more arguments
+		break
+	fi
+
+	# Parse first optional positional argument
+	# Parse install tag argument
+	DOCKERC_INSTALL_TAG="$1"
+	shift
+
+	# Stop parsing arguments
+	break
+
+done
 
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	# Print help & exit
