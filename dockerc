@@ -643,9 +643,14 @@ ENV_FILE_ARGS=''
 look_env_files() {
 	# Usage: look_env_files <dir> <base> <part>
 
+	# Extract arguments
+	ARG_DIR="${1:-.}" # eg. '.' or './docker'
+	ARG_BASE="${2:-}"
+	ARG_PART="${3:-}" # e.g. '' or 'prod' or 'dev'
+
 	ENV_FILE_FOUND='false'
 
-	ENV_FILE_PATH="${1:-.}/.env${3:-}${4:-}"
+	ENV_FILE_PATH="$ARG_DIR/.env$ARG_BASE$ARG_PART"
 	if [ -f "$ENV_FILE_PATH" ]; then
 		# Env file found
 		echo "$ENV_FILE_PATH"
@@ -674,7 +679,7 @@ look_compose_file() {
 	ARG_DIR="${1:-.}" # eg. '.' or './docker'
 	ARG_COMPOSE_PREFIX="${2:-docker-compose}" # eg. 'docker-compose' or 'compose'
 	ARG_BASE="${3:-}"
-	ARG_PART="${4:-}" # e.g. 'override' or 'prod'
+	ARG_PART="${4:-}" # e.g. '' or 'override' or 'prod'
 	ARG_EXTENSION="${5:-yml}" # e.g. 'yml' or 'yaml'
 
 	# Reformat base argument: prepend dot if not empty
