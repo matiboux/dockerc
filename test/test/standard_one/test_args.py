@@ -17,7 +17,7 @@ def test_default_config(file = __file__):
             '-',
             'config',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'

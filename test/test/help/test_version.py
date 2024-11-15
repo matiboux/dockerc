@@ -11,7 +11,7 @@ def test_version(file = __file__):
         dockerc = ctx.run_dockerc(
             '--version',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             re.compile(VERSION_STDOUT_SHORT_REGEX)
         )
 
@@ -20,7 +20,7 @@ def test_version_shorthand(file = __file__):
         dockerc = ctx.run_dockerc(
             '-v',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             re.compile(VERSION_STDOUT_SHORT_REGEX)
         )
 
@@ -29,7 +29,7 @@ def test_version_dry(file = __file__):
         dockerc = ctx.run_dockerc(
             '-n', '--version',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             re.compile(VERSION_STDOUT_SHORT_REGEX)
         )
 
@@ -38,6 +38,6 @@ def test_version_dry_shorthand(file = __file__):
         dockerc = ctx.run_dockerc(
             '-n', '-v',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             re.compile(VERSION_STDOUT_SHORT_REGEX)
         )

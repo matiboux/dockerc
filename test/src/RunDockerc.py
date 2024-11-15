@@ -79,7 +79,7 @@ class RunDockerc():
 
         assert self.proc.returncode == returncode
 
-    def assert_context_found(
+    def assert_context_ok(
         self,
         stdout: bytes | re.Pattern = b'',
         *,

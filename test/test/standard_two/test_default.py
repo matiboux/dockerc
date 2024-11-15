@@ -6,7 +6,7 @@ def test_default(file = __file__):
         dockerc = ctx.run_dockerc(
             None,
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -20,7 +20,7 @@ def test_dev_not_found(file = __file__):
         dockerc = ctx.run_dockerc(
             'dev',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -34,7 +34,7 @@ def test_override_not_found(file = __file__):
         dockerc = ctx.run_dockerc(
             'override',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -48,7 +48,7 @@ def test_prod_not_found(file = __file__):
         dockerc = ctx.run_dockerc(
             'prod',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -67,7 +67,7 @@ def test_what_not_found(file = __file__):
 #     reset_dir('./twd', dir_files + [
 #         '.env',
 #     ])
-#     assert_context_found(
+#     assert_context_ok(
 #         None,
 #         (
 #             b'docker compose' \
@@ -82,7 +82,7 @@ def test_what_not_found(file = __file__):
 #     reset_dir('./twd', dir_files + [
 #         '.env.local',
 #     ])
-#     assert_context_found(
+#     assert_context_ok(
 #         None,
 #         (
 #             b'docker compose' \
@@ -98,7 +98,7 @@ def test_what_not_found(file = __file__):
 #         '.env',
 #         '.env.local',
 #     ])
-#     assert_context_found(
+#     assert_context_ok(
 #         None,
 #         (
 #             b'docker compose' \

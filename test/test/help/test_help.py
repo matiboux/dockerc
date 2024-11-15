@@ -23,7 +23,7 @@ def test_help(file = __file__):
         dockerc = ctx.run_dockerc(
             '--help',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             get_help_stdout(dockerc.dockerc_path),
         )
 
@@ -32,6 +32,6 @@ def test_help_shorthand(file = __file__):
         dockerc = ctx.run_dockerc(
             '-h',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             get_help_stdout(dockerc.dockerc_path),
         )

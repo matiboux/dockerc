@@ -30,6 +30,6 @@ def test_help_docker_presets(file = __file__):
         dockerc = ctx.run_dockerc(
             '@',
         )
-        dockerc.assert_context_found(
+        dockerc.assert_context_ok(
             get_help_stdout(dockerc.dockerc_path),
         )
