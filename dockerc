@@ -836,7 +836,7 @@ if [ "$CONTEXT" != '--' ]; then
 							LVL2_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 
 						else
-							# Context compose file not found, invalidate LVL2 and break loop
+							# Context compose file not found: invalidate LVL2 and break loop
 							LVL2_COMPOSE_FILE_ARGS=''
 							break
 						fi
@@ -938,7 +938,7 @@ if [ "$CONTEXT" != '--' ]; then
 								LVL2_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 
 							else
-								# Context compose file not found, invalidate LVL2 and break loop
+								# Context compose file not found: invalidate LVL2 and break loop
 								LVL2_COMPOSE_FILE_ARGS=''
 								break
 							fi
@@ -1052,13 +1052,13 @@ if [ "$CONTEXT" != '--' ]; then
 
 			# Check for special contexts
 
-			if [ "$CONTEXT" = 'prod' ]; then
-				# Context resolved, use LVL1 arguments & break loop
-				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS $LVL1_COMPOSE_FILE_ARGS"
-				ENV_FILE_ARGS="$ENV_FILE_ARGS $LVL1_ENV_FILE_ARGS"
-				ABSTRACT_CONTEXT="$LVL1_ABSTRACT_CONTEXT"
-				break
-			fi
+			# if [ "$CONTEXT" = 'prod' ]; then
+			# 	# Context resolved, use LVL1 arguments & break loop
+			# 	COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS $LVL1_COMPOSE_FILE_ARGS"
+			# 	ENV_FILE_ARGS="$ENV_FILE_ARGS $LVL1_ENV_FILE_ARGS"
+			# 	ABSTRACT_CONTEXT="$LVL1_ABSTRACT_CONTEXT"
+			# 	break
+			# fi
 
 			if [ -z "$CONTEXT" ] || [ "$CONTEXT" = 'dev' ]; then
 
@@ -1076,14 +1076,17 @@ if [ "$CONTEXT" != '--' ]; then
 					LVL1_COMPOSE_FILE_ARGS=''
 				fi
 
-				if [ -n "$LVL1_COMPOSE_FILE_ARGS" ]; then
-					# Context resolved, use LVL1 arguments & break loop
-					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS $LVL1_COMPOSE_FILE_ARGS"
-					ENV_FILE_ARGS="$ENV_FILE_ARGS $LVL1_ENV_FILE_ARGS"
-					ABSTRACT_CONTEXT="$LVL1_ABSTRACT_CONTEXT"
-					break
-				fi
+			elif [ "$CONTEXT" != 'prod' ]; then
+				# Context not resolved: invalidate LVL1
+				LVL1_COMPOSE_FILE_ARGS=''
+			fi
 
+			if [ -n "$LVL1_COMPOSE_FILE_ARGS" ]; then
+				# Context resolved, use LVL1 arguments & break loop
+				COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS $LVL1_COMPOSE_FILE_ARGS"
+				ENV_FILE_ARGS="$ENV_FILE_ARGS $LVL1_ENV_FILE_ARGS"
+				ABSTRACT_CONTEXT="$LVL1_ABSTRACT_CONTEXT"
+				break
 			fi
 
 			# Found no context, use nothing & end loop
@@ -1131,20 +1134,30 @@ if [ "$CONTEXT" != '--' ]; then
 		4
 		EOF
 
+		if [ -n "$COMPOSE_FILE_ARGS" ]; then
+			# Context resolved, break loop
+			break
+		fi
+
 	# End of while loop over directories
 	done <<-EOF
 	.
 	./docker
 	EOF
 
-	# If compose file arguments are empty, exit with error
 	if [ -z "$COMPOSE_FILE_ARGS" ]; then
+		# Context not found, exit with error
 		if [ -z "$CONTEXT" ]; then
 			echo 'Error: Default context not found' >&2
 		else
 			echo "Error: Unknown context '$CONTEXT'" >&2
 		fi
 		exit 1
+
+	else
+		# Context found, ensure one leading space in arguments variables
+		COMPOSE_FILE_ARGS="$(echo "$COMPOSE_FILE_ARGS" | sed 's/^ */ /')"
+		ENV_FILE_ARGS="$(echo "$ENV_FILE_ARGS" | sed 's/^ */ /')"
 	fi
 
 	# Unless force option is set,
