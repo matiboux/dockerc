@@ -525,11 +525,6 @@ fi
 if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC & exit
 
-	if [ ! -d "$INSTALL_DIR" ]; then
-		echo 'Error: Install directory does not exist.' >&2
-		exit 1
-	fi
-
 	INSTALL_TAG_ARG=''
 	if [ -n "$INSTALL_TAG" ]; then
 		INSTALL_TAG_ARG=" \"$INSTALL_TAG\""
