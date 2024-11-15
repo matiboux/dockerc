@@ -533,13 +533,9 @@ if [ "$UPDATE" = 'true' ]; then
 		exit 1
 	fi
 
-	# Read install tag from first positional argument: context
-	if [ -z "$CONTEXT" ]; then
+	if [ -z "$INSTALL_TAG" ]; then
+		# Default install tag is latest released version
 		INSTALL_TAG="$(get_latest_version)"
-	elif [ "$CONTEXT" = 'HEAD' ] || [ "$CONTEXT" = 'head' ] || [ "$CONTEXT" = '.' ] || [ "$CONTEXT" = '-' ]; then
-		INSTALL_TAG='HEAD'
-	else
-		INSTALL_TAG="$CONTEXT"
 	fi
 
 	if [ "$QUIET" = 'false' ]; then
