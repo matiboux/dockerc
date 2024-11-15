@@ -125,8 +125,7 @@ while true; do
 	fi
 
 	# Parse command preset optional positional argument
-
-	if [ "${echo "$1" | cut -c1}" = '@' ]; then
+	if [ -z "$DOCKERC_COMPOSE_PRESET" ] && [ "${echo "$1" | cut -c1}" = '@' ]; then
 		if [ "$1" = '@' ]; then
 			# Print command preset help
 			DOCKERC_PRINT_HELP_COMMAND_PRESET='true'
