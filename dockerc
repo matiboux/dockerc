@@ -478,34 +478,33 @@ fi
 if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC & exit
 
-	INSTALL_DIR=$(dirname "$0") # Default install directory
-	if [ -n "$DOCKERC_INSTALL_DIR" ]; then
-		# Use from environment variable
-		INSTALL_DIR="$DOCKERC_INSTALL_DIR"
-	fi
-
 	if [ ! -d "$INSTALL_DIR" ]; then
 		echo 'Error: Install directory does not exist.' >&2
 		exit 1
 	fi
 
-	if [ $# -gt 0 ]; then
-		if [ "$1" = 'HEAD' ] || [ "$1" = 'head' ] || [ "$1" = '.' ] || [ "$1" = '-' ]; then
-			REQUIRED_VERSION='HEAD'
-		else
-			REQUIRED_VERSION="$1"
-		fi
-		shift
+	# Read install tag from first positional argument: context
+	if [ -z "$CONTEXT" ]; then
+		INSTALL_TAG="$(get_latest_version)"
+	elif [ "$CONTEXT" = 'HEAD' ] || [ "$CONTEXT" = 'head' ] || [ "$CONTEXT" = '.' ] || [ "$CONTEXT" = '-' ]; then
+		INSTALL_TAG='HEAD'
 	else
-		REQUIRED_VERSION="$(get_latest_version)"
+		INSTALL_TAG="$CONTEXT"
+	fi
+
+	if [ "$QUIET" = 'false' ]; then
+		# Print install script command
+		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
+			echo ''
+		fi
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$INSTALL_TAG\""
+		echo ''
 	fi
 
 	if [ "$DRY_RUN" = 'false' ]; then
-		echo "Updating DockerC (v$REQUIRED_VERSION)..."
-		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$REQUIRED_VERSION\""
-	else
-		echo 'Updating DockerC (dry run):'
-		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$REQUIRED_VERSION\""
+		# Run install script
+		echo "Updating DockerC to $INSTALL_TAG..."
+		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$INSTALL_TAG\""
 	fi
 
 	exit 0
