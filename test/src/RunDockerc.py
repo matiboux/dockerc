@@ -17,7 +17,7 @@ class RunDockerc():
             context
             if context is not None else
             dockerc_args[0]
-            if dockerc_args and not dockerc_args[0].startswith('-') else
+            if dockerc_args and dockerc_args[0] and not dockerc_args[0].startswith('-') else
             None
         )
         self.env = env
