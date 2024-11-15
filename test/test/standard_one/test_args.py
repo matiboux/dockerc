@@ -8,7 +8,7 @@ def test_default_config_syntax_error(file = __file__):
             'config',
         )
         dockerc.assert_context_error(
-            stdout = b'Error: Unknown context \'config\'\n',
+            stderr = b'Error: Unknown context \'config\'\n',
         )
 
 def test_default_config(file = __file__):

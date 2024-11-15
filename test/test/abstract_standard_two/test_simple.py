@@ -5,7 +5,7 @@ def test_simple(file = __file__):
     with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc()
         dockerc.assert_context_error(
-            stdout = b'Error: Abstract context found\n',
+            stderr = b'Error: Abstract context found\n',
         )
 
 def test_forced(file = __file__):
