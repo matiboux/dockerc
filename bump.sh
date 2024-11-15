@@ -8,57 +8,66 @@
 # This project is not affiliated with Docker, Inc.
 
 ERROR_CODE=''
-DOCKERC_PARSE_ARGUMENTS='true'
 
-# Parse options arguments
-while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
+# Parse arguments
+# Dummy while loop to allow breaking
+while true; do
 
-	case "$1" in
+	# Parse options arguments
+	while [ "$#" -gt 0 ]; do
 
-		'--help' | '-h' )
-			DOCKERC_PRINT_HELP='true'
-			shift
-			;;
+		case "$1" in
 
-		'--disable-git' | '-n' )
-			DOCKERC_DISABLE_GIT='true'
-			shift
-			;;
+			'--help' | '-h' )
+				# Print help
+				DOCKERC_PRINT_HELP='true'
+				shift
+				;;
 
-		* )
-			# Unknown option, maybe first argument
-			# Stop parsing options
-			break
-			;;
+			'--disable-git' | '-n' )
+				# Disable git support
+				DOCKERC_DISABLE_GIT='true'
+				shift
+				;;
 
-	esac
+			* )
+				break
+				;;
 
-done
+		esac
 
-if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
-	# Parse positional arguments
+	done
 
-	# Parse version argument
+	if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
+		# Stop parsing arguments
+		break
+	fi
+
+	# Parse mandatory version positional argument
 	if [ "$#" -le 0 ] || [ -z "$1" ]; then
 		echo 'Error: No version specified.' >&2
 		DOCKERC_PRINT_HELP='true'
 		ERROR_CODE=1
+		break
 	fi
 	DOCKERC_VERSION="$1"
 	shift
 
-fi
+	# Stop parsing arguments
+	break
+
+done
 
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	# Print help & exit
 	echo "Usage: $0 [options] <version>"
 	echo ''
 	echo 'Options:'
-	echo '  --help, -h         Display this help message'
-	echo '  --disable-git, -n  Disable git'
+	echo '  -h, --help         Print this help message'
+	echo '  -n, --disable-git  Disable git support'
 	echo ''
 	echo 'Arguments:'
-	echo '  version  New version (e.g. 1.1.0)'
+	echo '  version  Version to bump to (e.g. 1.1.0)'
 	exit ${ERROR_CODE:-0}
 fi
 
@@ -84,16 +93,17 @@ if [ "$USE_GIT" = 'true' ]; then
 fi
 
 # Get version from argument
-VERSION="$DOCKERC_VERSION"
+VERSION="${DOCKERC_VERSION#v}"
+VERSION_TAG="v${VERSION}"
 
 # Bump version in dockerc
 if [ "$(uname -s)" = 'Darwin' ]; then
 	# MacOS
-	sed -i '' "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" ./dockerc
+	sed -i '' "3 s/\# DockerC.*/\# DockerC ($VERSION_TAG)/g" ./dockerc
 	sed -i '' "10 s/VERSION=.*/VERSION='$VERSION'/g" ./dockerc
 else
 	# Linux
-	sed -i "3 s/\# DockerC.*/\# DockerC (v$VERSION)/g" ./dockerc
+	sed -i "3 s/\# DockerC.*/\# DockerC ($VERSION_TAG)/g" ./dockerc
 	sed -i "10 s/VERSION=.*/VERSION='$VERSION'/g" ./dockerc
 fi
 
@@ -104,8 +114,8 @@ if [ "$USE_GIT" = true ]; then
 	if [ $? -ne 0 ]; then
 		echo 'Warning: Failed to commit changes.' >&2
 	else
-		git tag -a "v$VERSION" -m "Bump version to $VERSION"
-		echo "Info: Commited changes & tagged 'v$VERSION' in git" >&2
+		git tag -a "$VERSION_TAG" -m "Bump version to $VERSION"
+		echo "Info: Commited changes & tagged '$VERSION_TAG' in git" >&2
 	fi
 fi
 
