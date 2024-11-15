@@ -640,6 +640,33 @@ COMPOSE_FILE_ARGS=''
 ABSTRACT_COMPOSE_FILE_ARGS='false'
 ENV_FILE_ARGS=''
 
+look_env_files() {
+	# Usage: look_env_files <dir> <base> <part>
+
+	ENV_FILE_FOUND='false'
+
+	ENV_FILE_PATH="${1:-.}/.env${3:-}${4:-}"
+	if [ -f "$ENV_FILE_PATH" ]; then
+		# Env file found
+		echo "$ENV_FILE_PATH"
+		ENV_FILE_FOUND='true'
+	fi
+
+	ENV_FILE_LOCAL_PATH="$ENV_FILE_PATH.local"
+	if [ -f "$ENV_FILE_LOCAL_PATH" ]; then
+		# Local env file found
+		echo "$ENV_FILE_LOCAL_PATH"
+		ENV_FILE_FOUND='true'
+	fi
+
+	if [ "$ENV_FILE_FOUND" = 'false' ]; then
+		# No env file found
+		return 1
+	fi
+
+	return 0
+}
+
 look_compose_file() {
 	# Usage: look_compose_file <dir> <compose_prefix> <base> <part> <extension>
 
@@ -685,15 +712,17 @@ if [ "$CONTEXT" != '--' ]; then
 
 		# Look for global env files
 
-		if [ -f "$dir/.env" ]; then
-			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env"
+		ENV_LOOK_FILES=$(look_env_files "$dir" '' '')
+		ENV_LOOK_CODE=$?
+		if [ "$ENV_LOOK_CODE" -eq 0 ]; then
+			while read -r ENV_LOOK_FILE; do
+				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
+			done <<-EOF
+			$(echo "$ENV_LOOK_FILES")
+			EOF
 		fi
 
-		if [ -f "$dir/.env.local" ]; then
-			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
-		fi
-
-		# Look for root compose files
+		# Look for root compose file
 
 		COMPOSE_LOOK_FILE=$(look_compose_file "$dir" 'docker-compose' '' '' 'yml')
 		COMPOSE_LOOK_CODE=$?
