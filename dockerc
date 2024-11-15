@@ -861,6 +861,12 @@ EOF
 
 fi
 
+# Get args
+ARGS=''
+if [ -n "$COMMAND_ARGS" ]; then
+	ARGS=" $COMMAND_ARGS"
+fi
+
 # Check for shell arguments preset shortcut
 if [ "$COMMAND_PRESET" = '$' ]; then
 	# Replace command preset shortcut
@@ -870,19 +876,13 @@ fi
 # Check for arguments
 if [ -z "$COMMAND_PRESET" ]; then
 	# If arguments are empty, set to the default arguments
-	ARGS='up -d'
+	ARGS="up -d$ARGS"
 
 # Check for arguments preset
 elif [ "$(echo "$COMMAND_PRESET" | cut -c1)" = '@' ]; then
 
 	# Get preset name
 	ARGS_PRESET="${COMMAND_PRESET#?}"
-
-	# Get args
-	ARGS=''
-	if [ -n "$COMMAND_ARGS" ]; then
-		ARGS=" $COMMAND_ARGS"
-	fi
 
 	PRINT_ARGS_PRESET_HELP='false'
 
@@ -1155,7 +1155,7 @@ elif [ "$(echo "$COMMAND_PRESET" | cut -c1)" = '@' ]; then
 
 # No arguments preset, use the command preset as arguments
 else
-	ARGS="$COMMAND_PRESET $ARGS"
+	ARGS="$COMMAND_PRESET$ARGS"
 fi
 
 if [ "$QUIET" = 'false' ]; then
