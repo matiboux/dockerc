@@ -156,6 +156,9 @@ while true; do
 
 	done
 
+	# Remove leading space
+	DOCKERC_COMMAND_ARGS="${DOCKERC_COMMAND_ARGS# }"
+
 	# Stop parsing arguments
 	break
 
@@ -859,30 +862,26 @@ EOF
 fi
 
 # Check for shell arguments preset shortcut
-if [ "$(echo "$ARGS" | cut -c 1-2)" = '$ ' ]; then
-	# Replace arguments preset shortcut
-	ARGS="@$ $(echo "$ARGS" | cut -c 3-)"
+if [ "$COMMAND_PRESET" = '$' ]; then
+	# Replace command preset shortcut
+	COMMAND_PRESET='@$'
 fi
 
 # Check for arguments
-if [ -z "$ARGS" ]; then
+if [ -z "$COMMAND_PRESET" ]; then
 	# If arguments are empty, set to the default arguments
 	ARGS='up -d'
 
 # Check for arguments preset
-elif [ "$(echo "$ARGS" | cut -c1)" = '@' ]; then
+elif [ "$(echo "$COMMAND_PRESET" | cut -c1)" = '@' ]; then
 
-	# Get first arg as preset name
-	ARGS_PRESET="${ARGS%% *}"
-	ARGS_PRESET="${ARGS_PRESET#?}"
+	# Get preset name
+	ARGS_PRESET="${COMMAND_PRESET#?}"
 
-	# Clear first arg from args
-	if [ "@$ARGS_PRESET" = "$ARGS" ]; then
-		# No other args
-		ARGS=''
-	else
-		# Other args
-		ARGS=" ${ARGS#* }"
+	# Get args
+	ARGS=''
+	if [ -n "$COMMAND_ARGS" ]; then
+		ARGS=" $COMMAND_ARGS"
 	fi
 
 	PRINT_ARGS_PRESET_HELP='false'
