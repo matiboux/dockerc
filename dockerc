@@ -18,16 +18,19 @@ while [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; do
 	case "$1" in
 
 		'--help' | '-h' )
+			# Print general help
 			DOCKERC_PRINT_HELP='true'
 			shift
 			;;
 
 		'--version' | '-v' )
+			# Print version
 			DOCKERC_PRINT_VERSION='true'
 			shift
 			;;
 
 		'--update' )
+			# Update DockerC
 			DOCKERC_UPDATE='true'
 			shift
 			;;
@@ -154,6 +157,18 @@ CONTEXT=''
 if [ -n "$DOCKERC_CONTEXT" ]; then
 	# Use from argument or environment variable
 	CONTEXT="$DOCKERC_CONTEXT"
+fi
+
+COMMAND_PRESET=''
+if [ -n "$DOCKERC_COMMAND_PRESET" ]; then
+	# Use from argument or environment variable
+	COMMAND_PRESET="$DOCKERC_COMMAND_PRESET"
+fi
+
+COMMAND_ARGS=''
+if [ -n "$DOCKERC_COMMAND_ARGS" ]; then
+	# Use from argument or environment variable
+	COMMAND_ARGS="$DOCKERC_COMMAND_ARGS"
 fi
 
 print_context_help() {
