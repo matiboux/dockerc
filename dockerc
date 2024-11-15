@@ -213,8 +213,34 @@ if [ "$DOCKERC_PRINT_HELP_CONTEXT" = 'true' ]; then
 	echo 'Use dry run option (--dry-run or -n) to see the docker compose command'
 	echo 'and files that will be used without running it.'
 	echo ''
-	echo "Use '$0 --help' to see the general help message."
+	echo "Use '$0 --help' to see the general help message and options help."
 	exit ${ERROR_CODE:-0}
+fi
+
+if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
+	# Print compose preset help & exit
+	echo "Usage: $0 [options] [@compose_preset] [...args]"
+	echo ''
+	echo 'Compose presets:'
+	echo '  @rfc   Remove unused containers'
+	echo '  @rfi   Remove dangling images'
+	echo '  @rfia  Remove all unused images'
+	echo '  @rf    Remove unused containers, networks and images'
+	echo '  @rfa   Remove all unused containers, networks and images'
+	echo '  @rfav  Remove all unused containers, networks, images and volumes'
+	echo '  @sa    Stop all running containers'
+	echo '  @rmf   Remove running containers, force'
+	echo '  @rms   Remove stopped containers'
+	echo '  @rmsf  Remove stopped containers, force'
+	echo '    (aliases: @rmfs)'
+	echo '  @rma   Remove all containers'
+	echo '  @rmaf  Remove all containers, force'
+	echo '    (aliases: @rmfa)'
+	echo ''
+	echo 'Arguments will be appended to the docker command that will be run.'
+	echo ''
+	echo "Use '$0 --help' to see the general help message and options help."
+	exit 0
 fi
 
 UPDATE='false'
@@ -422,28 +448,8 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 	if [ "$PRINT_DOCKER_PRESETS_HELP" = 'true' ]; then
 		# Print help and exit
-		echo "Usage: $0 [options] [@preset] [...args]"
-		echo '  args: Arguments passed to docker'
-		echo '  @preset:'
-		echo '    @rfc   Remove unused containers'
-		echo '    @rfi   Remove dangling images'
-		echo '    @rfia  Remove all unused images'
-		echo '    @rf    Remove unused containers, networks and images'
-		echo '    @rfa   Remove all unused containers, networks and images'
-		echo '    @rfav  Remove all unused containers, networks, images and volumes'
-		echo '    @sa    Stop all running containers'
-		echo '    @rmf   Remove running containers, force'
-		echo '    @rms   Remove stopped containers'
-		echo '    @rmsf  Remove stopped containers, force'
-		echo '      (aliases: @rmfs)'
-		echo '    @rma   Remove all containers'
-		echo '    @rmaf  Remove all containers, force'
-		echo '      (aliases: @rmfa)'
-		echo '  options:'
-		echo '    -f  Force, for example ignores abstract contexts'
-		echo '    -n  Dry run, print docker command without running it'
-		echo '    -q  Quiet, do not print docker command'
-		exit 0
+		echo 'DEPRECATED'
+		exit 1
 	fi
 
 	if [ "$RUN_SHELL" = 'false' ]; then
