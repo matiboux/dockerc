@@ -527,93 +527,75 @@ if [ "$UPDATE" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-# Check for docker preset
-if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
+# Handle compose presets
+if [ -n "$COMPOSE_PRESET" ]; then
 
-	# Other arguments to pass to docker
-	# Use single quotes to safely pass arguments to shell
-	# Escape single quotes in arguments
-	ARGS=''
-	while [ $# -gt 0 ]; do
-		NEW_ARG=$(echo "$1" | sed "s/'/'\"'\"'/g")
-		ARGS="$ARGS '$NEW_ARG'"
-		shift
-	done
-
-	PRINT_DOCKER_PRESETS_HELP='false'
 	DOCKER_ARGS=''
 	RUN_SHELL='false'
 
 	# Remove first char
-	CONTEXT="${CONTEXT#?}"
+	CONTEXT="${CONTEXT#@}"
 
-	case "$CONTEXT" in
+	case "$COMPOSE_PRESET" in
 
-		'')
-			PRINT_DOCKER_PRESETS_HELP='true'
-			;;
-
-		'rfc')
+		# Prune presets
+		'@rfc' )
 			DOCKER_ARGS='container prune -f'
 			;;
-		'rfi')
+		'@rfi' )
 			DOCKER_ARGS='image prune -f'
 			;;
-		'rfia')
+		'@rfia' )
 			DOCKER_ARGS='image prune -f -a'
 			;;
-		'rf')
+		'@rf' )
 			DOCKER_ARGS='system prune -f'
 			;;
-		'rfa')
+		'@rfa' )
 			DOCKER_ARGS='system prune -f -a'
 			;;
-		'rfav')
+		'@rfav' )
 			DOCKER_ARGS='system prune -f -a --volumes'
 			;;
 
-		'sa')
+		# Stop presets
+		'@sa' )
 			# Stop all containers
 			DOCKER_ARGS='stop $(docker ps -q)'
 			RUN_SHELL='true'
 			;;
 
-		'rmf')
+		# Remove presets
+		'@rmf' )
 			# Remove running containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q)'
 			RUN_SHELL='true'
 			;;
-		'rms')
+		'@rms' )
 			# Remove stopped containers
 			DOCKER_ARGS='rm $(docker ps -a -q -f status=exited -f status=dead)'
 			RUN_SHELL='true'
 			;;
-		'rmsf'|'rmfs')
+		'@rmsf' | '@rmfs' )
 			# Remove stopped containers, force
 			DOCKER_ARGS='rm -f $(docker ps -a -q -f status=exited -f status=dead)'
 			RUN_SHELL='true'
 			;;
-		'rma')
+		'@rma' )
 			# Remove all containers
 			DOCKER_ARGS='rm $(docker ps -a -q)'
 			RUN_SHELL='true'
 			;;
-		'rmaf'|'rmfa')
+		'@rmaf' | '@rmfa' )
 			# Remove all containers, force
 			DOCKER_ARGS='rm -f $(docker ps -q)'
 			RUN_SHELL='true'
 			;;
 
-		*)
-			echo "Error: Unknown docker preset '@$CONTEXT'" >&2
-			exit 1
-			;;
-
 	esac
 
-	if [ "$PRINT_DOCKER_PRESETS_HELP" = 'true' ]; then
-		# Print help and exit
-		echo 'DEPRECATED'
+	if [ -z "$DOCKER_ARGS" ]; then
+		echo "Error: Unknown docker preset '$COMPOSE_PRESET'" >&2
 		exit 1
 	fi
 
