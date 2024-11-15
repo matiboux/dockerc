@@ -16,7 +16,7 @@ on:
       - test
     paths:
       - '.github/workflows/check.yml'
-      - 'dockerx'
+      - 'dockerc'
       - 'test/**'
       - 'docker-compose.yml'
       - 'docker-compose.test.yml'
