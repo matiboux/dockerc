@@ -105,13 +105,13 @@ while true; do
 
 	if [ "$(echo "$1" | cut -c1)" = '@' ]; then
 		if [ "$1" = '@' ]; then
-			# Print compose preset help
-			DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
+			# Print docker preset help
+			DOCKERC_PRINT_HELP_DOCKER_PRESET='true'
 			# Stop parsing arguments
 			break
 		fi
 
-		DOCKERC_COMPOSE_PRESET="$1"
+		DOCKERC_DOCKER_PRESET="$1"
 		shift
 	else
 		DOCKERC_CONTEXT="$1"
@@ -124,16 +124,16 @@ while true; do
 		break
 	fi
 
-	# Parse command preset optional positional argument
-	if [ -z "$DOCKERC_COMPOSE_PRESET" ] && [ "$(echo "$1" | cut -c1)" = '@' ]; then
+	# Parse docker command preset optional positional argument
+	if [ -z "$DOCKERC_DOCKER_PRESET" ] && [ "$(echo "$1" | cut -c1)" = '@' ]; then
 		if [ "$1" = '@' ]; then
-			# Print command preset help
-			DOCKERC_PRINT_HELP_COMMAND_PRESET='true'
+			# Print docker command preset help
+			DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
 			# Stop parsing arguments
 			break
 		fi
 
-		DOCKERC_COMMAND_PRESET="$1"
+		DOCKERC_COMPOSE_PRESET="$1"
 		shift
 
 		# Check for optional positional arguments
@@ -176,8 +176,8 @@ if [ "$DOCKERC_DEBUG_ARGS" = 'true' ]; then
 	# Print parsed arguments
 	echo "DOCKERC_PRINT_HELP: $DOCKERC_PRINT_HELP"
 	echo "DOCKERC_PRINT_HELP_CONTEXT: $DOCKERC_PRINT_HELP_CONTEXT"
+	echo "DOCKERC_PRINT_HELP_DOCKER_PRESET: $DOCKERC_PRINT_HELP_DOCKER_PRESET"
 	echo "DOCKERC_PRINT_HELP_COMPOSE_PRESET: $DOCKERC_PRINT_HELP_COMPOSE_PRESET"
-	echo "DOCKERC_PRINT_HELP_COMMAND_PRESET: $DOCKERC_PRINT_HELP_COMMAND_PRESET"
 	echo "DOCKERC_PRINT_VERSION: $DOCKERC_PRINT_VERSION"
 	echo "DOCKERC_FORCE: $DOCKERC_FORCE"
 	echo "DOCKERC_DRY_RUN: $DOCKERC_DRY_RUN"
@@ -185,7 +185,7 @@ if [ "$DOCKERC_DEBUG_ARGS" = 'true' ]; then
 	echo "DOCKERC_UPDATE: $DOCKERC_UPDATE"
 	echo "DOCKERC_INSTALL_DIR: $DOCKERC_INSTALL_DIR"
 	echo "DOCKERC_CONTEXT: $DOCKERC_CONTEXT"
-	echo "DOCKERC_COMMAND_PRESET: $DOCKERC_COMMAND_PRESET"
+	echo "DOCKERC_COMPOSE_PRESET: $DOCKERC_COMPOSE_PRESET"
 	echo "DOCKERC_COMMAND_ARGS: $DOCKERC_COMMAND_ARGS"
 	exit ${ERROR_CODE:-0}
 fi
@@ -220,10 +220,10 @@ if [ -n "$DOCKERC_INSTALL_DIR" ]; then
 	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
 fi
 
-COMPOSE_PRESET=''
-if [ -n "$DOCKERC_COMPOSE_PRESET" ]; then
+DOCKER_PRESET=''
+if [ -n "$DOCKERC_DOCKER_PRESET" ]; then
 	# Use from argument or environment variable
-	COMPOSE_PRESET="$DOCKERC_COMPOSE_PRESET"
+	DOCKER_PRESET="$DOCKERC_DOCKER_PRESET"
 fi
 
 CONTEXT=''
@@ -232,10 +232,10 @@ if [ -n "$DOCKERC_CONTEXT" ]; then
 	CONTEXT="$DOCKERC_CONTEXT"
 fi
 
-COMMAND_PRESET=''
-if [ -n "$DOCKERC_COMMAND_PRESET" ]; then
+COMPOSE_PRESET=''
+if [ -n "$DOCKERC_COMPOSE_PRESET" ]; then
 	# Use from argument or environment variable
-	COMMAND_PRESET="$DOCKERC_COMMAND_PRESET"
+	COMPOSE_PRESET="$DOCKERC_COMPOSE_PRESET"
 fi
 
 COMMAND_ARGS=''
@@ -262,8 +262,8 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 
 	# Print help & exit
 	echo 'Usage:'
-	echo "  $0 [options] [ <context> [@command_preset] [...args] ]"
-	echo "  $0 [options] <@compose_preset> [...args]"
+	echo "  $0 [options] [ <context> [@compose_preset] [...args] ]"
+	echo "  $0 [options] <@docker_preset> [...args]"
 	echo ''
 	echo 'Options:'
 	echo '  -h, --help     Print this help message'
@@ -276,14 +276,14 @@ if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	echo 'Arguments:'
 	echo '  options          DockerC options'
 	echo '  context          Docker compose files context'
-	echo '  @command_preset  DockerC command preset (shortcut for a command)'
-	echo '  @compose_preset  DockerC compose preset (shortcut for a command)'
+	echo '  @compose_preset  Docker compose command preset (shorthand)'
+	echo '  @docker_preset   Docker command preset (shorthand)'
 	echo '  args             Arguments appended to the docker compose command'
 	echo ''
 	echo 'Help commands:'
 	echo "  $0 ?    See context argument help"
-	echo "  $0 - @  See @command_preset argument help"
-	echo "  $0 @    See @compose_preset argument help"
+	echo "  $0 - @  See @compose_preset argument help"
+	echo "  $0 @    See @docker_preset argument help"
 	exit ${ERROR_CODE:-0}
 fi
 
@@ -295,7 +295,7 @@ if [ "$DOCKERC_PRINT_HELP_CONTEXT" = 'true' ]; then
 	echo '    Look for default docker compose files'
 	echo '    Usage:'
 	echo "      $0 [options]"
-	echo "      $0 [options] - [@command_preset] [...args]"
+	echo "      $0 [options] - [@compose_preset] [...args]"
 	echo '    Used default docker compose files are:'
 	echo '      - docker-compose.yml'
 	echo '      - docker-compose.override.yml (if it exists)'
@@ -303,12 +303,12 @@ if [ "$DOCKERC_PRINT_HELP_CONTEXT" = 'true' ]; then
 	echo '  --'
 	echo '    Run docker compose without file arguments'
 	echo '    Usage:'
-	echo "      $0 [options] -- [@command_preset] [...args]"
+	echo "      $0 [options] -- [@compose_preset] [...args]"
 	echo ''
 	echo '  level1[.level2[...]]]'
 	echo '    Look for docker compose files matching context levels'
 	echo '    Usage:'
-	echo "      $0 [options] level1[.level2[...] [@command_preset] [...args]"
+	echo "      $0 [options] level1[.level2[...] [@compose_preset] [...args]"
 	echo '    Example:'
 	echo "      '$0 prod.boosted' will look for:"
 	echo '        - docker-compose.yml'
@@ -322,11 +322,11 @@ if [ "$DOCKERC_PRINT_HELP_CONTEXT" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
-	# Print compose preset help & exit
-	echo "Usage: $0 [options] <@compose_preset> [...args]"
+if [ "$DOCKERC_PRINT_HELP_DOCKER_PRESET" = 'true' ]; then
+	# Print docker preset help & exit
+	echo "Usage: $0 [options] <@docker_preset> [...args]"
 	echo ''
-	echo 'Compose presets:'
+	echo 'Docker command presets:'
 	echo '  prune:'
 	echo '    @rfc   Remove unused containers'
 	echo '    @rfi   Remove dangling images'
@@ -351,11 +351,11 @@ if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-if [ "$DOCKERC_PRINT_HELP_COMMAND_PRESET" = 'true' ]; then
+if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
 	# Print compose preset help & exit
-	echo "Usage: $0 [options] <context> [@command_preset] [...args]"
+	echo "Usage: $0 [options] <context> [@compose_preset] [...args]"
 	echo ''
-	echo 'Command presets:'
+	echo 'Compose command presets:'
 	echo '  up:'
 	echo '    @u     up -d'
 	echo '    @ua    up'
@@ -448,7 +448,7 @@ if [ "$DOCKERC_PRINT_HELP_COMMAND_PRESET" = 'true' ]; then
 	echo '    @rfv   rm -f -v'
 	echo ''
 	echo 'Arguments will be appended to the docker command that will be run.'
-	echo 'If the command preset is empty, the arguments should include the command.'
+	echo 'If the preset is empty, the arguments should include the command.'
 	echo ''
 	echo "Use '$0 --help' for more help."
 	exit ${ERROR_CODE:-0}
@@ -530,8 +530,8 @@ if [ "$UPDATE" = 'true' ]; then
 	exit ${ERROR_CODE:-0}
 fi
 
-# Handle compose presets
-if [ -n "$COMPOSE_PRESET" ]; then
+# Handle docker presets
+if [ -n "$DOCKER_PRESET" ]; then
 
 	DOCKER_ARGS=''
 	RUN_SHELL='false'
@@ -539,7 +539,7 @@ if [ -n "$COMPOSE_PRESET" ]; then
 	# Remove first char
 	CONTEXT="${CONTEXT#@}"
 
-	case "$COMPOSE_PRESET" in
+	case "$DOCKER_PRESET" in
 
 		# Prune presets
 		'@rfc' )
@@ -598,7 +598,7 @@ if [ -n "$COMPOSE_PRESET" ]; then
 	esac
 
 	if [ -z "$DOCKER_ARGS" ]; then
-		echo "Error: Unknown docker preset '$COMPOSE_PRESET'" >&2
+		echo "Error: Unknown docker preset '$DOCKER_PRESET'" >&2
 		exit 1
 	fi
 
@@ -871,21 +871,21 @@ if [ -n "$COMMAND_ARGS" ]; then
 fi
 
 # Check for shell arguments preset shortcut
-if [ "$COMMAND_PRESET" = '$' ]; then
-	# Replace command preset shortcut
-	COMMAND_PRESET='@$'
+if [ "$COMPOSE_PRESET" = '$' ]; then
+	# Replace compose command preset shortcut
+	COMPOSE_PRESET='@$'
 fi
 
 # Check for arguments
-if [ -z "$COMMAND_PRESET" ]; then
+if [ -z "$COMPOSE_PRESET" ]; then
 	# If arguments are empty, set to the default arguments
 	ARGS="up -d$ARGS"
 
 # Check for arguments preset
-elif [ "$(echo "$COMMAND_PRESET" | cut -c1)" = '@' ]; then
+elif [ "$(echo "$COMPOSE_PRESET" | cut -c1)" = '@' ]; then
 
 	# Get preset name
-	ARGS_PRESET="${COMMAND_PRESET#?}"
+	ARGS_PRESET="${COMPOSE_PRESET#?}"
 
 	PRINT_ARGS_PRESET_HELP='false'
 
@@ -1156,9 +1156,9 @@ elif [ "$(echo "$COMMAND_PRESET" | cut -c1)" = '@' ]; then
 		exit 1
 	fi
 
-# No arguments preset, use the command preset as arguments
+# No arguments preset, use the compose command preset as arguments
 else
-	ARGS="$COMMAND_PRESET$ARGS"
+	ARGS="$COMPOSE_PRESET$ARGS"
 fi
 
 if [ "$QUIET" = 'false' ]; then
