@@ -1,55 +1,60 @@
 from test.src.format_dockerc_stdout import format_dockerc_stdout
 from test.src.TestDirContext import TestDirContext
 
-def test_default(file = __file__):
-    with TestDirContext(file) as ctx:
-        dockerc = ctx.run_dockerc()
-        dockerc.assert_context_ok(
-            format_dockerc_stdout(
-                b'docker compose'
-                b' -f ./compose.yaml'
-                b' -f ./compose.override.yaml'
-                b' up -d'
-            ),
-        )
-
-def test_override_not_found(file = __file__):
-    with TestDirContext(file) as ctx:
-        dockerc = ctx.run_dockerc(
-            'override',
-        )
-        dockerc.assert_context_ok(
-            format_dockerc_stdout(
-                b'docker compose'
-                b' -f ./compose.yaml'
-                b' -f ./compose.override.yaml'
-                b' up -d'
-            ),
-        )
-
-def test_dev_not_found(file = __file__):
+def test_dev(file = __file__):
     with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc(
             'dev',
         )
-        dockerc.assert_context_not_found()
-
-def test_prod_not_found(file = __file__):
-    with TestDirContext(file) as ctx:
-        dockerc = ctx.run_dockerc(
-            'prod',
-        )
         dockerc.assert_context_ok(
+            # TODO: change behavior
             format_dockerc_stdout(
                 b'docker compose'
-                b' -f ./compose.yaml'
+                b' -f ./docker-compose.yml'
+                b' -f ./docker-compose.dev.yml'
                 b' up -d'
             ),
         )
 
-def test_what_not_found(file = __file__):
+def test_dash_dev(file = __file__):
     with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc(
-            'what',
+            '-dev',
         )
-        dockerc.assert_context_not_found()
+        dockerc.assert_context_ok(
+            # TODO: change behavior
+            format_dockerc_stdout(
+                b'docker compose'
+                b' -f ./docker-compose.yml'
+                b' -f ./docker-compose.dev.yml'
+                b' up -d'
+            ),
+        )
+
+def test_dot_dev(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '.dev',
+        )
+        dockerc.assert_context_ok(
+            format_dockerc_stdout(
+                b'docker compose'
+                b' -f ./docker-compose.yml'
+                b' -f ./docker-compose.dev.yml'
+                b' up -d'
+            ),
+        )
+
+def test_dots_dev(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '...dev',
+        )
+        dockerc.assert_context_ok(
+            format_dockerc_stdout(
+                b'docker compose'
+                b' -f ./docker-compose.yml'
+                b' -f ./docker-compose.dev.yml'
+                b' up -d'
+            ),
+        )
