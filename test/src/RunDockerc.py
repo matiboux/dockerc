@@ -109,7 +109,7 @@ class RunDockerc():
         self,
     ):
         return self.assert_context(
-            stdout = (
+            stderr = (
                 (
                     b'Error: Unknown context \''
                     + self.context.encode('utf-8')
