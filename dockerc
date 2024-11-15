@@ -723,6 +723,28 @@ if [ "$CONTEXT" != '--' ]; then
 	# - Directory './docker'
 	while read -r dir; do
 
+		# # TODO: Iterate over compose file naming schemes:
+		# # - 'docker-compose.yml'
+		# # - 'docker-compose.yaml'
+		# # - 'compose.yml'
+		# # - 'compose.yaml'
+		# while read -r compose_scheme; do
+		#
+		# 	# If $compose_scheme <= 2, use 'docker-compose' compose file prefix name
+		# 	# Else,                    use 'compose' compose file prefix name
+		# 	ARG_COMPOSE_PREFIX=$([ "${compose_scheme:-1}" -le 2 ] && echo 'docker-compose' || echo 'compose')
+		#
+		# 	# If $compose_scheme is odd, use 'yml' compose file extension
+		# 	# Else,                      use 'yaml' compose file extension
+		# 	ARG_COMPOSE_EXTENSION=$([ "$((${compose_scheme:-1} % 2))" -eq 1 ] && echo 'yml' || echo 'yaml')
+		#
+		# done <<-EOF
+		# 1
+		# 2
+		# 3
+		# 4
+		# EOF
+
 		ENV_FILE_ARGS=''
 		PREFIX=''
 		COMPOSE_FILE_ARGS_1_DEFAULT=''
