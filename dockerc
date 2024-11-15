@@ -103,6 +103,29 @@ if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
 
 fi
 
+# Parse command args optional positional arguments
+if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ] && [ "$#" -gt 0 ]; then
+
+	DOCKERC_COMMAND_ARGS=''
+	for ARG in "$@"; do
+
+		if [ -z "$ARG" ]; then
+			# Skip empty arguments
+			continue
+		fi
+
+		if [ "$(echo "$ARG" | grep "[ '\"\$\`;*&#<>|]")" ]; then
+			# Escape argument with spaces or special shell characters
+			# Replace single quotes with escaped single quotes
+			ARG="'$(echo "$ARG" | sed "s/'/'\"'\"'/g")'"
+		fi
+
+		DOCKERC_COMMAND_ARGS="$DOCKERC_COMMAND_ARGS $ARG"
+
+	done
+
+fi
+
 UPDATE='false'
 if [ -n "$DOCKERC_UPDATE" ]; then
 	# Use from argument or environment variable
