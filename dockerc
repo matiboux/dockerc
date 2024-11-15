@@ -636,27 +636,91 @@ if [ -n "$DOCKER_PRESET" ]; then
 
 fi
 
-# Other parameters are arguments passed to docker compose
-ARGS="$@"
+look_env_files() {
+	# Usage: look_env_files <dir> <base> <part>
+
+	# Extract arguments
+	ARG_DIR="${1:-.}" # eg. '.' or './docker'
+	ARG_BASE="${2:-}"
+	ARG_PART="${3:-}" # e.g. '' or 'prod' or 'dev'
+
+	# Reformat base argument: prepend dot if not empty
+	if [ -n "$ARG_PART" ]; then
+		ARG_PART=".$ARG_PART"
+	fi
+
+	ENV_FILE_FOUND='false'
+
+	ENV_FILE_PATH="$ARG_DIR/.env$ARG_BASE$ARG_PART"
+	if [ -f "$ENV_FILE_PATH" ]; then
+		# Env file found
+		echo "$ENV_FILE_PATH"
+		ENV_FILE_FOUND='true'
+	fi
+
+	ENV_FILE_LOCAL_PATH="$ENV_FILE_PATH.local"
+	if [ -f "$ENV_FILE_LOCAL_PATH" ]; then
+		# Local env file found
+		echo "$ENV_FILE_LOCAL_PATH"
+		ENV_FILE_FOUND='true'
+	fi
+
+	if [ "$ENV_FILE_FOUND" = 'false' ]; then
+		# No env file found
+		return 1
+	fi
+
+	return 0
+}
+
+look_compose_file() {
+	# Usage: look_compose_file <dir> <compose_prefix> <base> <part> <extension>
+
+	# Extract arguments
+	ARG_DIR="${1:-.}" # eg. '.' or './docker'
+	ARG_COMPOSE_PREFIX="${2:-docker-compose}" # eg. 'docker-compose' or 'compose'
+	ARG_BASE="${3:-}"
+	ARG_PART="${4:-}" # e.g. '' or 'override' or 'prod'
+	ARG_EXTENSION="${5:-yml}" # e.g. 'yml' or 'yaml'
+
+	# Reformat base argument: prepend dot if not empty
+	if [ -n "$ARG_PART" ]; then
+		ARG_PART=".$ARG_PART"
+	fi
+
+	COMPOSE_FILE_PATH="${ARG_DIR}/${ARG_COMPOSE_PREFIX}${ARG_BASE}${ARG_PART}.${ARG_EXTENSION}"
+	if [ ! -f "$COMPOSE_FILE_PATH" ]; then
+		# Compose file not found
+		return 1
+	fi
+
+	# Return found compose file path
+	echo "$COMPOSE_FILE_PATH"
+
+	if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
+		# Compose file is abstract
+		return 2
+	fi
+
+	return 0
+}
 
 COMPOSE_FILE_ARGS=''
-NO_COMPOSE_FILE_ARGS='false'
 ABSTRACT_COMPOSE_FILE_ARGS='false'
 ENV_FILE_ARGS=''
 
-# If context is -, use default docker compose files (override if it exists)
-if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
-	CONTEXT=''
+# Handle context
+# Unless context is '--': in this case, use no compose file argument
+if [ "$CONTEXT" != '--' ]; then
 
-# If context is --, ignore context and use docker compose without file arguments
-elif [ "$CONTEXT" = '--' ]; then
-	NO_COMPOSE_FILE_ARGS='true'
+	if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
+		# Use default context
+		CONTEXT=''
+	fi
 
-fi
-
-if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
-
-	# Check in current directory, then in docker directory
+	# Iterate over:
+	# - Current directory '.'
+	# - Directory './docker'
 	while read -r dir; do
 
 		ENV_FILE_ARGS=''
@@ -668,23 +732,24 @@ if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
 		PREFIX_2=''
 		MISSING_PARTS=''
 
-		if [ -f "$dir/.env" ]; then
-			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env"
+		# Look for global env files
+		ENV_LOOK_FILES=$(look_env_files "$dir" '' '')
+		ENV_LOOK_CODE=$?
+		if [ "$ENV_LOOK_CODE" -eq 0 ]; then
+			while read -r ENV_LOOK_FILE; do
+				ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
+			done <<-EOF
+			$(echo "$ENV_LOOK_FILES")
+			EOF
 		fi
 
-		if [ -f "$dir/.env.local" ]; then
-			ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.local"
-		fi
-
-		COMPOSE_FILE_PATH="$dir/docker-compose.yml"
-		if [ -f "$COMPOSE_FILE_PATH" ]; then
-			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_FILE_PATH"
-
-			if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-				ABSTRACT_COMPOSE_FILE_ARGS='true'
-			else
-				ABSTRACT_COMPOSE_FILE_ARGS='false'
-			fi
+		# Look for root compose file
+		COMPOSE_LOOK_FILE=$(look_compose_file "$dir" 'docker-compose' '' '' 'yml')
+		COMPOSE_LOOK_CODE=$?
+		if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+			# Compose file found
+			COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_LOOK_FILE"
+			ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 		fi
 
 		if [ ! -z "$CONTEXT" ]; then
@@ -697,39 +762,42 @@ if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
 
 				PREFIX="$PREFIX.$part"
 
-				if [ -f "$dir/.env.-.$part" ]; then
-					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.-.$part"
+				# Look for universal env files
+				ENV_LOOK_FILES=$(look_env_files "$dir" '.-' "$part")
+				ENV_LOOK_CODE=$?
+				if [ "$ENV_LOOK_CODE" -eq 0 ]; then
+					while read -r ENV_LOOK_FILE; do
+						ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
+					done <<-EOF
+					$(echo "$ENV_LOOK_FILES")
+					EOF
 				fi
 
-				if [ -f "$dir/.env.-.$part.local" ]; then
-					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env.-.$part.local"
-				fi
-
-				if [ -f "$dir/.env$PREFIX" ]; then
-					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env$PREFIX"
-				fi
-
-				if [ -f "$dir/.env$PREFIX.local" ]; then
-					ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $dir/.env$PREFIX.local"
+				# Look for context env files
+				ENV_LOOK_FILES=$(look_env_files "$dir" '' "$PREFIX")
+				ENV_LOOK_CODE=$?
+				if [ "$ENV_LOOK_CODE" -eq 0 ]; then
+					while read -r ENV_LOOK_FILE; do
+						ENV_FILE_ARGS="$ENV_FILE_ARGS --env-file $ENV_LOOK_FILE"
+					done <<-EOF
+					$(echo "$ENV_LOOK_FILES")
+					EOF
 				fi
 
 				if [ -z "$COMPOSE_FILE_ARGS_2" ]; then
 
-					# Look for docker-compose$PREFIX_1.$part.yml
-					COMPOSE_FILE_PATH="$dir/docker-compose$PREFIX_1.$MISSING_PARTS$part.yml"
-					if [ -f "$COMPOSE_FILE_PATH" ]; then
-						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $COMPOSE_FILE_PATH"
+					# Look for context compose file
+					COMPOSE_LOOK_FILE=$(look_compose_file "$dir" 'docker-compose' "$PREFIX_1" "$MISSING_PARTS$part" 'yml')
+					COMPOSE_LOOK_CODE=$?
+					if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+						# Context compose file found
+						COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $COMPOSE_LOOK_FILE"
 						PREFIX_1="$PREFIX_1.$MISSING_PARTS$part"
 						MISSING_PARTS=''
-
-						if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-							ABSTRACT_COMPOSE_FILE_ARGS='true'
-						else
-							ABSTRACT_COMPOSE_FILE_ARGS='false'
-						fi
+						ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 
 					else
-						# Part was not found, invalidate PREFIX_1
+						# Context compose file not found, invalidate PREFIX_1
 						PREFIX_1=''
 					fi
 
@@ -741,18 +809,15 @@ if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
 
 						if [ -z "$PREFIX_2" ]; then
 
-							# Look for docker-compose-$part.yml
-							COMPOSE_FILE_PATH="$dir/docker-compose-$MISSING_PARTS$part.yml"
-							if [ -f "$COMPOSE_FILE_PATH" ]; then
-								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_FILE_PATH"
+							# Look for context root compose file
+							COMPOSE_LOOK_FILE=$(look_compose_file "$dir" 'docker-compose' "-$MISSING_PARTS$part" '' 'yml')
+							COMPOSE_LOOK_CODE=$?
+							if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+								# Context compose file found
+								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_LOOK_FILE"
 								PREFIX_2="-$MISSING_PARTS$part"
 								MISSING_PARTS=''
-
-								if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-									ABSTRACT_COMPOSE_FILE_ARGS='true'
-								else
-									ABSTRACT_COMPOSE_FILE_ARGS='false'
-								fi
+								ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 							fi
 
 						fi
@@ -761,20 +826,17 @@ if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
 
 						if [ ! -z "$PREFIX_2" ]; then
 
-							# Look for docker-compose$PREFIX_2.$part.yml
-							COMPOSE_FILE_PATH="$dir/docker-compose$PREFIX_2.$part.yml"
-							if [ -f "$COMPOSE_FILE_PATH" ]; then
-								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_FILE_PATH"
+							# Look for context compose file
+							COMPOSE_LOOK_FILE=$(look_compose_file "$dir" 'docker-compose' "$PREFIX_2" "$part" 'yml')
+							COMPOSE_LOOK_CODE=$?
+							if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+								# Context compose file found
+								COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_LOOK_FILE"
 								PREFIX_2="$PREFIX_2.$part"
-
-								if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-									ABSTRACT_COMPOSE_FILE_ARGS='true'
-								else
-									ABSTRACT_COMPOSE_FILE_ARGS='false'
-								fi
+								ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 
 							else
-								# Part was not found, invalidate PREFIX_2
+								# Context compose file not found, invalidate PREFIX_2
 								PREFIX_2=''
 							fi
 
@@ -792,9 +854,9 @@ if [ "$NO_COMPOSE_FILE_ARGS" = 'false' ]; then
 					fi
 				fi
 
-			done <<EOF
-$(echo "$CONTEXT" | tr '-' "\n" | tr '.' "\n")
-EOF
+			done <<-EOF
+			$(echo "$CONTEXT" | tr '-' "\n" | tr '.' "\n")
+			EOF
 
 		fi
 
@@ -814,32 +876,29 @@ EOF
 
 			elif [ -z "$CONTEXT" ] || [ "$CONTEXT" = 'dev' ]; then
 
-				COMPOSE_FILE_PATH="$dir/docker-compose.override.yml"
-				if [ -f "$COMPOSE_FILE_PATH" ]; then
-					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $COMPOSE_FILE_PATH"
-
-					if cat "$COMPOSE_FILE_PATH" | grep -q "^#:dockerc.abstract$"; then
-						ABSTRACT_COMPOSE_FILE_ARGS='true'
-					else
-						ABSTRACT_COMPOSE_FILE_ARGS='false'
-					fi
-
+				# Look for standard override compose file
+				COMPOSE_LOOK_FILE=$(look_compose_file "$dir" 'docker-compose' '' 'override' 'yml')
+				COMPOSE_LOOK_CODE=$?
+				if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
+					# Standard override compose file found
+					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $COMPOSE_LOOK_FILE"
+					ABSTRACT_COMPOSE_FILE_ARGS=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 					break
 
 				elif [ -z "$CONTEXT" ]; then
+					# Standard override compose file not found & empty context
 					COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT"
 					break
-
 				fi
 
 			fi
 
 		fi
 
-	done <<EOF
-.
-./docker
-EOF
+	done <<-EOF
+	.
+	./docker
+	EOF
 
 	# If compose file arguments are empty, exit with error
 	if [ -z "$COMPOSE_FILE_ARGS" ]; then
