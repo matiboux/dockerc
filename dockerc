@@ -670,6 +670,11 @@ look_env_files() {
 look_compose_file() {
 	# Usage: look_compose_file <dir> <compose_prefix> <base> <part> <extension>
 
+	# Reformat $4: add leading dot if not empty
+	if [ -n "$4" ]; then
+		4=".$4"
+	fi
+
 	COMPOSE_FILE_PATH="${1:-.}/${2:-docker-compose}${3:-}${4:-}.${5:-yml}"
 	if [ ! -f "$COMPOSE_FILE_PATH" ]; then
 		# Compose file not found
@@ -711,7 +716,6 @@ if [ "$CONTEXT" != '--' ]; then
 		MISSING_PARTS=''
 
 		# Look for global env files
-
 		ENV_LOOK_FILES=$(look_env_files "$dir" '' '')
 		ENV_LOOK_CODE=$?
 		if [ "$ENV_LOOK_CODE" -eq 0 ]; then
@@ -723,7 +727,6 @@ if [ "$CONTEXT" != '--' ]; then
 		fi
 
 		# Look for root compose file
-
 		COMPOSE_LOOK_FILE=$(look_compose_file "$dir" 'docker-compose' '' '' 'yml')
 		COMPOSE_LOOK_CODE=$?
 		if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
