@@ -784,18 +784,18 @@ if [ "$CONTEXT" != '--' ]; then
 				LVL1_ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
 			fi
 
-			LVL2_COMPOSE_FILE_ARGS="$LVL1_COMPOSE_FILE_ARGS"
-			LVL2_ENV_FILE_ARGS="$LVL1_ENV_FILE_ARGS"
-			LVL2_ABSTRACT_CONTEXT='false'
-
 			# Parse context parts
 			if [ -n "$CONTEXT" ]; then
 
-				if [ -n "$LVL2_COMPOSE_FILE_ARGS" ]; then
+				if [ -n "$LVL1_COMPOSE_FILE_ARGS" ]; then
 
 					# Check for standard root level compose files
 
+					LVL2_COMPOSE_FILE_ARGS="$LVL1_COMPOSE_FILE_ARGS"
+					LVL2_ENV_FILE_ARGS="$LVL1_ENV_FILE_ARGS"
+					LVL2_ABSTRACT_CONTEXT='false'
 					LVL2_PREFIX=''
+
 					while read -r CONTEXT_PART; do
 
 						if [ -z "$CONTEXT_PART" ]; then
@@ -897,7 +897,9 @@ if [ "$CONTEXT" != '--' ]; then
 
 					# Parse context parts
 					if [ -n "$CONTEXT_REST" ]; then
+
 						LVL2_PREFIX=''
+
 						while read -r CONTEXT_PART; do
 
 							if [ -z "$CONTEXT_PART" ]; then
