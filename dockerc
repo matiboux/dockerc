@@ -523,14 +523,14 @@ if [ "$UPDATE" = 'true' ]; then
 		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 			echo ''
 		fi
-		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$INSTALL_TAG\""
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"${INSTALL_DIR}\" \"${INSTALL_TAG}\""
 		echo ''
 	fi
 
 	if [ "$DRY_RUN" = 'false' ]; then
-		# Run install script
-		echo "Updating DockerC to $INSTALL_TAG..."
-		exec /bin/sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"$INSTALL_DIR\" \"$INSTALL_TAG\""
+		# Run install script command
+		echo "Updating DockerC to ${INSTALL_TAG}..."
+		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"${INSTALL_DIR}\" \"${INSTALL_TAG}\""
 	fi
 
 	exit ${ERROR_CODE:-0}
@@ -1124,11 +1124,11 @@ if [ "$QUIET" = 'false' ]; then
 	if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 		echo ''
 	fi
-	echo "> docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS$COMPOSE_ARGS$COMMAND_ARGS"
+	echo "> docker compose${COMPOSE_FILE_ARGS}${ENV_FILE_ARGS}${COMPOSE_ARGS}${COMMAND_ARGS}"
 	echo ''
 fi
 
 if [ "$DRY_RUN" = 'false' ]; then
 	# Run docker compose command
-	exec sh -c "docker compose$COMPOSE_FILE_ARGS$ENV_FILE_ARGS$COMPOSE_ARGS$COMMAND_ARGS"
+	exec sh -c "docker compose${COMPOSE_FILE_ARGS}${ENV_FILE_ARGS}${COMPOSE_ARGS}${COMMAND_ARGS}"
 fi
