@@ -541,7 +541,6 @@ if [ "$UPDATE" = 'true' ]; then
 
 	if [ "$DRY_RUN" = 'false' ]; then
 		# Run install script command
-		echo "Updating DockerC to ${INSTALL_TAG}..."
 		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARG}"
 	fi
 
