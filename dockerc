@@ -240,14 +240,7 @@ fi
 INSTALL_TAG=''
 if [ -n "$DOCKERC_INSTALL_TAG" ]; then
 	# Use from argument or environment variable
-	if
-		[ "$DOCKERC_INSTALL_TAG" = 'HEAD' ] || [ "$DOCKERC_INSTALL_TAG" = 'head' ] ||
-		[ "$DOCKERC_INSTALL_TAG" = '.' ] || [ "$DOCKERC_INSTALL_TAG" = '-' ]
-	then
-		INSTALL_TAG='HEAD'
-	else
-		INSTALL_TAG="$DOCKERC_INSTALL_TAG"
-	fi
+	INSTALL_TAG="$DOCKERC_INSTALL_TAG"
 fi
 
 DOCKER_PRESET=''
@@ -492,12 +485,14 @@ get_latest_version() {
 	)
 
 	if [ -n "$LATEST_VERSION_JSON" ]; then
+		# Extract version from matched string
+		# Remove `"tag_name": "` (13 characters) and `",` (2 characters)
 		if [ "$(uname -s)" = 'Darwin' ]; then
 			# MacOS
-			LATEST_VERSION="${LATEST_VERSION_JSON:14:$((${#LATEST_VERSION_JSON}-14-2))}"
+			LATEST_VERSION="${LATEST_VERSION_JSON:13:$((${#LATEST_VERSION_JSON}-13-2))}"
 		else
 			# Linux
-			LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 14) $(expr length "$LATEST_VERSION_JSON" - 14 - 2))
+			LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 13) $(expr length "$LATEST_VERSION_JSON" - 13 - 2))
 		fi
 
 		echo "$LATEST_VERSION"
@@ -512,7 +507,9 @@ if [ "$DOCKERC_PRINT_VERSION" = 'true' ]; then
 
 		if [ "$DRY_RUN" = 'false' ]; then
 			LATEST_VERSION=$(get_latest_version)
-			if [ "$VERSION" != "$LATEST_VERSION" ]; then
+			if [ -z "$LATEST_VERSION" ]; then
+				echo 'Notice: Failed to get DockerC latest version.' >&2
+			elif [ "$VERSION" != "$LATEST_VERSION" ]; then
 				echo "Notice: DockerC is not up to date, latest version is $LATEST_VERSION!" >&2
 			fi
 		fi
@@ -528,14 +525,9 @@ fi
 if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC & exit
 
-	if [ ! -d "$INSTALL_DIR" ]; then
-		echo 'Error: Install directory does not exist.' >&2
-		exit 1
-	fi
-
-	if [ -z "$INSTALL_TAG" ]; then
-		# Default install tag is latest released version
-		INSTALL_TAG="$(get_latest_version)"
+	INSTALL_TAG_ARG=''
+	if [ -n "$INSTALL_TAG" ]; then
+		INSTALL_TAG_ARG=" \"$INSTALL_TAG\""
 	fi
 
 	if [ "$QUIET" = 'false' ]; then
@@ -543,14 +535,14 @@ if [ "$UPDATE" = 'true' ]; then
 		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 			echo ''
 		fi
-		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"${INSTALL_DIR}\" \"${INSTALL_TAG}\""
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARG}"
 		echo ''
 	fi
 
 	if [ "$DRY_RUN" = 'false' ]; then
 		# Run install script command
 		echo "Updating DockerC to ${INSTALL_TAG}..."
-		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- \"${INSTALL_DIR}\" \"${INSTALL_TAG}\""
+		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARG}"
 	fi
 
 	exit ${ERROR_CODE:-0}
