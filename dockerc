@@ -621,7 +621,9 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 		if [ "$QUIET" = 'false' ]; then
 			# Print docker command
-			echo ''
+			if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
+				echo ''
+			fi
 			echo "> docker ${DOCKER_ARGS}${ARGS}"
 			echo ''
 		fi
@@ -635,7 +637,9 @@ if [ "$(echo "$CONTEXT" | cut -c1)" = '@' ]; then
 
 		if [ "$QUIET" = 'false' ]; then
 			# Print docker command
-			echo ''
+			if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
+				echo ''
+			fi
 			echo "> sh -c 'docker ${DOCKER_ARGS}${ARGS}'"
 			echo ''
 		fi
