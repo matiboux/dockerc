@@ -644,9 +644,9 @@ look_env_files() {
 	ARG_BASE="${2:-}"
 	ARG_PART="${3:-}" # e.g. '' or 'prod' or 'dev'
 
-	# Reformat base argument: prepend dot if not empty
+	# Reformat base argument: ensure leading dot if not empty
 	if [ -n "$ARG_PART" ]; then
-		ARG_PART=".$ARG_PART"
+		ARG_PART=".${ARG_PART#.}"
 	fi
 
 	ENV_FILE_FOUND='false'
@@ -683,9 +683,9 @@ look_compose_file() {
 	ARG_PART="${4:-}" # e.g. '' or 'override' or 'prod'
 	ARG_EXTENSION="${5:-yml}" # e.g. 'yml' or 'yaml'
 
-	# Reformat base argument: prepend dot if not empty
+	# Reformat base argument: ensure leading dot if not empty
 	if [ -n "$ARG_PART" ]; then
-		ARG_PART=".$ARG_PART"
+		ARG_PART=".${ARG_PART#.}"
 	fi
 
 	COMPOSE_FILE_PATH="${ARG_DIR}/${ARG_COMPOSE_PREFIX}${ARG_BASE}${ARG_PART}.${ARG_EXTENSION}"
