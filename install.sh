@@ -118,10 +118,10 @@ get_latest_version() {
 	if [ -n "$LATEST_VERSION_JSON" ]; then
 		if [ "$(uname -s)" = 'Darwin' ]; then
 			# MacOS
-			LATEST_VERSION="${LATEST_VERSION_JSON:14:$((${#LATEST_VERSION_JSON}-14-2))}"
+			LATEST_VERSION="${LATEST_VERSION_JSON:13:$((${#LATEST_VERSION_JSON}-13-2))}"
 		else
 			# Linux
-			LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 14) $(expr length "$LATEST_VERSION_JSON" - 14 - 2))
+			LATEST_VERSION=$(expr substr "$LATEST_VERSION_JSON" $(expr 1 + 13) $(expr length "$LATEST_VERSION_JSON" - 13 - 2))
 		fi
 
 		echo "$LATEST_VERSION"
