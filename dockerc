@@ -746,15 +746,6 @@ if [ "$CONTEXT" != '--' ]; then
 			# Else,                      use 'yaml' compose file extension
 			COMPOSE_EXTENSION=$([ "$((${COMPOSE_SCHEME:-1} % 2))" -eq 1 ] && echo 'yml' || echo 'yaml')
 
-			# # # ENV_FILE_ARGS=''
-			# # # PREFIX=''
-			# # # COMPOSE_FILE_ARGS_1_DEFAULT=''
-			# # # COMPOSE_FILE_ARGS_1=''
-			# # # PREFIX_1=''
-			# # # COMPOSE_FILE_ARGS_2=''
-			# # # PREFIX_2=''
-			# # # MISSING_PARTS=''
-
 			LVL1_COMPOSE_FILE_ARGS=''
 			LVL1_ENV_FILE_ARGS=''
 			LVL1_ABSTRACT_CONTEXT='false'
@@ -771,9 +762,6 @@ if [ "$CONTEXT" != '--' ]; then
 			fi
 
 			# Check for standard root level compose file
-
-			# # # COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" 'docker-compose' '' '' 'yml')
-			# # # COMPOSE_FILE_ARGS_1_DEFAULT=" -f $COMPOSE_LOOK_FILE"
 
 			# Look for root compose file
 			COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" "$COMPOSE_PREFIX" '' '' "$COMPOSE_EXTENSION")
@@ -958,80 +946,6 @@ if [ "$CONTEXT" != '--' ]; then
 
 				fi
 
-
-				# 	if [ -z "$COMPOSE_FILE_ARGS_2" ]; then
-
-				# 		# Look for context compose file
-				# 		COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" 'docker-compose' "$PREFIX_1" "$MISSING_PARTS$CONTEXT_PART" 'yml')
-				# 		COMPOSE_LOOK_CODE=$?
-				# 		if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
-				# 			# Context compose file found
-				# 			COMPOSE_FILE_ARGS_1="$COMPOSE_FILE_ARGS_1 -f $COMPOSE_LOOK_FILE"
-				# 			PREFIX_1="$PREFIX_1.$MISSING_PARTS$CONTEXT_PART"
-				# 			MISSING_PARTS=''
-				# 			ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
-
-				# 		else
-				# 			# Context compose file not found, invalidate PREFIX_1
-				# 			PREFIX_1=''
-				# 		fi
-
-				# 	fi
-
-				# 	if [ -z "$COMPOSE_FILE_ARGS_1" ]; then
-
-				# 		if [ -z "$COMPOSE_FILE_ARGS_2" ]; then
-
-				# 			if [ -z "$PREFIX_2" ]; then
-
-				# 				# Look for context root compose file
-				# 				COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" 'docker-compose' "-$MISSING_PARTS$CONTEXT_PART" '' 'yml')
-				# 				COMPOSE_LOOK_CODE=$?
-				# 				if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
-				# 					# Context compose file found
-				# 					COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_LOOK_FILE"
-				# 					PREFIX_2="-$MISSING_PARTS$CONTEXT_PART"
-				# 					MISSING_PARTS=''
-				# 					ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
-				# 				fi
-
-				# 			fi
-
-				# 		else
-
-				# 			if [ ! -z "$PREFIX_2" ]; then
-
-				# 				# Look for context compose file
-				# 				COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" 'docker-compose' "$PREFIX_2" "$CONTEXT_PART" 'yml')
-				# 				COMPOSE_LOOK_CODE=$?
-				# 				if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
-				# 					# Context compose file found
-				# 					COMPOSE_FILE_ARGS_2="$COMPOSE_FILE_ARGS_2 -f $COMPOSE_LOOK_FILE"
-				# 					PREFIX_2="$PREFIX_2.$CONTEXT_PART"
-				# 					ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
-
-				# 				else
-				# 					# Context compose file not found, invalidate PREFIX_2
-				# 					PREFIX_2=''
-				# 				fi
-
-				# 			fi
-
-				# 		fi
-
-				# 	fi
-
-				# 	if [ -z "$PREFIX_1" ] && [ -z "$PREFIX_2" ]; then
-				# 		if [ -z "$MISSING_PARTS" ]; then
-				# 			MISSING_PARTS="$CONTEXT_PART."
-				# 		else
-				# 			MISSING_PARTS="$MISSING_PARTS$CONTEXT_PART."
-				# 		fi
-				# 	fi
-
-				# done <<-EOF
-				# $(echo "$CONTEXT" | tr '-' "\n" | tr '.' "\n")
-				# EOF
 			fi
 
 			if [ -n "$LVL2_COMPOSE_FILE_ARGS" ]; then
@@ -1072,52 +986,6 @@ if [ "$CONTEXT" != '--' ]; then
 				fi
 
 			fi
-
-
-
-
-			# if [ -z "$LVL1_COMPOSE_FILE_ARGS" ]; then
-			# 	# Root compose file not found, use nothing & break loop
-			# 	break
-			# fi
-
-
-			# Found no context, use nothing & end loop
-
-			# if [ ! -z "$PREFIX_2" ]; then
-			# 	COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_2"
-			# 	break
-
-			# elif [ ! -z "$PREFIX_1" ]; then
-			# 	COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT$COMPOSE_FILE_ARGS_1"
-			# 	break
-
-			# elif [ ! -z "$COMPOSE_FILE_ARGS_1_DEFAULT" ]; then
-
-			# 	if [ "$CONTEXT" = 'prod' ]; then
-			# 		COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT"
-			# 		break
-
-			# 	elif [ -z "$CONTEXT" ] || [ "$CONTEXT" = 'dev' ]; then
-
-			# 		# Look for standard override compose file
-			# 		COMPOSE_LOOK_FILE=$(look_compose_file "$COMPOSE_DIR" 'docker-compose' '' 'override' 'yml')
-			# 		COMPOSE_LOOK_CODE=$?
-			# 		if [ "$COMPOSE_LOOK_CODE" -ne 1 ]; then
-			# 			# Standard override compose file found
-			# 			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT -f $COMPOSE_LOOK_FILE"
-			# 			ABSTRACT_CONTEXT=$([ "$COMPOSE_LOOK_CODE" -eq 0 ] && echo 'false' || echo 'true')
-			# 			break
-
-			# 		elif [ -z "$CONTEXT" ]; then
-			# 			# Standard override compose file not found & empty context
-			# 			COMPOSE_FILE_ARGS="$COMPOSE_FILE_ARGS_1_DEFAULT"
-			# 			break
-			# 		fi
-
-			# 	fi
-
-			# fi
 
 		# End of while loop over compose file naming schemes
 		done <<-EOF
