@@ -7,6 +7,7 @@ def test_dev(file = __file__):
             'dev',
         )
         dockerc.assert_context_ok(
+            # TODO: change behavior
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
@@ -21,6 +22,7 @@ def test_dash_dev(file = __file__):
             '-dev',
         )
         dockerc.assert_context_ok(
+            # TODO: change behavior
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
