@@ -146,6 +146,34 @@ while true; do
 
 done
 
+if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
+	# Print help & exit
+	echo 'Usage:'
+	echo "  $0 [options] [ <context> [@command_preset] [...args] ]"
+	echo "  $0 [options] <@compose_preset> [...args]"
+	echo ''
+	echo 'Options:'
+	echo '  -h, --help     Print this help message'
+	echo '  -v, --version  Print version'
+	echo '  --update       Update DockerC'
+	echo '  -f, --force    Force, for example ignores abstract contexts'
+	echo '  -n, --dry-run  Dry run, print docker compose command without running it'
+	echo '  -q, --quiet    Quiet, do not print docker compose command'
+	echo ''
+	echo 'Arguments:'
+	echo '  options          DockerC options'
+	echo '  context          Docker compose files context'
+	echo '  @command_preset  DockerC command preset (shortcut for a command)'
+	echo '  @compose_preset  DockerC compose preset (shortcut for a command)'
+	echo '  args             Arguments appended to the docker compose command'
+	echo ''
+	echo 'Help commands:'
+	echo "  $0 ?    See context argument help"
+	echo "  $0 - @  See @command_preset argument help"
+	echo "  $0 @    See @compose_preset argument help"
+	exit ${ERROR_CODE:-0}
+fi
+
 UPDATE='false'
 if [ -n "$DOCKERC_UPDATE" ]; then
 	# Use from argument or environment variable
@@ -195,34 +223,6 @@ print_context_help() {
 	echo '    "-"     Use default docker compose files ("override" if it exists)'
 	echo '    "--"    Use docker compose without file arguments'
 }
-
-if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
-	# Print help & exit
-	echo 'Usage:'
-	echo "  $0 [options] [ <context> [@command_preset] [...args] ]"
-	echo "  $0 [options] <@compose_preset> [...args]"
-	echo ''
-	echo 'Options:'
-	echo '  -h, --help     Print this help message'
-	echo '  -v, --version  Print version'
-	echo '  --update       Update DockerC'
-	echo '  -f, --force    Force, for example ignores abstract contexts'
-	echo '  -n, --dry-run  Dry run, print docker compose command without running it'
-	echo '  -q, --quiet    Quiet, do not print docker compose command'
-	echo ''
-	echo 'Arguments:'
-	echo '  options          DockerC options'
-	echo '  context          Docker compose files context'
-	echo '  @command_preset  DockerC command preset (shortcut for a command)'
-	echo '  @compose_preset  DockerC compose preset (shortcut for a command)'
-	echo '  args             Arguments appended to the docker compose command'
-	echo ''
-	echo 'Help commands:'
-	echo "  $0 ?    See context argument help"
-	echo "  $0 - @  See @command_preset argument help"
-	echo "  $0 @    See @compose_preset argument help"
-	exit ${ERROR_CODE:-0}
-fi
 
 get_latest_version() {
 	# Syntax: '"tag_name": "v1.0.0",'
