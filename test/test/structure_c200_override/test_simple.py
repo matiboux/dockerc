@@ -39,7 +39,13 @@ def test_prod_not_found(file = __file__):
         dockerc = ctx.run_dockerc(
             'prod',
         )
-        dockerc.assert_context_not_found()
+        dockerc.assert_context_ok(
+            format_dockerc_stdout(
+                b'docker compose'
+                b' -f ./compose.yml'
+                b' up -d'
+            ),
+        )
 
 def test_what_not_found(file = __file__):
     with TestDirContext(file) as ctx:
