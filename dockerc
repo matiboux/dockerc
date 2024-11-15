@@ -63,17 +63,24 @@ if
 	[ "$DOCKERC_PRINT_VERSION" = 'true' ] ||
 	[ "$DOCKERC_UPDATE" = 'true' ]
 then
-	# Skip parsing positional arguments
+	# Stop parsing positional arguments
 	DOCKERC_PARSE_ARGUMENTS='false'
 fi
 
+# Parse context optional positional argument
 if [ "$DOCKERC_PARSE_ARGUMENTS" = 'true' ]; then
-	# Parse positional arguments
 
-	# Parse context optional argument
 	if [ "$#" -gt 0 ]; then
 		DOCKERC_CONTEXT="$1"
 		shift
+	fi
+
+	if [ "$DOCKERC_CONTEXT" = '@' ]; then
+		# Print context help
+		DOCKERC_PRINT_HELP='true'
+		DOCKERC_PRINT_HELP_CONTEXT='true'
+		# Stop parsing positional arguments
+		DOCKERC_PARSE_ARGUMENTS='false'
 	fi
 
 fi
