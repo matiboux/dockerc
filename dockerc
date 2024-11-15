@@ -103,15 +103,20 @@ while true; do
 		break
 	fi
 
-	if [ "$1" = '@' ]; then
-		# Print compose preset help
-		DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
-		# Stop parsing arguments
-		break
-	fi
+	if [ "${echo "$1" | cut -c1}" = '@' ]; then
+		if [ "$1" = '@' ]; then
+			# Print compose preset help
+			DOCKERC_PRINT_HELP_COMPOSE_PRESET='true'
+			# Stop parsing arguments
+			break
+		fi
 
-	DOCKERC_CONTEXT="$1"
-	shift
+		DOCKERC_COMPOSE_PRESET="$1"
+		shift
+	else
+		DOCKERC_CONTEXT="$1"
+		shift
+	fi
 
 	# Check for optional positional arguments
 	if [ "$#" -le 0 ]; then
@@ -210,6 +215,12 @@ INSTALL_DIR="$(dirname "$0")"
 if [ -n "$DOCKERC_INSTALL_DIR" ]; then
 	# Use from argument or environment variable
 	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
+fi
+
+COMPOSE_PRESET=''
+if [ -n "$DOCKERC_COMPOSE_PRESET" ]; then
+	# Use from argument or environment variable
+	COMPOSE_PRESET="$DOCKERC_COMPOSE_PRESET"
 fi
 
 CONTEXT=''
