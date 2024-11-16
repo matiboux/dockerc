@@ -69,7 +69,7 @@ done
 
 if [ "$DOCKERC_PRINT_HELP" = 'true' ]; then
 	# Print help & exit
-	echo "Usage: $0 --update [options] [tag]"
+	echo "Usage: $0 [options] [tag]"
 	echo ''
 	echo 'Options:'
 	echo '  -h, --help         Print this help message'
