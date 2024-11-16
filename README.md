@@ -1,5 +1,8 @@
 # DockerC
 
+![GitHub Release](https://img.shields.io/github/v/release/matiboux/dockerc)
+[![Check CI](https://github.com/matiboux/dockerc/actions/workflows/check.yml/badge.svg)](https://github.com/matiboux/dockerc/actions/workflows/check.yml)
+
 Wrapper for docker compose commands in your project.
 
 
