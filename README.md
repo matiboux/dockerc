@@ -76,6 +76,15 @@ dockerc train stop    # -> docker compose -f docker/docker-compose-train.yml sto
 
 dockerc train.gpu     # -> docker compose -f docker/docker-compose-train.yml -f docker/docker-compose-train.gpu.yml up -d
 dockerc train.gpu ps  # -> docker compose -f docker/docker-compose-train.yml -f docker/docker-compose-train.gpu.yml ps
+
+# Use "@exec" to execute a command in a running container.
+dockerc @exec <container> <command>  # -> docker exec <container> <command>
+
+# Use "@execi" to execute a command in a running container with interactive mode.
+dockerc @execi <container> <command>  # -> docker exec -i <container> <command>
+
+# Use "@execd" to execute a command in a running container with detached mode.
+dockerc @execd <container> <command>  # -> docker exec -d <container> <command>
 ```
 
 

@@ -127,3 +127,42 @@ class RunDockerc():
             ),
             returncode = 1,
         )
+
+    def assert_exec_command(
+        self,
+        preset: str,
+        container: str,
+        command: str,
+    ):
+        return self.assert_context_ok(
+            stdout = (
+                b'docker '
+                + preset.encode('utf-8')
+                + b' '
+                + container.encode('utf-8')
+                + b' '
+                + command.encode('utf-8')
+                + b'\n'
+            ),
+        )
+
+    def assert_exec(
+        self,
+        container: str,
+        command: str,
+    ):
+        return self.assert_exec_command('exec', container, command)
+
+    def assert_execi(
+        self,
+        container: str,
+        command: str,
+    ):
+        return self.assert_exec_command('exec -i', container, command)
+
+    def assert_execd(
+        self,
+        container: str,
+        command: str,
+    ):
+        return self.assert_exec_command('exec -d', container, command)

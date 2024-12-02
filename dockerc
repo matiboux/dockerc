@@ -367,6 +367,10 @@ if [ "$DOCKERC_PRINT_HELP_DOCKER_PRESET" = 'true' ]; then
 	echo '    @rma   Remove all containers'
 	echo '    @rmaf  Remove all containers, force'
 	echo '      (aliases: @rmfa)'
+	echo '  exec:'
+	echo '    @exec  Execute a command in a running container'
+	echo '    @execi Execute a command in a running container with interactive mode'
+	echo '    @execd Execute a command in a running container with detached mode'
 	echo ''
 	echo 'Arguments will be appended to the docker command that will be run.'
 	echo ''
@@ -600,6 +604,17 @@ if [ -n "$DOCKER_PRESET" ]; then
 		'@rmaf' | '@rmfa' )
 			# Remove all containers, force
 			DOCKER_ARGS='rm -f $(docker ps -q)'
+			;;
+
+		# Exec presets
+		'@exec' )
+			DOCKER_ARGS='exec'
+			;;
+		'@execi' )
+			DOCKER_ARGS='exec -i'
+			;;
+		'@execd' )
+			DOCKER_ARGS='exec -d'
 			;;
 
 	esac

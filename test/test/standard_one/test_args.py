@@ -23,3 +23,39 @@ def test_default_config(file = __file__):
                 b' config'
             ),
         )
+
+def test_exec(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '@exec',
+            'container_name',
+            'command',
+        )
+        dockerc.assert_exec(
+            'container_name',
+            'command',
+        )
+
+def test_execi(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '@execi',
+            'container_name',
+            'command',
+        )
+        dockerc.assert_execi(
+            'container_name',
+            'command',
+        )
+
+def test_execd(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '@execd',
+            'container_name',
+            'command',
+        )
+        dockerc.assert_execd(
+            'container_name',
+            'command',
+        )

@@ -42,3 +42,39 @@ def test_base_what_not_found(file = __file__):
             'base.what',
         )
         dockerc.assert_context_not_found()
+
+def test_exec(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '@exec',
+            'container_name',
+            'command',
+        )
+        dockerc.assert_exec(
+            'container_name',
+            'command',
+        )
+
+def test_execi(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '@execi',
+            'container_name',
+            'command',
+        )
+        dockerc.assert_execi(
+            'container_name',
+            'command',
+        )
+
+def test_execd(file = __file__):
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '@execd',
+            'container_name',
+            'command',
+        )
+        dockerc.assert_execd(
+            'container_name',
+            'command',
+        )
