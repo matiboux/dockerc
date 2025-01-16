@@ -50,6 +50,12 @@ while true; do
 				shift
 				;;
 
+			'--uid' | '-u' )
+				# Set user & group id environment variable
+				DOCKERC_UID='true'
+				shift
+				;;
+
 			'--update' )
 				# Update DockerC
 				DOCKERC_UPDATE='true'
@@ -199,6 +205,7 @@ if [ "$DOCKERC_DEBUG_ARGS" = 'true' ]; then
 	echo "DOCKERC_FORCE: $DOCKERC_FORCE"
 	echo "DOCKERC_DRY_RUN: $DOCKERC_DRY_RUN"
 	echo "DOCKERC_QUIET: $DOCKERC_QUIET"
+	echo "DOCKERC_UID: $DOCKERC_UID"
 	echo "DOCKERC_UPDATE: $DOCKERC_UPDATE"
 	echo "DOCKERC_INSTALL_DIR: $DOCKERC_INSTALL_DIR"
 	echo "DOCKERC_CONTEXT: $DOCKERC_CONTEXT"
@@ -223,6 +230,12 @@ QUIET='false'
 if [ -n "$DOCKERC_QUIET" ]; then
 	# Use from argument or environment variable
 	QUIET="$DOCKERC_QUIET"
+fi
+
+SET_UID='false'
+if [ -n "$DOCKERC_UID" ]; then
+	# Use from argument or environment variable
+	SET_UID="$DOCKERC_UID"
 fi
 
 UPDATE='false'
@@ -545,6 +558,12 @@ if [ "$UPDATE" = 'true' ]; then
 	fi
 
 	exit ${ERROR_CODE:-0}
+fi
+
+# Set user & group id environment variable
+if [ "$SET_UID" = 'true' ]; then
+	export UID="$(id -u)"
+	export GID="$(id -g)"
 fi
 
 # Handle docker presets

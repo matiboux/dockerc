@@ -1,0 +1,4 @@
+services:
+  app:
+    image: app:latest
+    user: ${UID:-1001}
