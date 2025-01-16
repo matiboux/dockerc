@@ -29,12 +29,12 @@ class TestDirContext(object):
         *args: list[str],
         cwd: str | None = None,
         env: dict[str, str] | None = None,
-        dryrun: bool = True,
+        dry_run: bool = True,
     ) -> RunDockerc:
         return RunDockerc(
             self.dockerc_path,
             dockerc_args = args,
             cwd = cwd or self.cwd,
             env = env,
-            dryrun = dryrun,
+            dry_run = dry_run,
         )
