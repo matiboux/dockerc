@@ -9,6 +9,7 @@ class RunDockerc():
         cwd: str,
         context: str | None = None,
         env: dict[str, str] | None = None,
+        dryrun: bool = True,
     ):
         self.dockerc_path = dockerc_path
         self.dockerc_args = dockerc_args
@@ -21,11 +22,12 @@ class RunDockerc():
             None
         )
         self.env = env
+        self.dryrun = dryrun
 
         self.proc = subprocess.Popen(
             [
                 self.dockerc_path,
-                '-n',
+                *(['-n'] if self.dryrun else []),
                 *self.dockerc_args,
             ],
             cwd = self.cwd,
