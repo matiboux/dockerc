@@ -393,35 +393,28 @@ if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
 	echo ''
 	echo 'Compose command presets:'
 	echo '  up:'
-	echo '    @u     up -d'
-	echo '    @ua    up'
-	echo '    @ub    up --build -d'
-	echo '    @uba   up --build'
-	echo '    @ubf   up --build -d --force-recreate'
-	echo '    @ubfa  up --build --force-recreate'
-	echo '    @ubfp  up --build -d --force-recreate --pull always'
-	echo '    @ubfap up --build --force-recreate --pull always'
-	echo '    @ubr   up --build -d --remove-orphans'
-	echo '    @ubar  up --build --remove-orphans'
-	echo '    @ubfr  up --build -d --force-recreate --remove-orphans'
-	echo '    @ubfar up --build --force-recreate --remove-orphans'
-	echo '    @uf    up -d --force-recreate'
-	echo '    @ufa   up --force-recreate'
-	echo '    @ur    up -d --remove-orphans'
-	echo '    @uar   up --remove-orphans'
-	echo '    @ufr   up -d --force-recreate --remove-orphans'
-	echo '    @ufar  up --force-recreate --remove-orphans'
+	echo '    @u[suffix]  up -d'
+	echo '    Suffixes to combine:'
+	echo '      a  Removes the -d flag (attached)'
+	echo '      b  --build'
+	echo '      f  --force-recreate'
+	echo '      p  --pull always'
+	echo '      r  --remove-orphans'
+	echo '      (e.g. @uba, @ubfapr)'
 	echo '  build:'
-	echo '    @b     build'
-	echo '    @bp    build --pull'
-	echo '    @bf    build --pull --no-cache'
-	echo '    @bn    build --dry-run --pull --no-cache'
+	echo '    @b[suffix]  build'
+	echo '    Suffixes to combine:'
+	echo '      p  --pull'
+	echo '      f  --no-cache'
+	echo '      n  --dry-run'
+	echo '      (e.g. @bp, @bfn)'
 	echo '  watch:'
-	echo '    @w     watch'
-	echo '    @wq    watch --quiet'
-	echo '    @ww    watch --no-up'
-	echo '    @wqw   watch --quiet --no-up'
-	echo '    @wn    watch --dry-run'
+	echo '    @w[suffix]  watch'
+	echo '    Suffixes to combine:'
+	echo '      q  --quiet'
+	echo '      w  --no-up'
+	echo '      n  --dry-run'
+	echo '      (e.g. @wq, @wwqn)'
 	echo '  down:'
 	echo '    @d     down'
 	echo '    @da    down --remove-orphans'
@@ -430,58 +423,54 @@ if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
 	echo '    @drav  down --remove-orphans --rmi all -v'
 	echo '    @drv   down --remove-orphans -v'
 	echo '  run:'
-	echo '    @r     run --rm'
-	echo '    @rw    run -w /pwd -v $(pwd):/pwd --rm'
-	echo '    @rd    run -d'
-	echo '    @rk    run'
-	echo '    @rb    run --build --rm'
-	echo '    @rbw   run --build -w /pwd -v $(pwd):/pwd --rm'
-	echo '    @rbd   run --build -d'
-	echo '    @rbk   run --build'
-	echo '    @ri    run -i --rm'
-	echo '    @rwi   run -w /pwd -v $(pwd):/pwd -i --rm'
-	echo '    @rki   run -i'
-	echo '    @rbi   run --build -i --rm'
-	echo '    @rbwi  run --build -w /pwd -v $(pwd):/pwd -i --rm'
-	echo '    @rbki  run --build -i'
+	echo '    @r[suffix]  run --rm'
+	echo '    Suffixes to combine:'
+	echo '      b  --build'
+	echo '      d  -d (detached)'
+	echo '      n  --dry-run'
+	echo '      i  -i (interactive)'
+	echo '      t  -t (tty)'
+	echo '      o  --no-deps'
+	echo '      q  --quiet'
+	echo '      k  Removes the --rm flag (keep)'
+	echo '      p  --service-ports'
+	echo '      w  -w /pwd -v $(pwd):/pwd'
+	echo '      (e.g. @rb, @rbkpd)'
 	echo '  run shells:'
-	echo '    @sh    run -i --rm --entrypoint /bin/sh'
-	echo '    @shw   run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
-	echo '      (aliases: $, @$)'
-	echo '    @shb   run --build -i --rm --entrypoint /bin/sh'
-	echo '    @shbw  run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
-	echo '    @bash  run -i --rm --entrypoint /bin/bash'
-	echo '    @bashw run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
-	echo '    @bashb run --build -i --rm --entrypoint /bin/bash'
-	echo '    @bashbw run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
+	echo '    @sh[suffix]    like: @ri --entrypoint /bin/sh'
+	echo '    @$[suffix]     like: @riw --entrypoint /bin/sh'
+	echo '    $[suffix]      like: @$'
+	echo '    @ash[suffix]   like: @ri --entrypoint /bin/ash'
+	echo '    @bash[suffix]  like: @ri --entrypoint /bin/bash'
+	echo '    @zsh[suffix]   like: @ri --entrypoint /bin/zsh'
+	echo '    Suffixes to combine:'
+	echo '      See suffixes for @r (run)'
 	echo '  logs:'
-	echo '    @l     logs -n 100'
-	echo '    @lf    logs -n 100 -f'
-	echo '    @lt    logs -n 100 -t'
-	echo '    @ls    logs -n 100 --no-log-prefix'
-	echo '    @lft   logs -n 100 -f -t'
-	echo '    @lfs   logs -n 100 -f --no-log-prefix'
-	echo '    @lfts  logs -n 100 -f -t --no-log-prefix'
-	echo '    @lts   logs -n 100 -t --no-log-prefix'
-	echo '    @ll    logs'
-	echo '    @llf   logs -f'
-	echo '    @llt   logs -t'
-	echo '    @lls   logs --no-log-prefix'
-	echo '    @llft  logs -f -t'
-	echo '    @llfs  logs -f --no-log-prefix'
-	echo '    @llfts logs -f -t --no-log-prefix'
-	echo '    @llts  logs -t --no-log-prefix'
+	echo '    @l[suffix]  logs -n 100'
+	echo '    Suffixes to combine:'
+	echo '      n  --dry-run'
+	echo '      f  -f (follow)'
+	echo '      C  --no-color'
+	echo '      s  --no-log-prefix'
+	echo '      t  -t (timestamps)'
+	echo '      l  Remove the -n flag (no tail)'
+	echo '      (e.g. @lf, @llfs)'
 	echo '  ps:'
-	echo '    @p     ps'
-	echo '    @pa    ps -a'
+	echo '    @p   ps'
+	echo '    @pa  ps -a'
 	echo '  push:'
-	echo '    @pu    push'
+	echo '    @pu  push'
 	echo '  pull:'
-	echo '    @pl    pull'
+	echo '    @pl  pull'
 	echo '  rm:'
-	echo '    @rs    rm --stop'
-	echo '    @rf    rm -f'
-	echo '    @rfv   rm -f -v'
+	echo '    @rs[suffix]  rm --stop'
+	echo '    @rf[suffix]  rm -f'
+	echo '    Suffixes to combine:'
+	echo '      n  --dry-run'
+	echo '      f  -f (force)'
+	echo '      s  --stop'
+	echo '      v  -v (remove volumes)'
+	echo '      (e.g. @rfv)'
 	echo ''
 	echo 'Arguments will be appended to the docker command that will be run.'
 	echo 'If the preset is empty, the arguments should include the command.'
@@ -1054,96 +1043,360 @@ if [ "$CONTEXT" != '--' ]; then
 
 fi
 
+handle_compose_presets_up()
+{
+	COMPOSE_UP_PULL="${COMPOSE_UP_PULL:-false}" # 'p'
+	COMPOSE_UP_BUILD="${COMPOSE_UP_BUILD:-false}" # 'b'
+	COMPOSE_UP_FORCE_RECREATE="${COMPOSE_UP_FORCE_RECREATE:-false}" # 'f'
+	COMPOSE_UP_REMOVE_ORPHANS="${COMPOSE_UP_REMOVE_ORPHANS:-false}" # 'r'
+	COMPOSE_UP_DETACHED="${COMPOSE_UP_DETACHED:-true}" # != 'a'
+
+	# Iterate over COMPOSE_PRESET_SUFFIX characters
+	i=1
+	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
+		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
+		case "$COMPOSE_PRESET_CHAR" in
+			'p')
+				COMPOSE_UP_PULL='true'
+				;;
+			'b')
+				COMPOSE_UP_BUILD='true'
+				;;
+			'f')
+				COMPOSE_UP_FORCE_RECREATE='true'
+				;;
+			'r')
+				COMPOSE_UP_REMOVE_ORPHANS='true'
+				;;
+			'a')
+				COMPOSE_UP_DETACHED='false'
+				;;
+			*)
+				echo "Warning: Unknown compose up preset character '$COMPOSE_PRESET_CHAR'" >&2
+				;;
+		esac
+		i=$((i + 1))
+	done
+
+	COMPOSE_ARGS='up'
+	if [ "$COMPOSE_UP_PULL" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --pull always"
+	fi
+	if [ "$COMPOSE_UP_BUILD" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --build"
+	fi
+	if [ "$COMPOSE_UP_FORCE_RECREATE" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --force-recreate"
+	fi
+	if [ "$COMPOSE_UP_REMOVE_ORPHANS" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --remove-orphans"
+	fi
+	if [ "$COMPOSE_UP_DETACHED" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -d"
+	fi
+}
+
+handle_compose_presets_build()
+{
+	COMPOSE_BUILD_DRY_RUN="${COMPOSE_BUILD_DRY_RUN:-false}" # 'n'
+	COMPOSE_BUILD_PULL="${COMPOSE_BUILD_PULL:-false}" # 'p'
+	COMPOSE_BUILD_NO_CACHE="${COMPOSE_BUILD_NO_CACHE:-false}" # 'f'
+
+	# Iterate over COMPOSE_PRESET_SUFFIX characters
+	i=1
+	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
+		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
+		case "$COMPOSE_PRESET_CHAR" in
+			'n')
+				COMPOSE_BUILD_DRY_RUN='true'
+				;;
+			'p')
+				COMPOSE_BUILD_PULL='true'
+				;;
+			'f')
+				COMPOSE_BUILD_NO_CACHE='true'
+				;;
+			*)
+				echo "Warning: Unknown compose build preset character '$COMPOSE_PRESET_CHAR'" >&2
+				;;
+		esac
+		i=$((i + 1))
+	done
+
+	COMPOSE_ARGS='build'
+	if [ "$COMPOSE_BUILD_DRY_RUN" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
+	fi
+	if [ "$COMPOSE_BUILD_PULL" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --pull"
+	fi
+	if [ "$COMPOSE_BUILD_NO_CACHE" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --no-cache"
+	fi
+}
+
+handle_compose_presets_watch()
+{
+	COMPOSE_WATCH_DRY_RUN="${COMPOSE_WATCH_DRY_RUN:-false}" # 'n'
+	COMPOSE_WATCH_QUIET="${COMPOSE_WATCH_QUIET:-false}" # 'q'
+	COMPOSE_WATCH_NO_UP="${COMPOSE_WATCH_NO_UP:-false}" # 'w'
+
+	# Iterate over COMPOSE_PRESET_SUFFIX characters
+	i=1
+	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
+		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
+		case "$COMPOSE_PRESET_CHAR" in
+			'n')
+				COMPOSE_WATCH_DRY_RUN='true'
+				;;
+			'q')
+				COMPOSE_WATCH_QUIET='true'
+				;;
+			'w')
+				COMPOSE_WATCH_NO_UP='true'
+				;;
+			*)
+				echo "Warning: Unknown compose watch preset character '$COMPOSE_PRESET_CHAR'" >&2
+				;;
+		esac
+		i=$((i + 1))
+	done
+
+	COMPOSE_ARGS='watch'
+	if [ "$COMPOSE_WATCH_DRY_RUN" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
+	fi
+	if [ "$COMPOSE_WATCH_QUIET" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --quiet"
+	fi
+	if [ "$COMPOSE_WATCH_NO_UP" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --no-up"
+	fi
+}
+
+# handle_compose_presets_down()
+
+handle_compose_presets_run()
+{
+	COMPOSE_RUN_DRY_RUN="${COMPOSE_RUN_DRY_RUN:-false}" # 'n'
+	COMPOSE_RUN_QUIET="${COMPOSE_RUN_QUIET:-false}" # 'q'
+	COMPOSE_RUN_NO_DEPS="${COMPOSE_RUN_NO_DEPS:-false}" # 'o'
+	COMPOSE_RUN_PULL="${COMPOSE_RUN_PULL:-false}"
+	COMPOSE_RUN_BUILD="${COMPOSE_RUN_BUILD:-false}" # 'b'
+	COMPOSE_RUN_WORKDIR="${COMPOSE_RUN_WORKDIR:-false}" # 'w'
+	COMPOSE_RUN_ENTRYPOINT="${COMPOSE_RUN_ENTRYPOINT:-}"
+	COMPOSE_RUN_INTERACTIVE="${COMPOSE_RUN_INTERACTIVE:-false}" # 'i'
+	COMPOSE_RUN_TTY="${COMPOSE_RUN_TTY:-false}" # 't'
+	COMPOSE_RUN_SERVICE_PORTS="${COMPOSE_RUN_SERVICE_PORTS:-false}" # 'p'
+	COMPOSE_RUN_DETACHED="${COMPOSE_RUN_DETACHED:-false}" # 'd'
+	COMPOSE_RUN_RM="${COMPOSE_RUN_RM:-true}" # != 'k'
+
+	# Iterate over COMPOSE_PRESET_SUFFIX characters
+	i=1
+	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
+		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
+		case "$COMPOSE_PRESET_CHAR" in
+			'n')
+				COMPOSE_RUN_DRY_RUN='true'
+				;;
+			'q')
+				COMPOSE_RUN_QUIET='true'
+				;;
+			'o')
+				COMPOSE_RUN_NO_DEPS='true'
+				;;
+			'b')
+				COMPOSE_RUN_BUILD='true'
+				;;
+			'w')
+				COMPOSE_RUN_WORKDIR='true'
+				;;
+			'i')
+				COMPOSE_RUN_INTERACTIVE='true'
+				;;
+			't')
+				COMPOSE_RUN_TTY='true'
+				;;
+			'p')
+				COMPOSE_RUN_SERVICE_PORTS='true'
+				;;
+			'd')
+				COMPOSE_RUN_DETACHED='true'
+				;;
+			'k')
+				COMPOSE_RUN_RM=false
+				;;
+			*)
+				echo "Warning: Unknown compose run preset character '$COMPOSE_PRESET_CHAR'" >&2
+				;;
+		esac
+		i=$((i + 1))
+	done
+
+	COMPOSE_ARGS='run'
+	if [ "$COMPOSE_RUN_DRY_RUN" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
+	fi
+	if [ "$COMPOSE_RUN_QUIET" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --quiet"
+	fi
+	if [ "$COMPOSE_RUN_NO_DEPS" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --no-deps"
+	fi
+	if [ "$COMPOSE_RUN_PULL" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --pull always"
+	fi
+	if [ "$COMPOSE_RUN_BUILD" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --build"
+	fi
+	if [ "$COMPOSE_RUN_WORKDIR" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS"' -w /pwd -v $(pwd):/pwd'
+	fi
+	if [ -n "$COMPOSE_RUN_ENTRYPOINT" ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --entrypoint $COMPOSE_RUN_ENTRYPOINT"
+	fi
+	if [ "$COMPOSE_RUN_INTERACTIVE" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -i"
+	fi
+	if [ "$COMPOSE_RUN_TTY" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -t"
+	fi
+	if [ "$COMPOSE_RUN_SERVICE_PORTS" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --service-ports"
+	fi
+	if [ "$COMPOSE_RUN_DETACHED" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -d"
+	fi
+	if [ "$COMPOSE_RUN_RM" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --rm"
+	fi
+}
+
+handle_compose_presets_logs()
+{
+	COMPOSE_LOGS_DRY_RUN="${COMPOSE_LOGS_DRY_RUN:-false}" # 'n'
+	COMPOSE_LOGS_TAIL="${COMPOSE_LOGS_TAIL:-100}" # != 'l'
+	COMPOSE_LOGS_NO_COLOR="${COMPOSE_LOGS_NO_COLOR:-false}" # 'C'
+	COMPOSE_LOGS_NO_LOG_PREFIX="${COMPOSE_LOGS_NO_LOG_PREFIX:-false}" # 's', 'P'
+	COMPOSE_LOGS_TIMESTAMPS="${COMPOSE_LOGS_TIMESTAMPS:-false}" # 't'
+	COMPOSE_LOGS_FOLLOW="${COMPOSE_LOGS_FOLLOW:-false}" # 'f'
+
+	# Iterate over COMPOSE_PRESET_SUFFIX characters
+	i=1
+	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
+		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
+		case "$COMPOSE_PRESET_CHAR" in
+			'n')
+				COMPOSE_LOGS_DRY_RUN='true'
+				;;
+			'l')
+				COMPOSE_LOGS_TAIL=''
+				;;
+			'C')
+				COMPOSE_LOGS_NO_COLOR='true'
+				;;
+			's'|'P')
+				COMPOSE_LOGS_NO_LOG_PREFIX='true'
+				;;
+			't')
+				COMPOSE_LOGS_TIMESTAMPS='true'
+				;;
+			'f')
+				COMPOSE_LOGS_FOLLOW='true'
+				;;
+			*)
+				echo "Warning: Unknown compose logs preset character '$COMPOSE_PRESET_CHAR'" >&2
+				;;
+		esac
+		i=$((i + 1))
+	done
+
+	COMPOSE_ARGS='logs'
+	if [ "$COMPOSE_LOGS_DRY_RUN" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
+	fi
+	if [ -n "$COMPOSE_LOGS_TAIL" ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -n $COMPOSE_LOGS_TAIL"
+	fi
+	if [ "$COMPOSE_LOGS_NO_COLOR" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --no-color"
+	fi
+	if [ "$COMPOSE_LOGS_NO_LOG_PREFIX" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --no-log-prefix"
+	fi
+	if [ "$COMPOSE_LOGS_TIMESTAMPS" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -t"
+	fi
+	if [ "$COMPOSE_LOGS_FOLLOW" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -f"
+	fi
+}
+
+handle_compose_presets_rm()
+{
+	COMPOSE_RM_DRY_RUN="${COMPOSE_RM_DRY_RUN:-false}" # 'n'
+	COMPOSE_RM_STOP="${COMPOSE_RM_STOP:-false}" # 's'
+	COMPOSE_RM_FORCE="${COMPOSE_RM_FORCE:-false}" # 'f'
+	COMPOSE_RM_VOLUMES="${COMPOSE_RM_VOLUMES:-false}" # 'v'
+
+	# Iterate over COMPOSE_PRESET_SUFFIX characters
+	i=1
+	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
+		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
+		case "$COMPOSE_PRESET_CHAR" in
+			'n')
+				COMPOSE_RM_DRY_RUN='true'
+				;;
+			's')
+				COMPOSE_RM_STOP='true'
+				;;
+			'f')
+				COMPOSE_RM_FORCE='true'
+				;;
+			'v')
+				COMPOSE_RM_VOLUMES='true'
+				;;
+			*)
+				echo "Warning: Unknown compose rm preset character '$COMPOSE_PRESET_CHAR'" >&2
+				;;
+		esac
+		i=$((i + 1))
+	done
+
+	COMPOSE_ARGS='rm'
+	if [ "$COMPOSE_RM_DRY_RUN" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
+	fi
+	if [ "$COMPOSE_RM_STOP" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --stop"
+	fi
+	if [ "$COMPOSE_RM_FORCE" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -f"
+	fi
+	if [ "$COMPOSE_RM_VOLUMES" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -v"
+	fi
+}
+
 # Handle compose presets
 COMPOSE_ARGS=''
 if [ -n "$COMPOSE_PRESET" ]; then
 
 	case "$COMPOSE_PRESET" in
 
-		'@u')
-			COMPOSE_ARGS='up -d'
-			;;
-		'@ua')
-			COMPOSE_ARGS='up'
-			;;
-		'@ub')
-			COMPOSE_ARGS='up --build -d'
-			;;
-		'@uba')
-			COMPOSE_ARGS='up --build'
-			;;
-		'@ubf')
-			COMPOSE_ARGS='up --build -d --force-recreate'
-			;;
-		'@ubfa')
-			COMPOSE_ARGS='up --build --force-recreate'
-			;;
-		'@ubfp')
-			COMPOSE_ARGS='up --build -d --force-recreate --pull always'
-			;;
-		'@ubfap')
-			COMPOSE_ARGS='up --build --force-recreate --pull always'
-			;;
-		'@ubr')
-			COMPOSE_ARGS='up --build -d --remove-orphans'
-			;;
-		'@ubar')
-			COMPOSE_ARGS='up --build --remove-orphans'
-			;;
-		'@ubfr')
-			COMPOSE_ARGS='up --build -d --force-recreate --remove-orphans'
-			;;
-		'@ubfar')
-			COMPOSE_ARGS='up --build --force-recreate --remove-orphans'
-			;;
-		'@uf')
-			COMPOSE_ARGS='up -d --force-recreate'
-			;;
-		'@ufa')
-			COMPOSE_ARGS='up --force-recreate'
-			;;
-		'@ur')
-			COMPOSE_ARGS='up -d --remove-orphans'
-			;;
-		'@uar')
-			COMPOSE_ARGS='up --remove-orphans'
-			;;
-		'@ufr')
-			COMPOSE_ARGS='up -d --force-recreate --remove-orphans'
-			;;
-		'@ufar')
-			COMPOSE_ARGS='up --force-recreate --remove-orphans'
+		# Up presets
+		'@u'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@u}"
+			handle_compose_presets_up
 			;;
 
-		'@b')
-			COMPOSE_ARGS='build'
-			;;
-		'@bp')
-			COMPOSE_ARGS='build --pull'
-			;;
-		'@bf')
-			COMPOSE_ARGS='build --pull --no-cache'
-			;;
-		'@bn')
-			COMPOSE_ARGS='build --dry-run --pull --no-cache'
+		# Watch presets
+		'@w'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@w}"
+			handle_compose_presets_watch
 			;;
 
-		'@w')
-			COMPOSE_ARGS='watch'
-			;;
-		'@wq')
-			COMPOSE_ARGS='watch --quiet'
-			;;
-		'@ww')
-			COMPOSE_ARGS='watch --no-up'
-			;;
-		'@wqw')
-			COMPOSE_ARGS='watch --quiet --no-up'
-			;;
-		'@wn')
-			COMPOSE_ARGS='watch --dry-run'
-			;;
-
+		# Down presets
 		'@d')
 			COMPOSE_ARGS='down'
 			;;
@@ -1163,129 +1416,76 @@ if [ -n "$COMPOSE_PRESET" ]; then
 			COMPOSE_ARGS='down --remove-orphans -v'
 			;;
 
-		'@r')
-			COMPOSE_ARGS='run --rm'
+		# Rm presets
+		'@rs'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@rs}"
+			COMPOSE_RM_STOP='true'
+			handle_compose_presets_rm
 			;;
-		'@rw')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd --rm'
-			;;
-		'@rd')
-			COMPOSE_ARGS='run -d'
-			;;
-		'@rk')
-			COMPOSE_ARGS='run'
-			;;
-		'@rb')
-			COMPOSE_ARGS='run --build --rm'
-			;;
-		'@rbw')
-			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd --rm'
-			;;
-		'@rbd')
-			COMPOSE_ARGS='run --build -d'
-			;;
-		'@rbk')
-			COMPOSE_ARGS='run --build'
-			;;
-		'@ri')
-			COMPOSE_ARGS='run -i --rm'
-			;;
-		'@rwi')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm'
-			;;
-		'@rki')
-			COMPOSE_ARGS='run -i'
-			;;
-		'@rbi')
-			COMPOSE_ARGS='run --build -i --rm'
-			;;
-		'@rbwi')
-			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd -i --rm'
-			;;
-		'@rbki')
-			COMPOSE_ARGS='run --build -i'
+		'@rf'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@rf}"
+			COMPOSE_RM_FORCE='true'
+			handle_compose_presets_rm
 			;;
 
-		'@sh')
-			COMPOSE_ARGS='run -i --rm --entrypoint /bin/sh'
+		# Run presets
+		'@r'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@r}"
+			COMPOSE_RUN_ENTRYPOINT=''
+			handle_compose_presets_run
 			;;
-		'@shw')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+		'@sh'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@sh}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/sh'
+			handle_compose_presets_run
 			;;
-		'@$')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+		'@$'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@$}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_WORKDIR='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/sh'
+			handle_compose_presets_run
 			;;
-		'$')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+		'$'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#$}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_WORKDIR='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/sh'
+			handle_compose_presets_run
 			;;
-		'@shb')
-			COMPOSE_ARGS='run --build -i --rm --entrypoint /bin/sh'
+		'@ash'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@ash}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/ash'
+			handle_compose_presets_run
 			;;
-		'@shbw')
-			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+		'@bash'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@bash}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/bash'
+			handle_compose_presets_run
 			;;
-		'@bash')
-			COMPOSE_ARGS='run -i --rm --entrypoint /bin/bash'
-			;;
-		'@bashw')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
-			;;
-		'@bashb')
-			COMPOSE_ARGS='run --build -i --rm --entrypoint /bin/bash'
-			;;
-		'@bashbw')
-			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
-			;;
-
-		'@l')
-			COMPOSE_ARGS='logs -n 100'
-			;;
-		'@lf')
-			COMPOSE_ARGS='logs -n 100 -f'
-			;;
-		'@lt')
-			COMPOSE_ARGS='logs -n 100 -t'
-			;;
-		'@ls')
-			COMPOSE_ARGS='logs -n 100 --no-log-prefix'
-			;;
-		'@lft')
-			COMPOSE_ARGS='logs -n 100 -f -t'
-			;;
-		'@lfs')
-			COMPOSE_ARGS='logs -n 100 -f --no-log-prefix'
-			;;
-		'@lfts')
-			COMPOSE_ARGS='logs -n 100 -f -t --no-log-prefix'
-			;;
-		'@lts')
-			COMPOSE_ARGS='logs -n 100 -t --no-log-prefix'
-			;;
-		'@ll')
-			COMPOSE_ARGS='logs'
-			;;
-		'@llf')
-			COMPOSE_ARGS='logs -f'
-			;;
-		'@llt')
-			COMPOSE_ARGS='logs -t'
-			;;
-		'@lls')
-			COMPOSE_ARGS='logs --no-log-prefix'
-			;;
-		'@llft')
-			COMPOSE_ARGS='logs -f -t'
-			;;
-		'@llfs')
-			COMPOSE_ARGS='logs -f --no-log-prefix'
-			;;
-		'@llfts')
-			COMPOSE_ARGS='logs -f -t --no-log-prefix'
-			;;
-		'@llts')
-			COMPOSE_ARGS='logs -t --no-log-prefix'
+		'@zsh'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@zsh}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/zsh'
+			handle_compose_presets_run
 			;;
 
+		# Build presets
+		'@b'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@b}"
+			handle_compose_presets_build
+			;;
+
+		# Logs presets
+		'@l'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@l}"
+			handle_compose_presets_logs
+			;;
+
+		# Ps presets
 		'@p')
 			COMPOSE_ARGS='ps'
 			;;
@@ -1293,22 +1493,14 @@ if [ -n "$COMPOSE_PRESET" ]; then
 			COMPOSE_ARGS='ps -a'
 			;;
 
+		# Push presets
 		'@pu')
 			COMPOSE_ARGS='push'
 			;;
 
+		# Pull presets
 		'@pl')
 			COMPOSE_ARGS='pull'
-			;;
-
-		'@rs')
-			COMPOSE_ARGS='rm --stop'
-			;;
-		'@rf')
-			COMPOSE_ARGS='rm -f'
-			;;
-		'@rfv')
-			COMPOSE_ARGS='rm -f -v'
 			;;
 
 	esac

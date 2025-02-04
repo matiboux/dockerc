@@ -49,23 +49,11 @@ WORKDIR /app
 
 
 # --
-# Runtime base image
+# Test base image
 
-FROM app_base AS app_runtime_base
+FROM app_base AS app_test_base
 
 # Set runtime environment
-ENV APP_ENV=dev
-ENV NODE_ENV=development
-
-# Copy application source code
-COPY --link . .
-
-
-# --
-# Test image
-
-FROM app_runtime_base AS app_test
-
 ENV APP_ENV=test
 ENV PYTHONPATH=/app
 
@@ -82,24 +70,36 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 		'pytest-cov ~= 5.0.0' \
 		'pytest-shell-utilities ~= 1.9.0'
 
-COPY --link --chmod=755 ./docker/test-command.sh /usr/local/bin/app-test-command
 
+# --
+# Test base image
+
+FROM app_test_base AS app_test
+
+# Copy application source code
+COPY --link . .
+
+COPY --link --chmod=755 ./docker/test-command.sh /usr/local/bin/app-test-command
 CMD [ "app-test-command" ]
 
 
 # --
 # Test watch image
 
-FROM app_test AS app_test_watch
+FROM app_test_base AS app_test_watch
 
-# Install pytest-watch
+# Install pytest-watch & pytest-testmon
 RUN --mount=type=cache,target=/tmp/pip-cache \
 	export PIP_CACHE_DIR=/tmp/pip-cache && \
 	pip install \
 		'pytest-watch ~= 4.2.0' \
 		'pytest-testmon ~= 2.1.1'
 
+# Configure pytest-testmon
 ENV TESTMON_DATAFILE='/tmp/pytest/.testmondata'
+
+# Copy application source code
+COPY --link . .
 
 COPY --link --chmod=755 ./docker/test-watch-command.sh /usr/local/bin/app-test-watch-command
 CMD [ "app-test-watch-command" ]
