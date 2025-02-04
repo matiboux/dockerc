@@ -103,7 +103,21 @@ while true; do
 				shift
 				;;
 
+			'-' | '--' )
+				# Stop parsing options
+				break
+				;;
+
+			'-'* )
+				# Unknown option
+				echo "Error: Unknown option '$1'" >&2
+				DOCKERC_PRINT_HELP='true'
+				ERROR_CODE=1
+				break
+				;;
+
 			* )
+				# Stop parsing options
 				break
 				;;
 
@@ -127,6 +141,11 @@ while true; do
 
 	if [ "$DOCKERC_UPDATE" = 'true' ]; then
 		# Parse update arguments
+
+		if [ "$1" = '--' ]; then
+			# Skip '--' argument
+			shift
+		fi
 
 		# Parse update install args
 		DOCKERC_INSTALL_ARGS=$(escape_shell_args "$@")
