@@ -128,16 +128,6 @@ while true; do
 	if [ "$DOCKERC_UPDATE" = 'true' ]; then
 		# Parse update arguments
 
-		# Parse update install tag argument
-		DOCKERC_INSTALL_TAG="$1"
-		shift
-
-		# Check for optional positional arguments
-		if [ "$#" -le 0 ]; then
-			# No more arguments
-			break
-		fi
-
 		# Parse update install args
 		DOCKERC_INSTALL_ARGS=$(escape_shell_args "$@")
 
@@ -228,6 +218,7 @@ if [ "$DOCKERC_DEBUG_ARGS" = 'true' ]; then
 	echo "DOCKERC_UID: $DOCKERC_UID"
 	echo "DOCKERC_UPDATE: $DOCKERC_UPDATE"
 	echo "DOCKERC_INSTALL_DIR: $DOCKERC_INSTALL_DIR"
+	echo "DOCKERC_INSTALL_ARGS: $DOCKERC_INSTALL_ARGS"
 	echo "DOCKERC_CONTEXT: $DOCKERC_CONTEXT"
 	echo "DOCKERC_COMPOSE_PRESET: $DOCKERC_COMPOSE_PRESET"
 	echo "DOCKERC_COMMAND_ARGS: $DOCKERC_COMMAND_ARGS"
@@ -268,12 +259,6 @@ INSTALL_DIR="$(dirname "$0")"
 if [ -n "$DOCKERC_INSTALL_DIR" ]; then
 	# Use from argument or environment variable
 	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
-fi
-
-INSTALL_TAG=''
-if [ -n "$DOCKERC_INSTALL_TAG" ]; then
-	# Use from argument or environment variable
-	INSTALL_TAG="$DOCKERC_INSTALL_TAG"
 fi
 
 INSTALL_ARGS=''
@@ -553,26 +538,18 @@ fi
 if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC & exit
 
-	INSTALL_TAG_ARGS=''
-	if [ -n "$INSTALL_TAG" ]; then
-		INSTALL_TAG_ARGS="$INSTALL_TAG_ARGS \"$INSTALL_TAG\""
-	fi
-	if [ -n "$INSTALL_ARGS" ]; then
-		INSTALL_TAG_ARGS="$INSTALL_TAG_ARGS $INSTALL_ARGS"
-	fi
-
 	if [ "$QUIET" = 'false' ]; then
 		# Print install script command
 		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 			echo ''
 		fi
-		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARGS}"
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_ARGS}"
 		echo ''
 	fi
 
 	if [ "$DRY_RUN" = 'false' ]; then
 		# Run install script command
-		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARGS}"
+		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_ARGS}"
 	fi
 
 	exit ${ERROR_CODE:-0}
