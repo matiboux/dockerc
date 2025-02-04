@@ -1189,17 +1189,18 @@ handle_compose_presets_watch()
 
 handle_compose_presets_run()
 {
-	COMPOSE_RUN_BUILD='false' # 'b'
-	COMPOSE_RUN_DETACHED='false' # 'd'
-	COMPOSE_RUN_DRY_RUN='false' # 'n'
-	COMPOSE_RUN_INTERACTIVE='false' # 'i'
-	COMPOSE_RUN_TTY='false' # 't'
-	COMPOSE_RUN_NO_DEPS='false' # 'o'
-	# COMPOSE_RUN_PULL='false'
-	COMPOSE_RUN_QUIET='false' # 'q'
-	COMPOSE_RUN_RM='true' # != 'k'
-	COMPOSE_RUN_SERVICE_PORTS='false' # 'p'
-	COMPOSE_RUN_WORKDIR='false' # 'w'
+	COMPOSE_RUN_BUILD="${COMPOSE_RUN_BUILD:-'false'}" # 'b'
+	COMPOSE_RUN_DETACHED="${COMPOSE_RUN_DETACHED:-'false'}" # 'd'
+	COMPOSE_RUN_DRY_RUN="${COMPOSE_RUN_DRY_RUN:-'false'}" # 'n'
+	COMPOSE_RUN_INTERACTIVE="${COMPOSE_RUN_INTERACTIVE:-'false'}" # 'i'
+	COMPOSE_RUN_TTY="${COMPOSE_RUN_TTY:-'false'}" # 't'
+	COMPOSE_RUN_NO_DEPS="${COMPOSE_RUN_NO_DEPS:-'false'}" # 'o'
+	COMPOSE_RUN_PULL="${COMPOSE_RUN_PULL:-'false'}"
+	COMPOSE_RUN_QUIET="${COMPOSE_RUN_QUIET:-'false'}" # 'q'
+	COMPOSE_RUN_RM="${COMPOSE_RUN_RM:-'true'}" # != 'k'
+	COMPOSE_RUN_SERVICE_PORTS="${COMPOSE_RUN_SERVICE_PORTS:-'false'}" # 'p'
+	COMPOSE_RUN_WORKDIR="${COMPOSE_RUN_WORKDIR:-'false'}" # 'w'
+	COMPOSE_RUN_ENTRYPOINT="${COMPOSE_RUN_ENTRYPOINT:-''}"
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
@@ -1262,6 +1263,9 @@ handle_compose_presets_run()
 	if [ "$COMPOSE_RUN_NO_DEPS" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --no-deps"
 	fi
+	if [ "$COMPOSE_RUN_PULL" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --pull always"
+	fi
 	if [ "$COMPOSE_RUN_QUIET" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --quiet"
 	fi
@@ -1273,6 +1277,10 @@ handle_compose_presets_run()
 	fi
 	if [ "$COMPOSE_RUN_WORKDIR" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS"' -w /pwd -v $(pwd):/pwd'
+	fi
+
+	if [ -n "$COMPOSE_RUN_ENTRYPOINT" ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --entrypoint $COMPOSE_RUN_ENTRYPOINT"
 	fi
 }
 
@@ -1322,38 +1330,34 @@ if [ -n "$COMPOSE_PRESET" ]; then
 		# Run presets
 		'@r'*)
 			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@r}"
+			COMPOSE_RUN_ENTRYPOINT=''
 			handle_compose_presets_run
 			;;
-
-		'@sh')
-			COMPOSE_ARGS='run -i --rm --entrypoint /bin/sh'
+		'@sh'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@sh}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/sh'
+			handle_compose_presets_run
 			;;
-		'@shw')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+		'@$'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@$}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_WORKDIR='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/sh'
+			handle_compose_presets_run
 			;;
-		'@$')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+		'$'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#$}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_WORKDIR='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/sh'
+			handle_compose_presets_run
 			;;
-		'$')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
-			;;
-		'@shb')
-			COMPOSE_ARGS='run --build -i --rm --entrypoint /bin/sh'
-			;;
-		'@shbw')
-			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
-			;;
-		'@bash')
-			COMPOSE_ARGS='run -i --rm --entrypoint /bin/bash'
-			;;
-		'@bashw')
-			COMPOSE_ARGS='run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
-			;;
-		'@bashb')
-			COMPOSE_ARGS='run --build -i --rm --entrypoint /bin/bash'
-			;;
-		'@bashbw')
-			COMPOSE_ARGS='run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
+		'@bash'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@bash}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/bash'
+			handle_compose_presets_run
 			;;
 
 		'@l')
