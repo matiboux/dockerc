@@ -1043,19 +1043,19 @@ fi
 
 handle_compose_presets_up()
 {
-	COMPOSE_UP_DETACHED="${COMPOSE_UP_DETACHED:-true}" # != 'a'
+	COMPOSE_UP_PULL="${COMPOSE_UP_PULL:-false}" # 'p'
 	COMPOSE_UP_BUILD="${COMPOSE_UP_BUILD:-false}" # 'b'
 	COMPOSE_UP_FORCE_RECREATE="${COMPOSE_UP_FORCE_RECREATE:-false}" # 'f'
 	COMPOSE_UP_REMOVE_ORPHANS="${COMPOSE_UP_REMOVE_ORPHANS:-false}" # 'r'
-	COMPOSE_UP_PULL="${COMPOSE_UP_PULL:-false}" # 'p'
+	COMPOSE_UP_DETACHED="${COMPOSE_UP_DETACHED:-true}" # != 'a'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
 	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
 		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
 		case "$COMPOSE_PRESET_CHAR" in
-			'a')
-				COMPOSE_UP_DETACHED='false'
+			'p')
+				COMPOSE_UP_PULL='true'
 				;;
 			'b')
 				COMPOSE_UP_BUILD='true'
@@ -1066,8 +1066,8 @@ handle_compose_presets_up()
 			'r')
 				COMPOSE_UP_REMOVE_ORPHANS='true'
 				;;
-			'p')
-				COMPOSE_UP_PULL='true'
+			'a')
+				COMPOSE_UP_DETACHED='false'
 				;;
 			*)
 				echo "Warning: Unknown compose up preset character '$COMPOSE_PRESET_CHAR'" >&2
@@ -1077,8 +1077,8 @@ handle_compose_presets_up()
 	done
 
 	COMPOSE_ARGS='up'
-	if [ "$COMPOSE_UP_DETACHED" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS -d"
+	if [ "$COMPOSE_UP_PULL" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --pull always"
 	fi
 	if [ "$COMPOSE_UP_BUILD" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --build"
@@ -1089,30 +1089,30 @@ handle_compose_presets_up()
 	if [ "$COMPOSE_UP_REMOVE_ORPHANS" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --remove-orphans"
 	fi
-	if [ "$COMPOSE_UP_PULL" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --pull always"
+	if [ "$COMPOSE_UP_DETACHED" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -d"
 	fi
 }
 
 handle_compose_presets_build()
 {
+	COMPOSE_BUILD_DRY_RUN="${COMPOSE_BUILD_DRY_RUN:-false}" # 'n'
 	COMPOSE_BUILD_PULL="${COMPOSE_BUILD_PULL:-false}" # 'p'
 	COMPOSE_BUILD_NO_CACHE="${COMPOSE_BUILD_NO_CACHE:-false}" # 'f'
-	COMPOSE_BUILD_DRY_RUN="${COMPOSE_BUILD_DRY_RUN:-false}" # 'n'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
 	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
 		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
 		case "$COMPOSE_PRESET_CHAR" in
+			'n')
+				COMPOSE_BUILD_DRY_RUN='true'
+				;;
 			'p')
 				COMPOSE_BUILD_PULL='true'
 				;;
 			'f')
 				COMPOSE_BUILD_NO_CACHE='true'
-				;;
-			'n')
-				COMPOSE_BUILD_DRY_RUN='true'
 				;;
 			*)
 				echo "Warning: Unknown compose build preset character '$COMPOSE_PRESET_CHAR'" >&2
@@ -1122,36 +1122,36 @@ handle_compose_presets_build()
 	done
 
 	COMPOSE_ARGS='build'
+	if [ "$COMPOSE_BUILD_DRY_RUN" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
+	fi
 	if [ "$COMPOSE_BUILD_PULL" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --pull"
 	fi
 	if [ "$COMPOSE_BUILD_NO_CACHE" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --no-cache"
 	fi
-	if [ "$COMPOSE_BUILD_DRY_RUN" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
-	fi
 }
 
 handle_compose_presets_watch()
 {
+	COMPOSE_WATCH_DRY_RUN="${COMPOSE_WATCH_DRY_RUN:-false}" # 'n'
 	COMPOSE_WATCH_QUIET="${COMPOSE_WATCH_QUIET:-false}" # 'q'
 	COMPOSE_WATCH_NO_UP="${COMPOSE_WATCH_NO_UP:-false}" # 'w'
-	COMPOSE_WATCH_DRY_RUN="${COMPOSE_WATCH_DRY_RUN:-false}" # 'n'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
 	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
 		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
 		case "$COMPOSE_PRESET_CHAR" in
+			'n')
+				COMPOSE_WATCH_DRY_RUN='true'
+				;;
 			'q')
 				COMPOSE_WATCH_QUIET='true'
 				;;
 			'w')
 				COMPOSE_WATCH_NO_UP='true'
-				;;
-			'n')
-				COMPOSE_WATCH_DRY_RUN='true'
 				;;
 			*)
 				echo "Warning: Unknown compose watch preset character '$COMPOSE_PRESET_CHAR'" >&2
@@ -1161,14 +1161,14 @@ handle_compose_presets_watch()
 	done
 
 	COMPOSE_ARGS='watch'
+	if [ "$COMPOSE_WATCH_DRY_RUN" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
+	fi
 	if [ "$COMPOSE_WATCH_QUIET" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --quiet"
 	fi
 	if [ "$COMPOSE_WATCH_NO_UP" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --no-up"
-	fi
-	if [ "$COMPOSE_WATCH_DRY_RUN" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
 	fi
 }
 
@@ -1176,32 +1176,38 @@ handle_compose_presets_watch()
 
 handle_compose_presets_run()
 {
-	COMPOSE_RUN_BUILD="${COMPOSE_RUN_BUILD:-false}" # 'b'
-	COMPOSE_RUN_DETACHED="${COMPOSE_RUN_DETACHED:-false}" # 'd'
 	COMPOSE_RUN_DRY_RUN="${COMPOSE_RUN_DRY_RUN:-false}" # 'n'
-	COMPOSE_RUN_INTERACTIVE="${COMPOSE_RUN_INTERACTIVE:-false}" # 'i'
-	COMPOSE_RUN_TTY="${COMPOSE_RUN_TTY:-false}" # 't'
+	COMPOSE_RUN_QUIET="${COMPOSE_RUN_QUIET:-false}" # 'q'
 	COMPOSE_RUN_NO_DEPS="${COMPOSE_RUN_NO_DEPS:-false}" # 'o'
 	COMPOSE_RUN_PULL="${COMPOSE_RUN_PULL:-false}"
-	COMPOSE_RUN_QUIET="${COMPOSE_RUN_QUIET:-false}" # 'q'
-	COMPOSE_RUN_RM="${COMPOSE_RUN_RM:-true}" # != 'k'
-	COMPOSE_RUN_SERVICE_PORTS="${COMPOSE_RUN_SERVICE_PORTS:-false}" # 'p'
+	COMPOSE_RUN_BUILD="${COMPOSE_RUN_BUILD:-false}" # 'b'
 	COMPOSE_RUN_WORKDIR="${COMPOSE_RUN_WORKDIR:-false}" # 'w'
 	COMPOSE_RUN_ENTRYPOINT="${COMPOSE_RUN_ENTRYPOINT:-}"
+	COMPOSE_RUN_INTERACTIVE="${COMPOSE_RUN_INTERACTIVE:-false}" # 'i'
+	COMPOSE_RUN_TTY="${COMPOSE_RUN_TTY:-false}" # 't'
+	COMPOSE_RUN_SERVICE_PORTS="${COMPOSE_RUN_SERVICE_PORTS:-false}" # 'p'
+	COMPOSE_RUN_DETACHED="${COMPOSE_RUN_DETACHED:-false}" # 'd'
+	COMPOSE_RUN_RM="${COMPOSE_RUN_RM:-true}" # != 'k'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
 	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
 		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
 		case "$COMPOSE_PRESET_CHAR" in
+			'n')
+				COMPOSE_RUN_DRY_RUN='true'
+				;;
+			'q')
+				COMPOSE_RUN_QUIET='true'
+				;;
+			'o')
+				COMPOSE_RUN_NO_DEPS='true'
+				;;
 			'b')
 				COMPOSE_RUN_BUILD='true'
 				;;
-			'd')
-				COMPOSE_RUN_DETACHED='true'
-				;;
-			'n')
-				COMPOSE_RUN_DRY_RUN='true'
+			'w')
+				COMPOSE_RUN_WORKDIR='true'
 				;;
 			'i')
 				COMPOSE_RUN_INTERACTIVE='true'
@@ -1209,20 +1215,14 @@ handle_compose_presets_run()
 			't')
 				COMPOSE_RUN_TTY='true'
 				;;
-			'o')
-				COMPOSE_RUN_NO_DEPS='true'
-				;;
-			'q')
-				COMPOSE_RUN_QUIET='true'
-				;;
-			'k')
-				COMPOSE_RUN_RM=false
-				;;
 			'p')
 				COMPOSE_RUN_SERVICE_PORTS='true'
 				;;
-			'w')
-				COMPOSE_RUN_WORKDIR='true'
+			'd')
+				COMPOSE_RUN_DETACHED='true'
+				;;
+			'k')
+				COMPOSE_RUN_RM=false
 				;;
 			*)
 				echo "Warning: Unknown compose run preset character '$COMPOSE_PRESET_CHAR'" >&2
@@ -1232,20 +1232,11 @@ handle_compose_presets_run()
 	done
 
 	COMPOSE_ARGS='run'
-	if [ "$COMPOSE_RUN_BUILD" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --build"
-	fi
-	if [ "$COMPOSE_RUN_DETACHED" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS -d"
-	fi
 	if [ "$COMPOSE_RUN_DRY_RUN" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
 	fi
-	if [ "$COMPOSE_RUN_INTERACTIVE" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS -i"
-	fi
-	if [ "$COMPOSE_RUN_TTY" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS -t"
+	if [ "$COMPOSE_RUN_QUIET" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --quiet"
 	fi
 	if [ "$COMPOSE_RUN_NO_DEPS" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --no-deps"
@@ -1253,32 +1244,40 @@ handle_compose_presets_run()
 	if [ "$COMPOSE_RUN_PULL" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --pull always"
 	fi
-	if [ "$COMPOSE_RUN_QUIET" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --quiet"
-	fi
-	if [ "$COMPOSE_RUN_RM" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --rm"
-	fi
-	if [ "$COMPOSE_RUN_SERVICE_PORTS" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --service-ports"
+	if [ "$COMPOSE_RUN_BUILD" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --build"
 	fi
 	if [ "$COMPOSE_RUN_WORKDIR" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS"' -w /pwd -v $(pwd):/pwd'
 	fi
-
 	if [ -n "$COMPOSE_RUN_ENTRYPOINT" ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --entrypoint $COMPOSE_RUN_ENTRYPOINT"
+	fi
+	if [ "$COMPOSE_RUN_INTERACTIVE" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -i"
+	fi
+	if [ "$COMPOSE_RUN_TTY" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -t"
+	fi
+	if [ "$COMPOSE_RUN_SERVICE_PORTS" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --service-ports"
+	fi
+	if [ "$COMPOSE_RUN_DETACHED" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -d"
+	fi
+	if [ "$COMPOSE_RUN_RM" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --rm"
 	fi
 }
 
 handle_compose_presets_logs()
 {
 	COMPOSE_LOGS_DRY_RUN="${COMPOSE_LOGS_DRY_RUN:-false}" # 'n'
-	COMPOSE_LOGS_FOLLOW="${COMPOSE_LOGS_FOLLOW:-false}" # 'f'
+	COMPOSE_LOGS_TAIL="${COMPOSE_LOGS_TAIL:-100}" # != 'l'
 	COMPOSE_LOGS_NO_COLOR="${COMPOSE_LOGS_NO_COLOR:-false}" # 'C'
 	COMPOSE_LOGS_NO_LOG_PREFIX="${COMPOSE_LOGS_NO_LOG_PREFIX:-false}" # 's', 'P'
-	COMPOSE_LOGS_TAIL="${COMPOSE_LOGS_TAIL:-100}" # != 'l'
 	COMPOSE_LOGS_TIMESTAMPS="${COMPOSE_LOGS_TIMESTAMPS:-false}" # 't'
+	COMPOSE_LOGS_FOLLOW="${COMPOSE_LOGS_FOLLOW:-false}" # 'f'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
@@ -1288,8 +1287,8 @@ handle_compose_presets_logs()
 			'n')
 				COMPOSE_LOGS_DRY_RUN='true'
 				;;
-			'f')
-				COMPOSE_LOGS_FOLLOW='true'
+			'l')
+				COMPOSE_LOGS_TAIL=''
 				;;
 			'C')
 				COMPOSE_LOGS_NO_COLOR='true'
@@ -1297,11 +1296,11 @@ handle_compose_presets_logs()
 			's'|'P')
 				COMPOSE_LOGS_NO_LOG_PREFIX='true'
 				;;
-			'l')
-				COMPOSE_LOGS_TAIL=''
-				;;
 			't')
 				COMPOSE_LOGS_TIMESTAMPS='true'
+				;;
+			'f')
+				COMPOSE_LOGS_FOLLOW='true'
 				;;
 			*)
 				echo "Warning: Unknown compose logs preset character '$COMPOSE_PRESET_CHAR'" >&2
@@ -1314,8 +1313,8 @@ handle_compose_presets_logs()
 	if [ "$COMPOSE_LOGS_DRY_RUN" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
 	fi
-	if [ "$COMPOSE_LOGS_FOLLOW" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS -f"
+	if [ -n "$COMPOSE_LOGS_TAIL" ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -n $COMPOSE_LOGS_TAIL"
 	fi
 	if [ "$COMPOSE_LOGS_NO_COLOR" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --no-color"
@@ -1323,19 +1322,19 @@ handle_compose_presets_logs()
 	if [ "$COMPOSE_LOGS_NO_LOG_PREFIX" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --no-log-prefix"
 	fi
-	if [ -n "$COMPOSE_LOGS_TAIL" ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS -n $COMPOSE_LOGS_TAIL"
-	fi
 	if [ "$COMPOSE_LOGS_TIMESTAMPS" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS -t"
+	fi
+	if [ "$COMPOSE_LOGS_FOLLOW" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -f"
 	fi
 }
 
 handle_compose_presets_rm()
 {
 	COMPOSE_RM_DRY_RUN="${COMPOSE_RM_DRY_RUN:-false}" # 'n'
-	COMPOSE_RM_FORCE="${COMPOSE_RM_FORCE:-false}" # 'f'
 	COMPOSE_RM_STOP="${COMPOSE_RM_STOP:-false}" # 's'
+	COMPOSE_RM_FORCE="${COMPOSE_RM_FORCE:-false}" # 'f'
 	COMPOSE_RM_VOLUMES="${COMPOSE_RM_VOLUMES:-false}" # 'v'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
@@ -1346,11 +1345,11 @@ handle_compose_presets_rm()
 			'n')
 				COMPOSE_RM_DRY_RUN='true'
 				;;
-			'f')
-				COMPOSE_RM_FORCE='true'
-				;;
 			's')
 				COMPOSE_RM_STOP='true'
+				;;
+			'f')
+				COMPOSE_RM_FORCE='true'
 				;;
 			'v')
 				COMPOSE_RM_VOLUMES='true'
@@ -1366,11 +1365,11 @@ handle_compose_presets_rm()
 	if [ "$COMPOSE_RM_DRY_RUN" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
 	fi
-	if [ "$COMPOSE_RM_FORCE" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS -f"
-	fi
 	if [ "$COMPOSE_RM_STOP" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --stop"
+	fi
+	if [ "$COMPOSE_RM_FORCE" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -f"
 	fi
 	if [ "$COMPOSE_RM_VOLUMES" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS -v"
