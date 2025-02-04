@@ -538,6 +538,10 @@ fi
 if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC & exit
 
+	if [ -n "$INSTALL_ARGS" ]; then
+		INSTALL_ARGS=" $INSTALL_ARGS"
+	fi
+
 	if [ "$QUIET" = 'false' ]; then
 		# Print install script command
 		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
