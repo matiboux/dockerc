@@ -11,6 +11,32 @@ VERSION='2.0.0'
 
 ERROR_CODE=''
 
+escape_shell_args()
+{
+	ARGS=''
+	for ARG in "$@"; do
+
+		if [ -z "$ARG" ]; then
+			# Skip empty arguments
+			continue
+		fi
+
+		if [ "$(echo "$ARG" | grep "[ '\"\$\`;*&#<>|]")" ]; then
+			# Escape argument with spaces or special shell characters
+			# Replace single quotes with escaped single quotes
+			ARG="'$(echo "$ARG" | sed "s/'/'\"'\"'/g")'"
+		fi
+
+		ARGS="$ARGS $ARG"
+
+	done
+
+	# Remove leading space
+	ARGS="${ARGS# }"
+
+	echo "$ARGS"
+}
+
 # Parse arguments
 # Dummy while loop to allow breaking
 while true; do
@@ -73,11 +99,25 @@ while true; do
 					break
 				fi
 				# Set installation directory
-				DOCKERC_INSTALL_DIR="$1"
+				DOCKERC_INSTALL_DIR=$(escape_shell_args "$1")
 				shift
 				;;
 
+			'-' | '--' )
+				# Stop parsing options
+				break
+				;;
+
+			'-'* )
+				# Unknown option
+				echo "Error: Unknown option '$1'" >&2
+				DOCKERC_PRINT_HELP='true'
+				ERROR_CODE=1
+				break
+				;;
+
 			* )
+				# Stop parsing options
 				break
 				;;
 
@@ -87,8 +127,7 @@ while true; do
 
 	if
 		[ "$DOCKERC_PRINT_HELP" = 'true' ] ||
-		[ "$DOCKERC_PRINT_VERSION" = 'true' ] ||
-		[ "$DOCKERC_UPDATE" = 'true' ]
+		[ "$DOCKERC_PRINT_VERSION" = 'true' ]
 	then
 		# Stop parsing arguments
 		break
@@ -97,6 +136,20 @@ while true; do
 	# Check for optional positional arguments
 	if [ "$#" -le 0 ]; then
 		# No more arguments
+		break
+	fi
+
+	if [ "$DOCKERC_UPDATE" = 'true' ]; then
+		# Parse update arguments
+
+		if [ "$1" = '--' ]; then
+			# Skip '--' argument
+			shift
+		fi
+
+		# Parse update install args
+		DOCKERC_INSTALL_ARGS=$(escape_shell_args "$@")
+
 		break
 	fi
 
@@ -119,11 +172,6 @@ while true; do
 		fi
 
 		DOCKERC_DOCKER_PRESET="$1"
-		shift
-
-	# Parse update install tag argument
-	elif [ "$DOCKERC_UPDATE" = 'true' ]; then
-		DOCKERC_INSTALL_TAG="$1"
 		shift
 
 	# Parse context argument
@@ -167,28 +215,9 @@ while true; do
 	# Else, this is a command argument
 	fi
 
-	# Parse trailing positional arguments
+	# Parse trailing positional arguments for command args
 	# Parse command args
-	DOCKERC_COMMAND_ARGS=''
-	for ARG in "$@"; do
-
-		if [ -z "$ARG" ]; then
-			# Skip empty arguments
-			continue
-		fi
-
-		if [ "$(echo "$ARG" | grep "[ '\"\$\`;*&#<>|]")" ]; then
-			# Escape argument with spaces or special shell characters
-			# Replace single quotes with escaped single quotes
-			ARG="'$(echo "$ARG" | sed "s/'/'\"'\"'/g")'"
-		fi
-
-		DOCKERC_COMMAND_ARGS="$DOCKERC_COMMAND_ARGS $ARG"
-
-	done
-
-	# Remove leading space
-	DOCKERC_COMMAND_ARGS="${DOCKERC_COMMAND_ARGS# }"
+	DOCKERC_COMMAND_ARGS=$(escape_shell_args "$@")
 
 	# Stop parsing arguments
 	break
@@ -208,6 +237,7 @@ if [ "$DOCKERC_DEBUG_ARGS" = 'true' ]; then
 	echo "DOCKERC_UID: $DOCKERC_UID"
 	echo "DOCKERC_UPDATE: $DOCKERC_UPDATE"
 	echo "DOCKERC_INSTALL_DIR: $DOCKERC_INSTALL_DIR"
+	echo "DOCKERC_INSTALL_ARGS: $DOCKERC_INSTALL_ARGS"
 	echo "DOCKERC_CONTEXT: $DOCKERC_CONTEXT"
 	echo "DOCKERC_COMPOSE_PRESET: $DOCKERC_COMPOSE_PRESET"
 	echo "DOCKERC_COMMAND_ARGS: $DOCKERC_COMMAND_ARGS"
@@ -244,16 +274,16 @@ if [ -n "$DOCKERC_UPDATE" ]; then
 	UPDATE="$DOCKERC_UPDATE"
 fi
 
-INSTALL_DIR="$(dirname "$0")"
+INSTALL_DIR="$(escape_shell_args "$(dirname "$0")")"
 if [ -n "$DOCKERC_INSTALL_DIR" ]; then
 	# Use from argument or environment variable
 	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
 fi
 
-INSTALL_TAG=''
-if [ -n "$DOCKERC_INSTALL_TAG" ]; then
+INSTALL_ARGS=''
+if [ -n "$DOCKERC_INSTALL_ARGS" ]; then
 	# Use from argument or environment variable
-	INSTALL_TAG="$DOCKERC_INSTALL_TAG"
+	INSTALL_ARGS="$DOCKERC_INSTALL_ARGS"
 fi
 
 DOCKER_PRESET=''
@@ -527,9 +557,8 @@ fi
 if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC & exit
 
-	INSTALL_TAG_ARG=''
-	if [ -n "$INSTALL_TAG" ]; then
-		INSTALL_TAG_ARG=" \"$INSTALL_TAG\""
+	if [ -n "$INSTALL_ARGS" ]; then
+		INSTALL_ARGS=" $INSTALL_ARGS"
 	fi
 
 	if [ "$QUIET" = 'false' ]; then
@@ -537,13 +566,13 @@ if [ "$UPDATE" = 'true' ]; then
 		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 			echo ''
 		fi
-		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARG}"
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir ${INSTALL_DIR}${INSTALL_ARGS}"
 		echo ''
 	fi
 
 	if [ "$DRY_RUN" = 'false' ]; then
 		# Run install script command
-		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARG}"
+		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir ${INSTALL_DIR}${INSTALL_ARGS}"
 	fi
 
 	exit ${ERROR_CODE:-0}
