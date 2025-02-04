@@ -87,8 +87,7 @@ while true; do
 
 	if
 		[ "$DOCKERC_PRINT_HELP" = 'true' ] ||
-		[ "$DOCKERC_PRINT_VERSION" = 'true' ] ||
-		[ "$DOCKERC_UPDATE" = 'true' ]
+		[ "$DOCKERC_PRINT_VERSION" = 'true' ]
 	then
 		# Stop parsing arguments
 		break
@@ -97,6 +96,26 @@ while true; do
 	# Check for optional positional arguments
 	if [ "$#" -le 0 ]; then
 		# No more arguments
+		break
+	fi
+
+	if [ "$DOCKERC_UPDATE" = 'true' ]; then
+		# Parse update arguments
+
+		# Parse update install tag argument
+		DOCKERC_INSTALL_TAG="$1"
+		shift
+
+		# Check for optional positional arguments
+		if [ "$#" -le 0 ]; then
+			# No more arguments
+			break
+		fi
+
+		# Parse update install args
+		DOCKERC_INSTALL_ARGS="$@"
+		shift
+
 		break
 	fi
 
@@ -119,11 +138,6 @@ while true; do
 		fi
 
 		DOCKERC_DOCKER_PRESET="$1"
-		shift
-
-	# Parse update install tag argument
-	elif [ "$DOCKERC_UPDATE" = 'true' ]; then
-		DOCKERC_INSTALL_TAG="$1"
 		shift
 
 	# Parse context argument
@@ -254,6 +268,12 @@ INSTALL_TAG=''
 if [ -n "$DOCKERC_INSTALL_TAG" ]; then
 	# Use from argument or environment variable
 	INSTALL_TAG="$DOCKERC_INSTALL_TAG"
+fi
+
+INSTALL_ARGS=''
+if [ -n "$DOCKERC_INSTALL_ARGS" ]; then
+	# Use from argument or environment variable
+	INSTALL_ARGS="$DOCKERC_INSTALL_ARGS"
 fi
 
 DOCKER_PRESET=''
@@ -527,9 +547,12 @@ fi
 if [ "$UPDATE" = 'true' ]; then
 	# Update DockerC & exit
 
-	INSTALL_TAG_ARG=''
+	INSTALL_TAG_ARGS=''
 	if [ -n "$INSTALL_TAG" ]; then
-		INSTALL_TAG_ARG=" \"$INSTALL_TAG\""
+		INSTALL_TAG_ARGS="$INSTALL_TAG_ARGS \"$INSTALL_TAG\""
+	fi
+	if [ -n "$INSTALL_ARGS" ]; then
+		INSTALL_TAG_ARGS="$INSTALL_TAG_ARGS $INSTALL_ARGS"
 	fi
 
 	if [ "$QUIET" = 'false' ]; then
@@ -537,13 +560,13 @@ if [ "$UPDATE" = 'true' ]; then
 		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 			echo ''
 		fi
-		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARG}"
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARGS}"
 		echo ''
 	fi
 
 	if [ "$DRY_RUN" = 'false' ]; then
 		# Run install script command
-		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARG}"
+		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_TAG_ARGS}"
 	fi
 
 	exit ${ERROR_CODE:-0}
