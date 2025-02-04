@@ -108,7 +108,7 @@ while true; do
 				break
 				;;
 
-			'-'* )
+			'--'* | '-'? )
 				# Unknown option
 				echo "Error: Unknown option '$1'" >&2
 				DOCKERC_PRINT_HELP='true'
