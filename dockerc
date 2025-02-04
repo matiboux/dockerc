@@ -11,6 +11,32 @@ VERSION='2.0.0'
 
 ERROR_CODE=''
 
+escape_shell_args()
+{
+	ARGS=''
+	for ARG in "$@"; do
+
+		if [ -z "$ARG" ]; then
+			# Skip empty arguments
+			continue
+		fi
+
+		if [ "$(echo "$ARG" | grep "[ '\"\$\`;*&#<>|]")" ]; then
+			# Escape argument with spaces or special shell characters
+			# Replace single quotes with escaped single quotes
+			ARG="'$(echo "$ARG" | sed "s/'/'\"'\"'/g")'"
+		fi
+
+		ARGS="$ARGS $ARG"
+
+	done
+
+	# Remove leading space
+	ARGS="${ARGS# }"
+
+	echo "$ARGS"
+}
+
 # Parse arguments
 # Dummy while loop to allow breaking
 while true; do
@@ -181,28 +207,9 @@ while true; do
 	# Else, this is a command argument
 	fi
 
-	# Parse trailing positional arguments
+	# Parse trailing positional arguments for command args
 	# Parse command args
-	DOCKERC_COMMAND_ARGS=''
-	for ARG in "$@"; do
-
-		if [ -z "$ARG" ]; then
-			# Skip empty arguments
-			continue
-		fi
-
-		if [ "$(echo "$ARG" | grep "[ '\"\$\`;*&#<>|]")" ]; then
-			# Escape argument with spaces or special shell characters
-			# Replace single quotes with escaped single quotes
-			ARG="'$(echo "$ARG" | sed "s/'/'\"'\"'/g")'"
-		fi
-
-		DOCKERC_COMMAND_ARGS="$DOCKERC_COMMAND_ARGS $ARG"
-
-	done
-
-	# Remove leading space
-	DOCKERC_COMMAND_ARGS="${DOCKERC_COMMAND_ARGS# }"
+	DOCKERC_COMMAND_ARGS=$(escape_shell_args "$@")
 
 	# Stop parsing arguments
 	break
