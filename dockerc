@@ -1284,6 +1284,66 @@ handle_compose_presets_run()
 	fi
 }
 
+handle_compose_presets_logs()
+{
+	COMPOSE_LOGS_DRY_RUN="${COMPOSE_LOGS_DRY_RUN:-'false'}" # 'n'
+	COMPOSE_LOGS_FOLLOW="${COMPOSE_LOGS_FOLLOW:-'false'}" # 'f'
+	COMPOSE_LOGS_NO_COLOR="${COMPOSE_LOGS_NO_COLOR:-'false'}" # 'C'
+	COMPOSE_LOGS_NO_LOG_PREFIX="${COMPOSE_LOGS_NO_LOG_PREFIX:-'false'}" # 's', 'P'
+	COMPOSE_LOGS_TAIL="${COMPOSE_LOGS_TAIL:-'100'}" # != 'l'
+	COMPOSE_LOGS_TIMESTAMPS="${COMPOSE_LOGS_TIMESTAMPS:-'false'}" # 't'
+
+	# Iterate over COMPOSE_PRESET_SUFFIX characters
+	i=1
+	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
+		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
+		case "$COMPOSE_PRESET_CHAR" in
+			'n')
+				COMPOSE_LOGS_DRY_RUN='true'
+				;;
+			'f')
+				COMPOSE_LOGS_FOLLOW='true'
+				;;
+			'C')
+				COMPOSE_LOGS_NO_COLOR='true'
+				;;
+			's'|'P')
+				COMPOSE_LOGS_NO_LOG_PREFIX='true'
+				;;
+			'l')
+				COMPOSE_LOGS_TAIL=''
+				;;
+			't')
+				COMPOSE_LOGS_TIMESTAMPS='true'
+				;;
+			*)
+				echo "Warning: Unknown compose logs preset character '$COMPOSE_PRESET_CHAR'" >&2
+				;;
+		esac
+		i=$((i + 1))
+	done
+
+	COMPOSE_ARGS='logs'
+	if [ "$COMPOSE_LOGS_DRY_RUN" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --dry-run"
+	fi
+	if [ "$COMPOSE_LOGS_FOLLOW" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -f"
+	fi
+	if [ "$COMPOSE_LOGS_NO_COLOR" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --no-color"
+	fi
+	if [ "$COMPOSE_LOGS_NO_LOG_PREFIX" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --no-log-prefix"
+	fi
+	if [ -n "$COMPOSE_LOGS_TAIL" ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --tail $COMPOSE_LOGS_TAIL"
+	fi
+	if [ "$COMPOSE_LOGS_TIMESTAMPS" = 'true' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS -t"
+	fi
+}
+
 # Handle compose presets
 COMPOSE_ARGS=''
 if [ -n "$COMPOSE_PRESET" ]; then
@@ -1360,53 +1420,9 @@ if [ -n "$COMPOSE_PRESET" ]; then
 			handle_compose_presets_run
 			;;
 
-		'@l')
-			COMPOSE_ARGS='logs -n 100'
-			;;
-		'@lf')
-			COMPOSE_ARGS='logs -n 100 -f'
-			;;
-		'@lt')
-			COMPOSE_ARGS='logs -n 100 -t'
-			;;
-		'@ls')
-			COMPOSE_ARGS='logs -n 100 --no-log-prefix'
-			;;
-		'@lft')
-			COMPOSE_ARGS='logs -n 100 -f -t'
-			;;
-		'@lfs')
-			COMPOSE_ARGS='logs -n 100 -f --no-log-prefix'
-			;;
-		'@lfts')
-			COMPOSE_ARGS='logs -n 100 -f -t --no-log-prefix'
-			;;
-		'@lts')
-			COMPOSE_ARGS='logs -n 100 -t --no-log-prefix'
-			;;
-		'@ll')
-			COMPOSE_ARGS='logs'
-			;;
-		'@llf')
-			COMPOSE_ARGS='logs -f'
-			;;
-		'@llt')
-			COMPOSE_ARGS='logs -t'
-			;;
-		'@lls')
-			COMPOSE_ARGS='logs --no-log-prefix'
-			;;
-		'@llft')
-			COMPOSE_ARGS='logs -f -t'
-			;;
-		'@llfs')
-			COMPOSE_ARGS='logs -f --no-log-prefix'
-			;;
-		'@llfts')
-			COMPOSE_ARGS='logs -f -t --no-log-prefix'
-			;;
-		'@llts')
-			COMPOSE_ARGS='logs -t --no-log-prefix'
+		'@l'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@l}"
+			handle_compose_presets_logs
 			;;
 
 		'@p')
