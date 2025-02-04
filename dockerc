@@ -1452,10 +1452,22 @@ if [ -n "$COMPOSE_PRESET" ]; then
 			COMPOSE_RUN_ENTRYPOINT='/bin/sh'
 			handle_compose_presets_run
 			;;
+		'@ash'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@ash}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/ash'
+			handle_compose_presets_run
+			;;
 		'@bash'*)
 			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@bash}"
 			COMPOSE_RUN_INTERACTIVE='true'
 			COMPOSE_RUN_ENTRYPOINT='/bin/bash'
+			handle_compose_presets_run
+			;;
+		'@zsh'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@zsh}"
+			COMPOSE_RUN_INTERACTIVE='true'
+			COMPOSE_RUN_ENTRYPOINT='/bin/zsh'
 			handle_compose_presets_run
 			;;
 
