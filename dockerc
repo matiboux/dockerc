@@ -1389,12 +1389,6 @@ if [ -n "$COMPOSE_PRESET" ]; then
 			handle_compose_presets_up
 			;;
 
-		# Build presets
-		'@b'*)
-			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@b}"
-			handle_compose_presets_build
-			;;
-
 		# Watch presets
 		'@w'*)
 			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@w}"
@@ -1464,6 +1458,12 @@ if [ -n "$COMPOSE_PRESET" ]; then
 			COMPOSE_RUN_INTERACTIVE='true'
 			COMPOSE_RUN_ENTRYPOINT='/bin/bash'
 			handle_compose_presets_run
+			;;
+
+		# Build presets
+		'@b'*)
+			COMPOSE_PRESET_SUFFIX="${COMPOSE_PRESET#@b}"
+			handle_compose_presets_build
 			;;
 
 		# Logs presets
