@@ -139,8 +139,7 @@ while true; do
 		fi
 
 		# Parse update install args
-		DOCKERC_INSTALL_ARGS="$@"
-		shift
+		DOCKERC_INSTALL_ARGS=$(escape_shell_args "$@")
 
 		break
 	fi
