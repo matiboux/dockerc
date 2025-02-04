@@ -1043,11 +1043,11 @@ fi
 
 handle_compose_presets_up()
 {
-	COMPOSE_UP_DETACHED='true'
-	COMPOSE_UP_BUILD='false'
-	COMPOSE_UP_FORCE_RECREATE='false'
-	COMPOSE_UP_REMOVE_ORPHANS='false'
-	COMPOSE_UP_PULL='false'
+	COMPOSE_UP_DETACHED="${COMPOSE_UP_DETACHED:-true}" # != 'a'
+	COMPOSE_UP_BUILD="${COMPOSE_UP_BUILD:-false}" # 'b'
+	COMPOSE_UP_FORCE_RECREATE="${COMPOSE_UP_FORCE_RECREATE:-false}" # 'f'
+	COMPOSE_UP_REMOVE_ORPHANS="${COMPOSE_UP_REMOVE_ORPHANS:-false}" # 'r'
+	COMPOSE_UP_PULL="${COMPOSE_UP_PULL:-false}" # 'p'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
@@ -1096,9 +1096,9 @@ handle_compose_presets_up()
 
 handle_compose_presets_build()
 {
-	COMPOSE_BUILD_PULL='false'
-	COMPOSE_BUILD_NO_CACHE='false'
-	COMPOSE_BUILD_DRY_RUN='false'
+	COMPOSE_BUILD_PULL="${COMPOSE_BUILD_PULL:-false}" # 'p'
+	COMPOSE_BUILD_NO_CACHE="${COMPOSE_BUILD_NO_CACHE:-false}" # 'f'
+	COMPOSE_BUILD_DRY_RUN="${COMPOSE_BUILD_DRY_RUN:-false}" # 'n'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
@@ -1135,9 +1135,9 @@ handle_compose_presets_build()
 
 handle_compose_presets_watch()
 {
-	COMPOSE_WATCH_QUIET='false'
-	COMPOSE_WATCH_NO_UP='false'
-	COMPOSE_WATCH_DRY_RUN='false'
+	COMPOSE_WATCH_QUIET="${COMPOSE_WATCH_QUIET:-false}" # 'q'
+	COMPOSE_WATCH_NO_UP="${COMPOSE_WATCH_NO_UP:-false}" # 'w'
+	COMPOSE_WATCH_DRY_RUN="${COMPOSE_WATCH_DRY_RUN:-false}" # 'n'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
@@ -1176,18 +1176,18 @@ handle_compose_presets_watch()
 
 handle_compose_presets_run()
 {
-	COMPOSE_RUN_BUILD="${COMPOSE_RUN_BUILD:-'false'}" # 'b'
-	COMPOSE_RUN_DETACHED="${COMPOSE_RUN_DETACHED:-'false'}" # 'd'
-	COMPOSE_RUN_DRY_RUN="${COMPOSE_RUN_DRY_RUN:-'false'}" # 'n'
-	COMPOSE_RUN_INTERACTIVE="${COMPOSE_RUN_INTERACTIVE:-'false'}" # 'i'
-	COMPOSE_RUN_TTY="${COMPOSE_RUN_TTY:-'false'}" # 't'
-	COMPOSE_RUN_NO_DEPS="${COMPOSE_RUN_NO_DEPS:-'false'}" # 'o'
-	COMPOSE_RUN_PULL="${COMPOSE_RUN_PULL:-'false'}"
-	COMPOSE_RUN_QUIET="${COMPOSE_RUN_QUIET:-'false'}" # 'q'
-	COMPOSE_RUN_RM="${COMPOSE_RUN_RM:-'true'}" # != 'k'
-	COMPOSE_RUN_SERVICE_PORTS="${COMPOSE_RUN_SERVICE_PORTS:-'false'}" # 'p'
-	COMPOSE_RUN_WORKDIR="${COMPOSE_RUN_WORKDIR:-'false'}" # 'w'
-	COMPOSE_RUN_ENTRYPOINT="${COMPOSE_RUN_ENTRYPOINT:-''}"
+	COMPOSE_RUN_BUILD="${COMPOSE_RUN_BUILD:-false}" # 'b'
+	COMPOSE_RUN_DETACHED="${COMPOSE_RUN_DETACHED:-false}" # 'd'
+	COMPOSE_RUN_DRY_RUN="${COMPOSE_RUN_DRY_RUN:-false}" # 'n'
+	COMPOSE_RUN_INTERACTIVE="${COMPOSE_RUN_INTERACTIVE:-false}" # 'i'
+	COMPOSE_RUN_TTY="${COMPOSE_RUN_TTY:-false}" # 't'
+	COMPOSE_RUN_NO_DEPS="${COMPOSE_RUN_NO_DEPS:-false}" # 'o'
+	COMPOSE_RUN_PULL="${COMPOSE_RUN_PULL:-false}"
+	COMPOSE_RUN_QUIET="${COMPOSE_RUN_QUIET:-false}" # 'q'
+	COMPOSE_RUN_RM="${COMPOSE_RUN_RM:-true}" # != 'k'
+	COMPOSE_RUN_SERVICE_PORTS="${COMPOSE_RUN_SERVICE_PORTS:-false}" # 'p'
+	COMPOSE_RUN_WORKDIR="${COMPOSE_RUN_WORKDIR:-false}" # 'w'
+	COMPOSE_RUN_ENTRYPOINT="${COMPOSE_RUN_ENTRYPOINT:-}"
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
@@ -1216,7 +1216,7 @@ handle_compose_presets_run()
 				COMPOSE_RUN_QUIET='true'
 				;;
 			'k')
-				COMPOSE_RUN_RM='false'
+				COMPOSE_RUN_RM=false
 				;;
 			'p')
 				COMPOSE_RUN_SERVICE_PORTS='true'
@@ -1273,12 +1273,12 @@ handle_compose_presets_run()
 
 handle_compose_presets_logs()
 {
-	COMPOSE_LOGS_DRY_RUN="${COMPOSE_LOGS_DRY_RUN:-'false'}" # 'n'
-	COMPOSE_LOGS_FOLLOW="${COMPOSE_LOGS_FOLLOW:-'false'}" # 'f'
-	COMPOSE_LOGS_NO_COLOR="${COMPOSE_LOGS_NO_COLOR:-'false'}" # 'C'
-	COMPOSE_LOGS_NO_LOG_PREFIX="${COMPOSE_LOGS_NO_LOG_PREFIX:-'false'}" # 's', 'P'
-	COMPOSE_LOGS_TAIL="${COMPOSE_LOGS_TAIL:-'100'}" # != 'l'
-	COMPOSE_LOGS_TIMESTAMPS="${COMPOSE_LOGS_TIMESTAMPS:-'false'}" # 't'
+	COMPOSE_LOGS_DRY_RUN="${COMPOSE_LOGS_DRY_RUN:-false}" # 'n'
+	COMPOSE_LOGS_FOLLOW="${COMPOSE_LOGS_FOLLOW:-false}" # 'f'
+	COMPOSE_LOGS_NO_COLOR="${COMPOSE_LOGS_NO_COLOR:-false}" # 'C'
+	COMPOSE_LOGS_NO_LOG_PREFIX="${COMPOSE_LOGS_NO_LOG_PREFIX:-false}" # 's', 'P'
+	COMPOSE_LOGS_TAIL="${COMPOSE_LOGS_TAIL:-100}" # != 'l'
+	COMPOSE_LOGS_TIMESTAMPS="${COMPOSE_LOGS_TIMESTAMPS:-false}" # 't'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
@@ -1333,10 +1333,10 @@ handle_compose_presets_logs()
 
 handle_compose_presets_rm()
 {
-	COMPOSE_RM_DRY_RUN="${COMPOSE_RM_DRY_RUN:-'false'}" # 'n'
-	COMPOSE_RM_FORCE="${COMPOSE_RM_FORCE:-'false'}" # 'f'
-	COMPOSE_RM_STOP="${COMPOSE_RM_STOP:-'false'}" # 's'
-	COMPOSE_RM_VOLUMES="${COMPOSE_RM_VOLUMES:-'false'}" # 'v'
+	COMPOSE_RM_DRY_RUN="${COMPOSE_RM_DRY_RUN:-false}" # 'n'
+	COMPOSE_RM_FORCE="${COMPOSE_RM_FORCE:-false}" # 'f'
+	COMPOSE_RM_STOP="${COMPOSE_RM_STOP:-false}" # 's'
+	COMPOSE_RM_VOLUMES="${COMPOSE_RM_VOLUMES:-false}" # 'v'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
