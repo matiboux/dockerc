@@ -99,7 +99,7 @@ while true; do
 					break
 				fi
 				# Set installation directory
-				DOCKERC_INSTALL_DIR="$1"
+				DOCKERC_INSTALL_DIR=$(escape_shell_args "$1")
 				shift
 				;;
 
@@ -255,7 +255,7 @@ if [ -n "$DOCKERC_UPDATE" ]; then
 	UPDATE="$DOCKERC_UPDATE"
 fi
 
-INSTALL_DIR="$(dirname "$0")"
+INSTALL_DIR="$(escape_shell_args "$(dirname "$0")")"
 if [ -n "$DOCKERC_INSTALL_DIR" ]; then
 	# Use from argument or environment variable
 	INSTALL_DIR="$DOCKERC_INSTALL_DIR"
@@ -547,13 +547,13 @@ if [ "$UPDATE" = 'true' ]; then
 		if [ "$DOCKERC_FIRST_NEWLINE" != 'false' ]; then
 			echo ''
 		fi
-		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_ARGS}"
+		echo "> curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir ${INSTALL_DIR}${INSTALL_ARGS}"
 		echo ''
 	fi
 
 	if [ "$DRY_RUN" = 'false' ]; then
 		# Run install script command
-		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir \"${INSTALL_DIR}\"${INSTALL_ARGS}"
+		exec sh -c "curl -fsSL \"https://raw.githubusercontent.com/matiboux/dockerc/HEAD/install.sh\" | /bin/sh -s -- --install-dir ${INSTALL_DIR}${INSTALL_ARGS}"
 	fi
 
 	exit ${ERROR_CODE:-0}
