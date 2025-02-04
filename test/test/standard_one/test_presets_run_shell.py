@@ -10,7 +10,7 @@ def test_presets_sh(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run -i --rm --entrypoint /bin/sh'
+                b' run --entrypoint /bin/sh -i --rm'
             )
         )
 
@@ -23,7 +23,7 @@ def test_presets_shw(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+                b' run -w /pwd -v $(pwd):/pwd --entrypoint /bin/sh -i --rm'
             )
         )
 
@@ -42,7 +42,7 @@ def test_presets_shb(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run --build -i --rm --entrypoint /bin/sh'
+                b' run --build --entrypoint /bin/sh -i --rm'
             )
        )
 
@@ -55,7 +55,7 @@ def test_presets_shbw(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/sh'
+                b' run --build -w /pwd -v $(pwd):/pwd --entrypoint /bin/sh -i --rm'
             )
         )
 
@@ -68,7 +68,7 @@ def test_presets_bash(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run -i --rm --entrypoint /bin/bash'
+                b' run --entrypoint /bin/bash -i --rm'
             )
         )
 
@@ -81,7 +81,7 @@ def test_presets_bashw(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
+                b' run -w /pwd -v $(pwd):/pwd --entrypoint /bin/bash -i --rm'
             )
         )
 
@@ -94,7 +94,7 @@ def test_presets_bashb(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run --build -i --rm --entrypoint /bin/bash'
+                b' run --build --entrypoint /bin/bash -i --rm'
             )
         )
 
@@ -107,6 +107,6 @@ def test_presets_bashbw(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run --build -w /pwd -v $(pwd):/pwd -i --rm --entrypoint /bin/bash'
+                b' run --build -w /pwd -v $(pwd):/pwd --entrypoint /bin/bash -i --rm'
             )
         )

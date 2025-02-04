@@ -62,7 +62,7 @@ def test_presets_ubf(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up --build -d --force-recreate'
+                b' up --build --force-recreate -d'
             )
         )
 
@@ -88,7 +88,7 @@ def test_presets_ubfp(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up --build -d --force-recreate --pull always'
+                b' up --pull always --build --force-recreate -d'
             )
         )
 
@@ -101,7 +101,7 @@ def test_presets_ubfap(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up --build --force-recreate --pull always'
+                b' up --pull always --build --force-recreate'
             )
         )
 
@@ -114,7 +114,7 @@ def test_presets_ubr(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up --build -d --remove-orphans'
+                b' up --build --remove-orphans -d'
             )
         )
 
@@ -140,7 +140,7 @@ def test_presets_ubfr(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up --build -d --force-recreate --remove-orphans'
+                b' up --build --force-recreate --remove-orphans -d'
             )
         )
 
@@ -166,7 +166,7 @@ def test_presets_uf(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up -d --force-recreate'
+                b' up --force-recreate -d'
             )
         )
 
@@ -192,7 +192,7 @@ def test_presets_ur(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up -d --remove-orphans'
+                b' up --remove-orphans -d'
             )
         )
 
@@ -218,7 +218,7 @@ def test_presets_ufr(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up -d --force-recreate --remove-orphans'
+                b' up --force-recreate --remove-orphans -d'
             )
         )
 

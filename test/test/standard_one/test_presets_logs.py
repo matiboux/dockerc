@@ -62,7 +62,7 @@ def test_presets_lft(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' logs -n 100 -f -t'
+                b' logs -n 100 -t -f'
             )
         )
 
@@ -75,7 +75,7 @@ def test_presets_lfs(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' logs -n 100 -f --no-log-prefix'
+                b' logs -n 100 --no-log-prefix -f'
             )
         )
 
@@ -88,7 +88,7 @@ def test_presets_lfts(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' logs -n 100 -f -t --no-log-prefix'
+                b' logs -n 100 --no-log-prefix -t -f'
             )
         )
 
@@ -101,7 +101,7 @@ def test_presets_lts(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' logs -n 100 -t --no-log-prefix'
+                b' logs -n 100 --no-log-prefix -t'
             )
         )
 
@@ -166,7 +166,7 @@ def test_presets_llft(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' logs -f -t'
+                b' logs -t -f'
             )
         )
 
@@ -179,7 +179,7 @@ def test_presets_llfs(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' logs -f --no-log-prefix'
+                b' logs --no-log-prefix -f'
             )
         )
 
@@ -192,7 +192,7 @@ def test_presets_llfts(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' logs -f -t --no-log-prefix'
+                b' logs --no-log-prefix -t -f'
             )
         )
 
@@ -205,6 +205,6 @@ def test_presets_llts(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' logs -t --no-log-prefix'
+                b' logs --no-log-prefix -t'
             )
         )

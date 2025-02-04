@@ -36,7 +36,7 @@ def test_presets_rd(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run -d'
+                b' run -d --rm'
             )
         )
 
@@ -88,7 +88,7 @@ def test_presets_rbd(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' run --build -d'
+                b' run --build -d --rm'
             )
         )
 

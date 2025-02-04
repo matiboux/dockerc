@@ -39,7 +39,7 @@ def test_default_uf(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up -d --force-recreate'
+                b' up --force-recreate -d'
             ),
         )
 
@@ -53,16 +53,23 @@ def test_default_ubf(file = __file__):
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' up --build -d --force-recreate'
+                b' up --build --force-recreate -d'
             ),
         )
 
-def test_default_uabc_not_found(file = __file__):
+def test_default_uabc(file = __file__):
     with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc(
             '-',
             '@uabc',
         )
-        dockerc.assert_context_error(
-            stderr = b'Error: Unknown compose preset \'@uabc\'\n',
+        dockerc.assert_context_ok(
+            format_dockerc_stdout(
+                b'docker compose'
+                b' -f ./docker-compose.yml'
+                b' up --build'
+            ),
+            stderr = (
+                b'Warning: Unknown compose up preset character \'c\'\n'
+            )
         )
