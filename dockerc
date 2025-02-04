@@ -1414,6 +1414,7 @@ if [ -n "$COMPOSE_PRESET" ]; then
 			handle_compose_presets_watch
 			;;
 
+		# Down presets
 		'@d')
 			COMPOSE_ARGS='down'
 			;;
@@ -1484,6 +1485,7 @@ if [ -n "$COMPOSE_PRESET" ]; then
 			handle_compose_presets_logs
 			;;
 
+		# Ps presets
 		'@p')
 			COMPOSE_ARGS='ps'
 			;;
@@ -1491,10 +1493,12 @@ if [ -n "$COMPOSE_PRESET" ]; then
 			COMPOSE_ARGS='ps -a'
 			;;
 
+		# Push presets
 		'@pu')
 			COMPOSE_ARGS='push'
 			;;
 
+		# Pull presets
 		'@pl')
 			COMPOSE_ARGS='pull'
 			;;
