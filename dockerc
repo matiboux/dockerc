@@ -743,7 +743,7 @@ if [ "$CONTEXT" != '--' ]; then
 
 	CONTEXT_SKIP_ROOT_STANDARD='false'
 
-	if [ "$CONTEXT" = '-' ] || [ "$CONTEXT" = '.' ]; then
+	if [ "$CONTEXT" = '-' ]; then
 		# Use default context
 		CONTEXT=''
 
@@ -805,7 +805,7 @@ if [ "$CONTEXT" != '--' ]; then
 			fi
 
 			# Parse context parts
-			if [ -n "$CONTEXT" ]; then
+			if [ -n "$CONTEXT" ] && [ "$CONTEXT" != '.' ]; then
 
 				if [ -n "$LVL1_COMPOSE_FILE_ARGS" ]; then
 
@@ -1002,7 +1002,8 @@ if [ "$CONTEXT" != '--' ]; then
 						break
 					fi
 
-				elif [ "$CONTEXT" != 'prod' ]; then
+				elif [ "$CONTEXT" != '.' ] && [ "$CONTEXT" != 'prod' ]; then
+					# Neither "root" nor "prod" context
 					# Context not resolved: invalidate LVL1 & break loop
 					LVL1_COMPOSE_FILE_ARGS=''
 					break
