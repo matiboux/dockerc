@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# DockerC (v2.0.0)
+# DockerC (v2.1.0)
 # Wrapper for docker compose commands in your project.
 # https://github.com/matiboux/dockerc
 # MIT License
 # Copyright (c) 2023 Matiboux
 # This project is not affiliated with Docker, Inc.
 
-VERSION='2.0.0'
+VERSION='2.1.0'
 
 ERROR_CODE=''
 
