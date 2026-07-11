@@ -1214,8 +1214,8 @@ handle_compose_presets_down()
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
 	i=1
 	while [ $i -le ${#COMPOSE_PRESET_SUFFIX} ]; do
-		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
-		case "$COMPOSE_PRESET_CHAR" in
+		COMPOSE_PRESET_CHAR=$(echo "${COMPOSE_PRESET_SUFFIX}" | cut -c$i)
+		case "${COMPOSE_PRESET_CHAR}" in
 			'a')
 				[ "${COMPOSE_DOWN_REMOVE_LEVEL}" = 'false' ] && COMPOSE_DOWN_REMOVE_LEVEL='1'
 				[ "${COMPOSE_DOWN_REMOVE_LEVEL}" = '2' ] && COMPOSE_DOWN_REMOVE_LEVEL='3'
@@ -1227,22 +1227,22 @@ handle_compose_presets_down()
 				COMPOSE_DOWN_VOLUMES='true'
 				;;
 			*)
-				echo "Warning: Unknown compose watch preset character '$COMPOSE_PRESET_CHAR'" >&2
+				echo "Warning: Unknown compose down preset character '${COMPOSE_PRESET_CHAR}'" >&2
 				;;
 		esac
 		i=$((i + 1))
 	done
 
 	COMPOSE_ARGS='down'
-	if [ "$COMPOSE_DOWN_REMOVE_LEVEL" = '1' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --remove-orphans"
-	elif [ "$COMPOSE_DOWN_REMOVE_LEVEL" = '2' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --remove-orphans --rmi local"
-	elif [ "$COMPOSE_DOWN_REMOVE_LEVEL" = '3' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --remove-orphans --rmi all"
+	if [ "${COMPOSE_DOWN_REMOVE_LEVEL}" = '1' ]; then
+		COMPOSE_ARGS="${COMPOSE_ARGS} --remove-orphans"
+	elif [ "${COMPOSE_DOWN_REMOVE_LEVEL}" = '2' ]; then
+		COMPOSE_ARGS="${COMPOSE_ARGS} --remove-orphans --rmi local"
+	elif [ "${COMPOSE_DOWN_REMOVE_LEVEL}" = '3' ]; then
+		COMPOSE_ARGS="${COMPOSE_ARGS} --remove-orphans --rmi all"
 	fi
-	if [ "$COMPOSE_DOWN_VOLUMES" = 'true' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS -v" # --volumes
+	if [ "${COMPOSE_DOWN_VOLUMES}" = 'true' ]; then
+		COMPOSE_ARGS="${COMPOSE_ARGS} -v" # --volumes
 	fi
 }
 
