@@ -450,8 +450,9 @@ if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
 	echo '    @da    down --remove-orphans'
 	echo '    @dr    down --remove-orphans --rmi local'
 	echo '    @dra   down --remove-orphans --rmi all'
-	echo '    @drav  down --remove-orphans --rmi all -v'
+	echo '    @dv    down -v'
 	echo '    @drv   down --remove-orphans -v'
+	echo '    @drav  down --remove-orphans --rmi all -v'
 	echo '  run:'
 	echo '    @r[suffix]  run --rm'
 	echo '    Suffixes to combine:'
@@ -1439,11 +1440,14 @@ if [ -n "$COMPOSE_PRESET" ]; then
 		'@dra')
 			COMPOSE_ARGS='down --remove-orphans --rmi all'
 			;;
-		'@drav')
-			COMPOSE_ARGS='down --remove-orphans --rmi all -v'
+		'@dv')
+			COMPOSE_ARGS='down -v'
 			;;
 		'@drv')
 			COMPOSE_ARGS='down --remove-orphans -v'
+			;;
+		'@drav')
+			COMPOSE_ARGS='down --remove-orphans --rmi all -v'
 			;;
 
 		# Rm presets
