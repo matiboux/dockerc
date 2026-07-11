@@ -447,12 +447,13 @@ if [ "$DOCKERC_PRINT_HELP_COMPOSE_PRESET" = 'true' ]; then
 	echo '      (e.g. @wq, @wwqn)'
 	echo '  down:'
 	echo '    @d[suffix]  down'
+	echo '    Preset suffixes:'
+	echo '      a   --remove-orphans'
+	echo '      r   --remove-orphans --rmi local'
+	echo '      ra  --remove-orphans --rmi all'
 	echo '    Suffixes to combine:'
-	echo '      a  --remove-orphans'
-	echo '      r  --rmi local'
-	echo '      R  --rmi all'
 	echo '      v  -v (volumes)'
-	echo '      (e.g. @dar, @daRv)'
+	echo '      (e.g. @da, @drv, @drav)'
 	echo '  run:'
 	echo '    @r[suffix]  run --rm'
 	echo '    Suffixes to combine:'
@@ -1207,8 +1208,7 @@ handle_compose_presets_watch()
 
 handle_compose_presets_down()
 {
-	COMPOSE_DOWN_REMOVE_ORPHANS="${COMPOSE_DOWN_REMOVE_ORPHANS:-false}" # 'a'
-	COMPOSE_DOWN_RMI="${COMPOSE_DOWN_RMI_LOCAL:-false}" # 'r' / 'R'
+	COMPOSE_DOWN_REMOVE_LEVEL="${COMPOSE_DOWN_REMOVE_LEVEL:-false}" # 'a', 'r', 'ra'
 	COMPOSE_DOWN_VOLUMES="${COMPOSE_DOWN_VOLUMES:-false}" # 'v'
 
 	# Iterate over COMPOSE_PRESET_SUFFIX characters
@@ -1217,13 +1217,11 @@ handle_compose_presets_down()
 		COMPOSE_PRESET_CHAR=$(echo "$COMPOSE_PRESET_SUFFIX" | cut -c$i)
 		case "$COMPOSE_PRESET_CHAR" in
 			'a')
-				COMPOSE_DOWN_REMOVE_ORPHANS='true'
+				[ "${COMPOSE_DOWN_REMOVE_LEVEL}" = 'false' ] && COMPOSE_DOWN_REMOVE_LEVEL='1'
+				[ "${COMPOSE_DOWN_REMOVE_LEVEL}" = '2' ] && COMPOSE_DOWN_REMOVE_LEVEL='3'
 				;;
 			'r')
-				COMPOSE_DOWN_RMI='local'
-				;;
-			'R')
-				COMPOSE_DOWN_RMI='all'
+				{ [ "${COMPOSE_DOWN_REMOVE_LEVEL}" = 'false' ] || [ "${COMPOSE_DOWN_REMOVE_LEVEL}" = '1' ]; } && COMPOSE_DOWN_REMOVE_LEVEL='2'
 				;;
 			'v')
 				COMPOSE_DOWN_VOLUMES='true'
@@ -1236,13 +1234,12 @@ handle_compose_presets_down()
 	done
 
 	COMPOSE_ARGS='down'
-	if [ "$COMPOSE_DOWN_REMOVE_ORPHANS" = 'true' ]; then
+	if [ "$COMPOSE_DOWN_REMOVE_LEVEL" = '1' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --remove-orphans"
-	fi
-	if [ "$COMPOSE_DOWN_RMI" = 'local' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --rmi local"
-	elif [ "$COMPOSE_DOWN_RMI" = 'all' ]; then
-		COMPOSE_ARGS="$COMPOSE_ARGS --rmi all"
+	elif [ "$COMPOSE_DOWN_REMOVE_LEVEL" = '2' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --remove-orphans --rmi local"
+	elif [ "$COMPOSE_DOWN_REMOVE_LEVEL" = '3' ]; then
+		COMPOSE_ARGS="$COMPOSE_ARGS --remove-orphans --rmi all"
 	fi
 	if [ "$COMPOSE_DOWN_VOLUMES" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS -v" # --volumes
