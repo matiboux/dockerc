@@ -85,17 +85,17 @@ def test_presets_dv(file = __file__):
             )
         )
 
-def test_presets_drav(file = __file__):
-    # Down with remove level 3 and volumes
+def test_presets_dav(file = __file__):
+    # Down with remove level 1 and volumes
     with TestDirContext(file) as ctx:
         dockerc = ctx.run_dockerc(
-            '-', '@drav',
+            '-', '@dav',
         )
         dockerc.assert_context_ok(
             format_dockerc_stdout(
                 b'docker compose'
                 b' -f ./docker-compose.yml'
-                b' down --remove-orphans --rmi all -v'
+                b' down --remove-orphans -v'
             )
         )
 
@@ -113,20 +113,6 @@ def test_presets_drv(file = __file__):
             )
         )
 
-def test_presets_dav(file = __file__):
-    # Down with remove level 1 and volumes
-    with TestDirContext(file) as ctx:
-        dockerc = ctx.run_dockerc(
-            '-', '@dav',
-        )
-        dockerc.assert_context_ok(
-            format_dockerc_stdout(
-                b'docker compose'
-                b' -f ./docker-compose.yml'
-                b' down --remove-orphans -v'
-            )
-        )
-
 def test_presets_darv(file = __file__):
     # Down with remove level 2 and volumes
     with TestDirContext(file) as ctx:
@@ -138,5 +124,19 @@ def test_presets_darv(file = __file__):
                 b'docker compose'
                 b' -f ./docker-compose.yml'
                 b' down --remove-orphans --rmi local -v'
+            )
+        )
+
+def test_presets_drav(file = __file__):
+    # Down with remove level 3 and volumes
+    with TestDirContext(file) as ctx:
+        dockerc = ctx.run_dockerc(
+            '-', '@drav',
+        )
+        dockerc.assert_context_ok(
+            format_dockerc_stdout(
+                b'docker compose'
+                b' -f ./docker-compose.yml'
+                b' down --remove-orphans --rmi all -v'
             )
         )
