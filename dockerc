@@ -11,6 +11,21 @@ VERSION='2.2.0'
 
 ERROR_CODE=''
 
+is_interactive_session()
+{
+	# Non-interactive if explicitly requested via environment variable
+	if [ "$DEBIAN_FRONTEND" = 'noninteractive' ]; then
+		return 1
+	fi
+
+	# Non-interactive if stdin and/or stdout is not a tty (e.g. piped, redirected, or no tty allocated)
+	if ! [ -t 0 ] || ! [ -t 1 ]; then
+		return 1
+	fi
+
+	return 0
+}
+
 escape_shell_args()
 {
 	ARGS=''
@@ -1324,6 +1339,15 @@ handle_compose_presets_run()
 	fi
 	if [ -n "$COMPOSE_RUN_ENTRYPOINT" ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --entrypoint $COMPOSE_RUN_ENTRYPOINT"
+	fi
+	if [ "$COMPOSE_RUN_INTERACTIVE" = 'true' ] && ! is_interactive_session; then
+		# Non-interactive session: drop the interactive flag to avoid hanging/erroring
+		# on a missing tty (e.g. running in CI, cron, or with redirected stdin/stdout)
+		COMPOSE_RUN_INTERACTIVE='false'
+	fi
+	if [ "$COMPOSE_RUN_TTY" = 'true' ] && ! is_interactive_session; then
+		# Non-interactive session: drop the tty flag, same reason as above
+		COMPOSE_RUN_TTY='false'
 	fi
 	if [ "$COMPOSE_RUN_INTERACTIVE" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS -i"
