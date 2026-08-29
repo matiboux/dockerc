@@ -1075,19 +1075,10 @@ if [ "$CONTEXT" != '--' ]; then
 
 fi
 
-is_interactive_session()
+is_tty_session()
 {
-	# Non-interactive if explicitly requested via environment variable
-	if [ "$DEBIAN_FRONTEND" = 'noninteractive' ]; then
-		return 1
-	fi
-
-	# Non-interactive if stdin and/or stdout is not a tty (e.g. piped, redirected, or no tty allocated)
-	if ! [ -t 0 ] || ! [ -t 1 ]; then
-		return 1
-	fi
-
-	return 0
+	# TTY session unless requested otherwise or stdin/stdout are not TTYs
+	[ "${DEBIAN_FRONTEND}" != 'noninteractive' ] && [ -t 0 ] && [ -t 1 ]
 }
 
 handle_compose_presets_up()
@@ -1340,11 +1331,15 @@ handle_compose_presets_run()
 	if [ -n "$COMPOSE_RUN_ENTRYPOINT" ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --entrypoint $COMPOSE_RUN_ENTRYPOINT"
 	fi
-	if [ "$COMPOSE_RUN_INTERACTIVE" = 'true' ] && is_interactive_session; then
+	if [ "$COMPOSE_RUN_INTERACTIVE" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS -i"
 	fi
-	if [ "$COMPOSE_RUN_TTY" = 'true' ] && is_interactive_session; then
-		COMPOSE_ARGS="$COMPOSE_ARGS -t"
+	if [ "$COMPOSE_RUN_TTY" = 'true' ]; then
+		if ! is_tty_session; then
+			COMPOSE_RUN_TTY='false'
+		else
+			COMPOSE_ARGS="$COMPOSE_ARGS -t"
+		fi
 	fi
 	if [ "$COMPOSE_RUN_SERVICE_PORTS" = 'true' ]; then
 		COMPOSE_ARGS="$COMPOSE_ARGS --service-ports"
