@@ -79,6 +79,15 @@ dockerc train.gpu ps  # -> docker compose -f docker/docker-compose-train.yml -f 
 ```
 
 
+## Support my work
+
+If you find this project useful, consider supporting its development:
+
+- [GitHub Sponsors](https://github.com/sponsors/matiboux)
+- [Ko-fi](https://ko-fi.com/matiboux)
+- [Liberapay](https://liberapay.com/Matiboux)
+
+
 ## License
 
 Copyright (c) 2023-2026 [Matiboux](https://github.com/matiboux) ([matiboux.me](https://matiboux.me))
